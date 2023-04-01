@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:eduapge2/homework.dart';
@@ -64,8 +62,7 @@ class PageBaseState extends State<PageBase> {
   bool error = false; //for error status
   bool loading = false; //for data featching status
   String errmsg = ""; //to assing any error message from API/runtime
-  var apidata; //for decoded JSON data
-  var apidata_msg;
+  late List<Map<String, dynamic>> apidataMsg;
   bool refresh = true;
 
   SessionManager sessionManager = SessionManager();
@@ -81,7 +78,7 @@ class PageBaseState extends State<PageBase> {
   }
 
   getMsgs() async {
-    apidata_msg = await sessionManager.get('messages');
+    apidataMsg = await sessionManager.get('messages');
   }
 
   @override
@@ -138,26 +135,20 @@ class PageBaseState extends State<PageBase> {
           ),
           NavigationDestination(
             icon: Badge(
-              label: Text(apidata_msg == null
-                  ? ""
-                  : apidata_msg
-                      .where((msg) => msg["isSeen"] == false)
-                      .toList()
-                      .length
-                      .toString()),
-              isLabelVisible: apidata_msg != null,
+              label: Text(apidataMsg
+                  .where((msg) => msg["isSeen"] == false)
+                  .toList()
+                  .length
+                  .toString()),
               child: const Icon(Icons.mail),
             ),
             label: 'Zprávy',
             selectedIcon: Badge(
-              label: Text(apidata_msg == null
-                  ? ""
-                  : apidata_msg
-                      .where((msg) => msg["isSeen"] == false)
-                      .toList()
-                      .length
-                      .toString()),
-              isLabelVisible: apidata_msg != null,
+              label: Text(apidataMsg
+                  .where((msg) => msg["isSeen"] == false)
+                  .toList()
+                  .length
+                  .toString()),
               child: const Icon(Icons.mail_outline),
             ),
           ),

@@ -31,8 +31,7 @@ class TimeTablePageState extends State<TimeTablePage> {
   bool error = false; //for error status
   bool loading = false; //for data featching status
   String errmsg = ""; //to assing any error message from API/runtime
-  var apidata; //for decoded JSON data
-  var apidata_tt;
+  late Map<String, dynamic> apidataTT;
   bool refresh = false;
 
   int daydiff = 0;
@@ -60,10 +59,10 @@ class TimeTablePageState extends State<TimeTablePage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    apidata_tt = await widget.sessionManager.get('timetable');
+    apidataTT = await widget.sessionManager.get('timetable');
 
     List<TimeTableClass> ttClasses = <TimeTableClass>[];
-    List<dynamic> lessons = apidata_tt["lessons"];
+    List<dynamic> lessons = apidataTT["lessons"];
     for (Map<String, dynamic> ttLesson in lessons) {
       ttClasses.add(
         TimeTableClass(
@@ -78,7 +77,7 @@ class TimeTablePageState extends State<TimeTablePage> {
         ),
       );
     }
-    tt = TimeTableData(DateTime.parse(apidata_tt["date"]), ttClasses);
+    tt = TimeTableData(DateTime.parse(apidataTT["date"]), ttClasses);
     timetables.add(tt);
 
     loading = false;

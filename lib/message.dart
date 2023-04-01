@@ -15,7 +15,7 @@ class MessagePage extends StatefulWidget {
 
 class MessagePageState extends State<MessagePage> {
   bool loading = true;
-  var apidata_msg;
+  late List<Map<String, dynamic>> apidataMsg;
 
   late Widget messages;
 
@@ -30,7 +30,7 @@ class MessagePageState extends State<MessagePage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    apidata_msg = await widget.sessionManager.get('messages');
+    apidataMsg = await widget.sessionManager.get('messages');
 
     loading = false;
     setState(() {}); //refresh UI

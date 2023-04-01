@@ -1,8 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 
 class MessagesPage extends StatefulWidget {
@@ -16,7 +12,7 @@ class MessagesPage extends StatefulWidget {
 
 class TimeTablePageState extends State<MessagesPage> {
   bool loading = true;
-  var apidata_msg;
+  late List<Map<String, dynamic>> apidataMsg;
 
   late Widget messages;
 
@@ -31,8 +27,8 @@ class TimeTablePageState extends State<MessagesPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    apidata_msg = await widget.sessionManager.get('messages');
-    messages = getMessages(apidata_msg);
+    apidataMsg = await widget.sessionManager.get('messages');
+    messages = getMessages(apidataMsg);
 
     loading = false;
     setState(() {}); //refresh UI
@@ -58,8 +54,8 @@ class TimeTablePageState extends State<MessagesPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    apidata_msg = await widget.sessionManager.get('messages');
-    messages = getMessages(apidata_msg);
+    apidataMsg = await widget.sessionManager.get('messages');
+    messages = getMessages(apidataMsg);
 
     loading = false;
     setState(() {}); //refresh UI

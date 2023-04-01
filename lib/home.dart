@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  final GlobalKey<ScaffoldState> _scaffold_key = GlobalKey();
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   late SharedPreferences sharedPreferences;
   String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app";
   String token = "abcd";
@@ -29,7 +29,7 @@ class HomePageState extends State<HomePage> {
   dynamic apidata; //for decoded JSON data
   bool refresh = false;
 
-  var apidata_tt;
+  late Map<String, dynamic> apidataTT;
 
   @override
   void initState() {
@@ -44,7 +44,7 @@ class HomePageState extends State<HomePage> {
       loading = true;
     });
     sharedPreferences = await SharedPreferences.getInstance();
-    apidata_tt = await widget.sessionManager.get('timetable');
+    apidataTT = await widget.sessionManager.get('timetable');
     setState(() {
       loading = false;
     }); //refresh UI
@@ -78,7 +78,7 @@ class HomePageState extends State<HomePage> {
       }
     }
     return Scaffold(
-      key: _scaffold_key,
+      key: scaffoldKey,
       body: Stack(
         children: <Widget>[
           Container(
@@ -114,7 +114,7 @@ class HomePageState extends State<HomePage> {
                 IconButton(
                   icon: const Icon(Icons.menu),
                   onPressed: () => {
-                    _scaffold_key.currentState?.openDrawer(),
+                    scaffoldKey.currentState?.openDrawer(),
                   },
                 ),
               ],
@@ -133,7 +133,7 @@ class HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         for (Map<String, dynamic> lesson
-                            in apidata_tt["lessons"])
+                            in apidataTT["lessons"])
                           Card(
                             child: Padding(
                               padding: const EdgeInsets.all(10),
