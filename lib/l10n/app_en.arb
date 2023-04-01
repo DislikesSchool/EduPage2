@@ -1,0 +1,11 @@
+{
+  "mainHome": "Home",
+  "mainTimetable": "Time table",
+  "mainICanteen": "iCanteen",
+  "mainMessages": "Messages",
+  "mainHomework": "Homework",
+  "homeLunchesNotLoaded": "Could not load lunches",
+  "homeNoLunchToday": "You don't have any lunch for today",
+  "homeLunchToday": "You have lunch number {lunch}",
+  "homeLunchDontForget": "Don't forget to order lunch for {date}"
+}
