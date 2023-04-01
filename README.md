@@ -1,16 +1,18 @@
-# eduapge2
+# EduPage2
+## Faster EduPage
+A custom EduPage mobile client written in dart using the flutter framework.
+The application uses a special caching server developed by @vyPal. This caching server periodically pulls data from EduPage servers, strips them of any unnecessary data, and stores them in RAM for quick access, when the app tries to load it. 
 
-A new Flutter project.
+**!IMPORTANT!** This app was not made by EduPage, it is only a custom client. Most features are not yet implemented. A list of implemented features and other features, that will be arriving soon are included in the list below.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## What does the app offer?
+### What already works
+- [x] Login with existing EduPage account
+- [x] A dedicated page for messages
+- [x] A dedicated page for homework and assignments
+- [x] Dedicated time table page
+- [x] Quick-view of lunches and time table from homepage
+### What is being tested
+- [x] iCanteen access in-app
+### What is coming
+- [ ] English translation by native speaker
