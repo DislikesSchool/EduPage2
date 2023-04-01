@@ -5,6 +5,7 @@ import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -30,6 +31,7 @@ class HomePageState extends State<HomePage> {
   bool refresh = false;
 
   late Map<String, dynamic> apidataTT;
+  late String username;
 
   @override
   void initState() {
@@ -44,6 +46,8 @@ class HomePageState extends State<HomePage> {
       loading = true;
     });
     sharedPreferences = await SharedPreferences.getInstance();
+    Map<String, dynamic> user = await widget.sessionManager.get('user');
+    username = user["firstname"] + " " + user["lastname"];
     apidataTT = await widget.sessionManager.get('timetable');
     setState(() {
       loading = false;
@@ -60,7 +64,7 @@ class HomePageState extends State<HomePage> {
     }
 
     int lunch = -1;
-    String orderLunchesFor = "";
+    DateTime orderLunchesFor = DateTime(1998, 4, 10);
     String? l = sharedPreferences.getString("lunches");
     if (l != null) {
       var lunches = jsonDecode(l) as List<dynamic>;
@@ -72,7 +76,7 @@ class HomePageState extends State<HomePage> {
       }
       for (Map<String, dynamic> li in lunches) {
         if (li["lunches"][0]["can_order"]) {
-          orderLunchesFor = li["day"];
+          orderLunchesFor = DateTime.parse(li["day"]);
           break;
         }
       }
@@ -94,10 +98,10 @@ class HomePageState extends State<HomePage> {
             ),
             child: Stack(
               children: <Widget>[
-                const Center(
+                Center(
                   child: Text(
-                    'Jakub Palacký',
-                    style: TextStyle(
+                    username,
+                    style: const TextStyle(
                       fontSize: 24,
                     ),
                   ),
@@ -173,23 +177,25 @@ class HomePageState extends State<HomePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     lunch == -1
-                        ? const Text(
-                            "Obědy nebyly načteny",
-                            style: TextStyle(fontSize: 20),
+                        ? Text(
+                            AppLocalizations.of(context)!.homeLunchesNotLoaded,
+                            style: const TextStyle(fontSize: 20),
                             textAlign: TextAlign.center,
                           )
                         : lunch == 0
-                            ? const Text(
-                                "Na dnešek nemáš objednaný oběd!",
-                                style: TextStyle(fontSize: 20),
+                            ? Text(
+                                AppLocalizations.of(context)!.homeNoLunchToday,
+                                style: const TextStyle(fontSize: 20),
                                 textAlign: TextAlign.center,
                               )
                             : Text(
-                                "Dneska máš oběd $lunch",
+                                AppLocalizations.of(context)!
+                                    .homeLunchToday(lunch),
                                 style: const TextStyle(fontSize: 20),
                                 textAlign: TextAlign.center,
                               ),
-                    Text("Nezapomeň objednat oběd na $orderLunchesFor"),
+                    Text(AppLocalizations.of(context)!
+                        .homeLunchDontForget(orderLunchesFor)),
                   ],
                 ),
               ),
@@ -216,7 +222,7 @@ class HomePageState extends State<HomePage> {
             const AboutListTile(
               icon: Icon(Icons.info_outline),
               applicationName: 'EduPage2',
-              applicationVersion: 'Beta 1.1.4 Build 1',
+              applicationVersion: 'Beta 1.2.0 Build 1',
               applicationLegalese: '©2023 Jakub Palacký',
               dense: true,
             ),

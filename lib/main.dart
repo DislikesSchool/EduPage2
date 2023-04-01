@@ -65,7 +65,7 @@ class PageBaseState extends State<PageBase> {
   bool error = false; //for error status
   bool loading = false; //for data featching status
   String errmsg = ""; //to assing any error message from API/runtime
-  late List<Map<String, dynamic>> apidataMsg;
+  List<dynamic> apidataMsg = [];
   bool refresh = true;
 
   SessionManager sessionManager = SessionManager();
@@ -81,7 +81,11 @@ class PageBaseState extends State<PageBase> {
   }
 
   getMsgs() async {
-    apidataMsg = await sessionManager.get('messages');
+    var msgs = await sessionManager.get('messages');
+    if (msgs != Null) {
+      apidataMsg = msgs;
+      setState(() {});
+    }
   }
 
   @override

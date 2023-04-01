@@ -18,5 +18,32 @@
   "mainHomework": "Úkoly",
   "@mainHomework": {
     "description":"Label for homework page button"
+  },
+  "homeLunchesNotLoaded": "Obědy nebyly načteny",
+  "@homeLunchesNotLoaded": {
+    "description": "Displayed when lunches weren't loaded"
+  },
+  "homeNoLunchToday": "Na dnešek nemáš objednaný oběd",
+  "@homeNoLunchToday": {
+    "description": "Displayed when the user hasn't ordered a lunch for today"
+  },
+  "homeLunchToday": "Dneska máš oběd {lunch}",
+  "@homeLunchToday": {
+    "description": "Shows the user the lunch that is ordered",
+    "placeholders": {
+      "lunch": {
+        "type": "int"
+      }
+    }
+  },
+  "homeLunchDontForget": "Nezapomeň si objednat oběd na {date}",
+  "@homeLunchDontForget": {
+    "description": "Displayed to remind user to order lunch",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMd"
+      }
+    }
   }
 }

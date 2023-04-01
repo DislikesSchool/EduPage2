@@ -12,7 +12,7 @@ class MessagesPage extends StatefulWidget {
 
 class TimeTablePageState extends State<MessagesPage> {
   bool loading = true;
-  late List<Map<String, dynamic>> apidataMsg;
+  late List<dynamic> apidataMsg;
 
   late Widget messages;
 

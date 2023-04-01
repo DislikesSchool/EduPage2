@@ -12,7 +12,7 @@ class HomeworkPage extends StatefulWidget {
 
 class HomeworkPageState extends State<HomeworkPage> {
   bool loading = true;
-  late List<Map<String, dynamic>> apidataMsg;
+  late List<dynamic> apidataMsg;
 
   late Widget messages;
 
