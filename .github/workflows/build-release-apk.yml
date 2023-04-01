@@ -18,6 +18,7 @@ jobs:
         flutter-version: '3.7.7'
     - run: flutter pub get
     - run: flutter analyze .
+    - run: flutter gen-l10n
     - run: flutter build apk
     - uses: actions/upload-artifact@v1
       with:

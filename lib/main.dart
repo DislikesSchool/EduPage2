@@ -7,6 +7,7 @@ import 'package:eduapge2/messages.dart';
 import 'package:eduapge2/timetable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'home.dart';
 
 void main() {
@@ -20,7 +21,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'EduPage2',
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -118,20 +121,20 @@ class PageBaseState extends State<PageBase> {
             ),
       bottomNavigationBar: NavigationBar(
         destinations: <NavigationDestination>[
-          const NavigationDestination(
-            icon: Icon(Icons.home),
-            label: 'Domů',
-            selectedIcon: Icon(Icons.home_outlined),
+          NavigationDestination(
+            icon: const Icon(Icons.home),
+            label: AppLocalizations.of(context)!.mainHome,
+            selectedIcon: const Icon(Icons.home_outlined),
           ),
-          const NavigationDestination(
-            icon: Icon(Icons.calendar_month),
-            label: 'Rozvrh',
-            selectedIcon: Icon(Icons.calendar_month_outlined),
+          NavigationDestination(
+            icon: const Icon(Icons.calendar_month),
+            label: AppLocalizations.of(context)!.mainTimetable,
+            selectedIcon: const Icon(Icons.calendar_month_outlined),
           ),
-          const NavigationDestination(
-            icon: Icon(Icons.lunch_dining_rounded),
-            label: 'iCanteen',
-            selectedIcon: Icon(Icons.lunch_dining_outlined),
+          NavigationDestination(
+            icon: const Icon(Icons.lunch_dining_rounded),
+            label: AppLocalizations.of(context)!.mainICanteen,
+            selectedIcon: const Icon(Icons.lunch_dining_outlined),
           ),
           NavigationDestination(
             icon: Badge(
@@ -142,7 +145,7 @@ class PageBaseState extends State<PageBase> {
                   .toString()),
               child: const Icon(Icons.mail),
             ),
-            label: 'Zprávy',
+            label: AppLocalizations.of(context)!.mainMessages,
             selectedIcon: Badge(
               label: Text(apidataMsg
                   .where((msg) => msg["isSeen"] == false)
@@ -152,10 +155,10 @@ class PageBaseState extends State<PageBase> {
               child: const Icon(Icons.mail_outline),
             ),
           ),
-          const NavigationDestination(
-            icon: Icon(Icons.home_work),
-            label: 'Úkoly',
-            selectedIcon: Icon(Icons.home_work_outlined),
+          NavigationDestination(
+            icon: const Icon(Icons.home_work),
+            label: AppLocalizations.of(context)!.mainHomework,
+            selectedIcon: const Icon(Icons.home_work_outlined),
           ),
         ],
         selectedIndex: _selectedIndex,

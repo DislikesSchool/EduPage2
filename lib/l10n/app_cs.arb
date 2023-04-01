@@ -1,0 +1,22 @@
+{
+  "mainHome": "Domů",
+  "@mainHome": {
+    "description": "Label for home page button"
+  },
+  "mainTimetable": "Rozvrh",
+  "@mainTimetable": {
+    "description":"Label for time table page button"
+  },
+  "mainICanteen": "iCanteen",
+  "@mainICanteen": {
+    "description":"Label for iCanteen page button"
+  },
+  "mainMessages": "Zprávy",
+  "@mainMessages": {
+    "description":"Label for messages page button"
+  },
+  "mainHomework": "Úkoly",
+  "@mainHomework": {
+    "description":"Label for homework page button"
+  }
+}
