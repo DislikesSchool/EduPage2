@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TimeTablePage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -136,36 +137,36 @@ class TimeTablePageState extends State<TimeTablePage> {
       body: Stack(
         children: <Widget>[
           getTimeTable(
-            timetables.firstWhere(
-              (element) => isSameDay(
-                element.date,
-                DateTime.now().add(
-                  Duration(days: daydiff),
-                ),
-              ),
-              orElse: () => tt,
-            ),
-            daydiff,
-            (diff) => {
-              setState(
-                () {
-                  daydiff = daydiff + diff;
-                },
-              ),
-              loadTt(
-                DateTime.now().add(
-                  Duration(days: daydiff),
-                ),
-              ).then(
-                (value) => {
-                  tt = value,
-                  setState(
-                    () {},
+              timetables.firstWhere(
+                (element) => isSameDay(
+                  element.date,
+                  DateTime.now().add(
+                    Duration(days: daydiff),
                   ),
-                },
+                ),
+                orElse: () => tt,
               ),
-            },
-          )
+              daydiff,
+              (diff) => {
+                    setState(
+                      () {
+                        daydiff = daydiff + diff;
+                      },
+                    ),
+                    loadTt(
+                      DateTime.now().add(
+                        Duration(days: daydiff),
+                      ),
+                    ).then(
+                      (value) => {
+                        tt = value,
+                        setState(
+                          () {},
+                        ),
+                      },
+                    ),
+                  },
+              AppLocalizations.of(context))
         ],
       ),
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -200,46 +201,46 @@ class TimeTableClass {
   final dynamic data;
 }
 
-String getLabel(DateTime date) {
+String getLabel(DateTime date, AppLocalizations? local) {
   DateTime now = DateTime.now();
   DateTime tmr = now.add(const Duration(days: 1));
   if (date.day == now.day && date.month == now.month && date.year == now.year) {
-    return "Dnes: ${[
-      "Pondělí",
-      "Úterý",
-      "Středa",
-      "Čtvrtek",
-      "Pátek",
-      "Sobota",
-      "Neděle"
+    return "${local!.today}: ${[
+      local.monday,
+      local.tuesday,
+      local.wednesday,
+      local.thursday,
+      local.friday,
+      local.saturday,
+      local.sunday
     ][now.weekday - 1]} ${now.day}.${now.month}.${now.year}";
   } else if (date.day == tmr.day &&
       date.month == tmr.month &&
       date.year == tmr.year) {
-    return "Zítra: ${[
-      "Pondělí",
-      "Úterý",
-      "Středa",
-      "Čtvrtek",
-      "Pátek",
-      "Sobota",
-      "Neděle"
+    return "${local!.tomorrow}: ${[
+      local.monday,
+      local.tuesday,
+      local.wednesday,
+      local.thursday,
+      local.friday,
+      local.saturday,
+      local.sunday
     ][tmr.weekday - 1]} ${tmr.day}.${tmr.month}.${tmr.year}";
   } else {
     return "${[
-      "Pondělí",
-      "Úterý",
-      "Středa",
-      "Čtvrtek",
-      "Pátek",
-      "Sobota",
-      "Neděle"
+      local?.monday,
+      local?.tuesday,
+      local?.wednesday,
+      local?.thursday,
+      local?.friday,
+      local?.saturday,
+      local?.sunday
     ][date.weekday - 1]} ${date.day}.${date.month}.${date.year}";
   }
 }
 
-Widget getTimeTable(
-    TimeTableData tt, int daydiff, Function(int) modifyDayDiff) {
+Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
+    AppLocalizations? local) {
   List<TableRow> rows = <TableRow>[];
   for (TimeTableClass ttclass in tt.classes) {
     Row extrasRow = Row(
@@ -338,7 +339,7 @@ Widget getTimeTable(
                   icon: const Icon(Icons.keyboard_arrow_left)),
               const Spacer(),
               Text(
-                getLabel(tt.date),
+                getLabel(tt.date, local),
                 style: const TextStyle(
                   fontSize: 20,
                 ),

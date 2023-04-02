@@ -56,10 +56,11 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations? local = AppLocalizations.of(context);
     ThemeData theme = Theme.of(context);
     if (loading) {
-      return const Center(
-        child: Text("Načítání"),
+      return Center(
+        child: Text(local!.loading),
       );
     }
 
@@ -178,24 +179,22 @@ class HomePageState extends State<HomePage> {
                   children: [
                     lunch == -1
                         ? Text(
-                            AppLocalizations.of(context)!.homeLunchesNotLoaded,
+                            local!.homeLunchesNotLoaded,
                             style: const TextStyle(fontSize: 20),
                             textAlign: TextAlign.center,
                           )
                         : lunch == 0
                             ? Text(
-                                AppLocalizations.of(context)!.homeNoLunchToday,
+                                local!.homeNoLunchToday,
                                 style: const TextStyle(fontSize: 20),
                                 textAlign: TextAlign.center,
                               )
                             : Text(
-                                AppLocalizations.of(context)!
-                                    .homeLunchToday(lunch),
+                                local!.homeLunchToday(lunch),
                                 style: const TextStyle(fontSize: 20),
                                 textAlign: TextAlign.center,
                               ),
-                    Text(AppLocalizations.of(context)!
-                        .homeLunchDontForget(orderLunchesFor)),
+                    Text(local.homeLunchDontForget(orderLunchesFor)),
                   ],
                 ),
               ),
