@@ -90,5 +90,13 @@
   "thursday": "Čtvrtek",
   "friday": "Pátek",
   "saturday": "Sobota",
-  "sunday": "Neděle"
+  "sunday": "Neděle",
+  "loadCredentials": "Načítání přihlašovacích údajů",
+  "loadLoggingIn": "Přihlašování...",
+  "loadLoggedIn": "Přihlášeno",
+  "loadAccessToken": "Získávání přihlašovacího tokenu...",
+  "loadVerify": "Ověřování...",
+  "loadDownloadTimetable": "Stahování rozvrhu...",
+  "loadDownloadMessages": "Stahování zpráv...",
+  "loadDone": "Hotovo!"
 }

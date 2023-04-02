@@ -25,5 +25,13 @@
   "thursday": "Thursday",
   "friday": "Friday",
   "saturday": "Saturday",
-  "sunday": "Sunday"
+  "sunday": "Sunday",
+  "loadCredentials": "Loading credentials...",
+  "loadLoggingIn": "Logging in...",
+  "loadLoggedIn": "Logged in",
+  "loadAccessToken": "Getting access token...",
+  "loadVerify": "Verifying",
+  "loadDownloadTimetable": "Downloading time table...",
+  "loadDownloadMessages": "Downloading messages...",
+  "loadDone": "Done!"
 }
