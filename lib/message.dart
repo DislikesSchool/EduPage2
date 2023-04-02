@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MessagePage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -46,7 +47,7 @@ class MessagePageState extends State<MessagePage> {
           ? Stack(
               children: <Widget>[messages],
             )
-          : const Text("Načítání..."),
+          : Text(AppLocalizations.of(context)!.loading),
       backgroundColor: Theme.of(context).colorScheme.background,
     );
   }

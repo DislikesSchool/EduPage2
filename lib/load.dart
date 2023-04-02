@@ -6,6 +6,7 @@ import 'package:eduapge2/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoadingScreen extends StatefulWidget {
   final Function loadedCallback;
@@ -31,17 +32,17 @@ class LoadingScreenState extends State<LoadingScreen> {
 
   String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
 
+  late AppLocalizations? local;
+
   @override
   void initState() {
     super.initState();
-
-    init();
   }
 
   Future<void> init() async {
     sharedPreferences = await SharedPreferences.getInstance();
     progress = 0.1;
-    loaderText = "Načítání přihlašovacích údajů...";
+    loaderText = local!.loadCredentials;
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
     setState(() {});
@@ -53,7 +54,7 @@ class LoadingScreenState extends State<LoadingScreen> {
     if (sharedPreferences.getString("token") != null) {
       String? token = sharedPreferences.getString("token");
       progress = 0.2;
-      loaderText = "Přihlašování...";
+      loaderText = local!.loadLoggingIn;
       setState(() {});
       Response response = await dio
           .get(
@@ -79,7 +80,7 @@ class LoadingScreenState extends State<LoadingScreen> {
 
       if (response.statusCode == 200) {
         progress = 0.5;
-        loaderText = "Přihlášeno";
+        loaderText = local!.loadLoggedIn;
         setState(() {});
         sessionManager.set('user', response.data);
         return loadTimetable();
@@ -92,7 +93,7 @@ class LoadingScreenState extends State<LoadingScreen> {
       String? password = sharedPreferences.getString("password");
 
       progress = 0.3;
-      loaderText = "Získávání přístupového tokenu...";
+      loaderText = local!.loadAccessToken;
       setState(() {});
 
       Response response = await dio
@@ -133,7 +134,7 @@ class LoadingScreenState extends State<LoadingScreen> {
               .then((value) => init());
         } else {
           sessionManager.set("token", response.data["token"]);
-          loaderText = "Ověřování...";
+          loaderText = local!.loadVerify;
           setState(() {});
           response = await dio
               .get(
@@ -159,7 +160,7 @@ class LoadingScreenState extends State<LoadingScreen> {
 
           if (response.statusCode == 200) {
             progress = 0.6;
-            loaderText = "Přihlášeno";
+            loaderText = local!.loadLoggedIn;
             setState(() {});
             sessionManager.set('user', response.data);
             return loadTimetable();
@@ -190,7 +191,7 @@ class LoadingScreenState extends State<LoadingScreen> {
 
   Future<void> loadTimetable() async {
     progress = 0.7;
-    loaderText = "Stahování rozvrhu...";
+    loaderText = local!.loadDownloadTimetable;
     setState(() {});
 
     String token = sharedPreferences.getString("token")!;
@@ -214,7 +215,7 @@ class LoadingScreenState extends State<LoadingScreen> {
 
   Future<void> loadMessages() async {
     progress = 0.9;
-    loaderText = "Načítání zpráv...";
+    loaderText = local!.loadDownloadMessages;
     setState(() {});
 
     String token = sharedPreferences.getString("token")!;
@@ -235,7 +236,7 @@ class LoadingScreenState extends State<LoadingScreen> {
     sessionManager.set("messages", jsonEncode(response.data));
 
     progress = 1.0;
-    loaderText = "Hotovo!";
+    loaderText = local!.loadDone;
     setState(() {});
     widget.loadedCallback();
   }
@@ -243,6 +244,8 @@ class LoadingScreenState extends State<LoadingScreen> {
   @override
   Widget build(BuildContext context) {
     sessionManager = widget.sessionManager;
+    local = AppLocalizations.of(context);
+    init();
     return Column(
       children: [
         LinearProgressIndicator(
