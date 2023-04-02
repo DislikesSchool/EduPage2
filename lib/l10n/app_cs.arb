@@ -1,4 +1,8 @@
 {
+  "loading": "Načítání",
+  "@loading": {
+    "description": "When loading a page"
+  },
   "mainHome": "Domů",
   "@mainHome": {
     "description": "Label for home page button"
@@ -45,5 +49,46 @@
         "format": "yMd"
       }
     }
-  }
+  },
+  "homeLogout": "Odhlásit se",
+  "@homeLogout": {
+    "description": "Logout button on home page"
+  },
+  "homeworkTitle": "Domácí úkoly",
+  "@homeworkTitle": {
+    "description": "Title of homework page"
+  },
+  "messagesTitle": "Zprávy",
+  "@messagesTitle": {
+    "description": "Title of messages page"
+  },
+  "loginPleaseLogin": "Přihlašte se prosím",
+  "@loginPleaseLogin": {
+    "description": "Main text for login page"
+  },
+  "loginUseExistingCredentials": "Použijte svoje existující přihlašovací údaje",
+  "@loginUseExistingCredentials": {
+    "description": "Asks user to use their existing EduPage credentials"
+  },
+  "loginUsername": "Přihlašovací jméno",
+  "@loginUsername": {
+    "description": "User's email or user name"
+  },
+  "loginPassword": "Heslo",
+  "@loginPassword": {
+    "description": "User's password"
+  },
+  "loginLogin": "Přihlásit se",
+  "@loginLogin": {
+    "description": "Login button"
+  },
+  "today": "Dnes",
+  "tomorrow": "Zítra",
+  "monday": "Pondělí",
+  "tuesday": "Úterý",
+  "wednesday": "Středa",
+  "thursday": "Čtvrtek",
+  "friday": "Pátek",
+  "saturday": "Sobota",
+  "sunday": "Neděle"
 }

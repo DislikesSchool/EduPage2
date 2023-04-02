@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MessagesPage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -44,7 +45,7 @@ class TimeTablePageState extends State<MessagesPage> {
           ? Stack(
               children: <Widget>[messages],
             )
-          : const Text("Načítání..."),
+          : Text(AppLocalizations.of(context)!.loading),
       backgroundColor: Theme.of(context).colorScheme.background,
     );
   }
@@ -138,9 +139,9 @@ class TimeTablePageState extends State<MessagesPage> {
         padding: const EdgeInsets.all(10),
         child: Stack(
           children: <Widget>[
-            const Text(
-              'Zprávy',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.messagesTitle,
+              style: const TextStyle(
                 fontSize: 24,
               ),
             ),

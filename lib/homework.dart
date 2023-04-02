@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeworkPage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -44,7 +45,7 @@ class HomeworkPageState extends State<HomeworkPage> {
           ? Stack(
               children: <Widget>[messages],
             )
-          : const Text("Načítání..."),
+          : Text(AppLocalizations.of(context)!.loading),
       backgroundColor: Theme.of(context).colorScheme.background,
     );
   }
@@ -128,9 +129,9 @@ class HomeworkPageState extends State<HomeworkPage> {
         padding: const EdgeInsets.all(10),
         child: Stack(
           children: <Widget>[
-            const Text(
-              'Domácí úkoly',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.homeworkTitle,
+              style: const TextStyle(
                 fontSize: 24,
               ),
             ),

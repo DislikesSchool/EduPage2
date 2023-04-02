@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -25,6 +26,7 @@ class LoinPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations? local = AppLocalizations.of(context);
     return Center(
       child: Card(
         child: Padding(
@@ -32,25 +34,25 @@ class LoinPageState extends State<LoginPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                "Prosím se přihlašte",
-                style: TextStyle(
+              Text(
+                local!.loginPleaseLogin,
+                style: const TextStyle(
                   fontSize: 18,
                 ),
               ),
-              const Text("Použijte vaše existující přihlašovací údaje"),
+              Text(local!.loginUseExistingCredentials),
               TextField(
-                decoration: const InputDecoration(
-                  icon: Icon(Icons.email),
-                  hintText: "Uživatelské jméno",
+                decoration: InputDecoration(
+                  icon: const Icon(Icons.email),
+                  hintText: local!.loginUsername,
                 ),
                 onChanged: (text) => {email = text},
                 keyboardType: TextInputType.emailAddress,
               ),
               TextField(
-                decoration: const InputDecoration(
-                  icon: Icon(Icons.key),
-                  hintText: "Heslo",
+                decoration: InputDecoration(
+                  icon: const Icon(Icons.key),
+                  hintText: local!.loginPassword,
                 ),
                 onChanged: (text) => {password = text},
                 obscureText: true,
@@ -62,7 +64,7 @@ class LoinPageState extends State<LoginPage> {
                   sharedPreferences.setString("password", password),
                   Navigator.pop(context),
                 },
-                child: const Text("Přihlásit se"),
+                child: Text(local!.loginLogin),
               ),
             ],
           ),

@@ -1,4 +1,5 @@
 {
+  "loading": "Loading",
   "mainHome": "Home",
   "mainTimetable": "Time table",
   "mainICanteen": "iCanteen",
@@ -7,5 +8,22 @@
   "homeLunchesNotLoaded": "Could not load lunches",
   "homeNoLunchToday": "You don't have any lunch for today",
   "homeLunchToday": "You have lunch number {lunch}",
-  "homeLunchDontForget": "Don't forget to order lunch for {date}"
+  "homeLunchDontForget": "Don't forget to order lunch for {date}",
+  "homeLogout": "Logout",
+  "homeworkTitle": "Homework",
+  "messagesTitle": "Messages",
+  "loginPleaseLogin": "Please login to EduPage2",
+  "loginUseExistingCredentials": "Use your existing EduPage credentials",
+  "loginUsername": "Username",
+  "loginPassword": "Password",
+  "loginLogin": "Login",
+  "today": "Today",
+  "tomorrow": "Tomorrow",
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+  "sunday": "Sunday"
 }
