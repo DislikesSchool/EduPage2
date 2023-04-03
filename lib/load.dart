@@ -25,6 +25,7 @@ class LoadingScreenState extends State<LoadingScreen> {
   late SharedPreferences sharedPreferences;
 
   bool runningInit = false;
+  bool startedInit = false;
 
   Dio dio = Dio();
   double progress = 0.0;
@@ -40,6 +41,7 @@ class LoadingScreenState extends State<LoadingScreen> {
   }
 
   Future<void> init() async {
+    startedInit = true;
     sharedPreferences = await SharedPreferences.getInstance();
     progress = 0.1;
     loaderText = local!.loadCredentials;
@@ -243,9 +245,11 @@ class LoadingScreenState extends State<LoadingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    sessionManager = widget.sessionManager;
-    local = AppLocalizations.of(context);
-    init();
+    if (!startedInit) {
+      sessionManager = widget.sessionManager;
+      local = AppLocalizations.of(context);
+      init();
+    }
     return Column(
       children: [
         LinearProgressIndicator(

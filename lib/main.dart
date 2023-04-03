@@ -82,9 +82,8 @@ class PageBaseState extends State<PageBase> {
 
   getMsgs() async {
     var msgs = await sessionManager.get('messages');
-    if (msgs != Null) {
+    if (msgs != Null && msgs != null) {
       apidataMsg = msgs;
-      setState(() {});
     }
   }
 

@@ -10,6 +10,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoinPageState extends State<LoginPage> {
+  AppLocalizations? local;
   late SharedPreferences sharedPreferences;
   String email = "";
   String password = "";
@@ -26,7 +27,7 @@ class LoinPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    AppLocalizations? local = AppLocalizations.of(context);
+    local ??= AppLocalizations.of(context);
     return Center(
       child: Card(
         child: Padding(
@@ -40,11 +41,11 @@ class LoinPageState extends State<LoginPage> {
                   fontSize: 18,
                 ),
               ),
-              Text(local.loginUseExistingCredentials),
+              Text(local!.loginUseExistingCredentials),
               TextField(
                 decoration: InputDecoration(
                   icon: const Icon(Icons.email),
-                  hintText: local.loginUsername,
+                  hintText: local!.loginUsername,
                 ),
                 onChanged: (text) => {email = text},
                 keyboardType: TextInputType.emailAddress,
@@ -52,7 +53,7 @@ class LoinPageState extends State<LoginPage> {
               TextField(
                 decoration: InputDecoration(
                   icon: const Icon(Icons.key),
-                  hintText: local.loginPassword,
+                  hintText: local!.loginPassword,
                 ),
                 onChanged: (text) => {password = text},
                 obscureText: true,
@@ -64,7 +65,7 @@ class LoinPageState extends State<LoginPage> {
                   sharedPreferences.setString("password", password),
                   Navigator.pop(context),
                 },
-                child: Text(local.loginLogin),
+                child: Text(local!.loginLogin),
               ),
             ],
           ),
