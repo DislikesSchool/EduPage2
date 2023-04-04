@@ -242,6 +242,15 @@ String getLabel(DateTime date, AppLocalizations? local) {
 Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
     AppLocalizations? local) {
   List<TableRow> rows = <TableRow>[];
+  if (daydiff == 0) {
+    String endTime = tt.classes.last.endTime;
+    DateTime now = DateTime.now();
+    DateTime end = DateTime(now.year, now.month, now.day,
+        int.parse(endTime.split(':')[0]), int.parse(endTime.split(':')[1]));
+    if (end.compareTo(now) < 0) {
+      modifyDayDiff(1);
+    }
+  }
   for (TimeTableClass ttclass in tt.classes) {
     Row extrasRow = Row(
       // ignore: prefer_const_literals_to_create_immutables

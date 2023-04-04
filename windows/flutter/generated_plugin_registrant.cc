@@ -10,8 +10,8 @@
 #include <sentry_flutter/sentry_flutter_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
-    ConnectivityPlusWindowsPluginRegisterWithRegistrar(
-        registry->GetRegistrarForPlugin("ConnectivityPlusWindowsPlugin"));
-    SentryFlutterPluginRegisterWithRegistrar(
-        registry->GetRegistrarForPlugin("SentryFlutterPlugin"));
+  ConnectivityPlusWindowsPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("ConnectivityPlusWindowsPlugin"));
+  SentryFlutterPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("SentryFlutterPlugin"));
 }

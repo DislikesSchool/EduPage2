@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   late SharedPreferences sharedPreferences;
-  String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app";
+  String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
   String token = "abcd";
   late Response response;
   Dio dio = Dio();
@@ -41,6 +41,14 @@ class HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  DateTime getWeekDay() {
+    DateTime now = DateTime.now();
+    if (now.weekday > 5) {
+      now.add(Duration(days: 8 - now.weekday));
+    }
+    return DateTime(now.year, now.month, now.day);
+  }
+
   getData() async {
     setState(() {
       loading = true;
@@ -48,7 +56,21 @@ class HomePageState extends State<HomePage> {
     sharedPreferences = await SharedPreferences.getInstance();
     Map<String, dynamic> user = await widget.sessionManager.get('user');
     username = user["firstname"] + " " + user["lastname"];
-    apidataTT = await widget.sessionManager.get('timetable');
+    String token = sharedPreferences.getString("token")!;
+
+    Response response = await dio.get(
+      "$baseUrl/timetable/${getWeekDay().toString()}",
+      options: buildCacheOptions(
+        Duration.zero,
+        maxStale: const Duration(days: 7),
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      ),
+    );
+    apidataTT = jsonDecode(response.data);
     setState(() {
       loading = false;
     }); //refresh UI
