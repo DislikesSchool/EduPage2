@@ -43,6 +43,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  sentry_flutter: ^7.4.0
 
 dev_dependencies:
   flutter_test:

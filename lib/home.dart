@@ -76,7 +76,17 @@ class HomePageState extends State<HomePage> {
         if (todayLunches[i]["ordered"]) lunch = i + 1;
       }
       for (Map<String, dynamic> li in lunches) {
-        if (li["lunches"][0]["can_order"]) {
+        bool canOrder = false;
+        bool hasOrdered = false;
+        for (Map<String, dynamic> l in li["lunches"]) {
+          if (l["can_order"]) {
+            canOrder = true;
+          }
+          if (l["ordered"]) {
+            hasOrdered = true;
+          }
+        }
+        if (canOrder && !hasOrdered) {
           orderLunchesFor = DateTime.parse(li["day"]);
           break;
         }
@@ -134,33 +144,36 @@ class HomePageState extends State<HomePage> {
                 children: <Widget>[
                   Card(
                     elevation: 5,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        for (Map<String, dynamic> lesson
-                            in apidataTT["lessons"])
-                          Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    lesson["period"]["name"] + ".",
-                                    style: const TextStyle(fontSize: 10),
-                                  ),
-                                  Text(
-                                    lesson["subject"]["short"],
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                  Text(
-                                    lesson["classrooms"][0]["short"],
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                ],
+                    child: SizedBox(
+                      height: 100,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          for (Map<String, dynamic> lesson
+                              in apidataTT["lessons"])
+                            Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      lesson["period"]["name"] + ".",
+                                      style: const TextStyle(fontSize: 10),
+                                    ),
+                                    Text(
+                                      lesson["subject"]["short"],
+                                      style: const TextStyle(fontSize: 20),
+                                    ),
+                                    Text(
+                                      lesson["classrooms"][0]["short"],
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ],
