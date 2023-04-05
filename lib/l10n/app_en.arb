@@ -5,6 +5,7 @@
   "mainICanteen": "iCanteen",
   "mainMessages": "Messages",
   "mainHomework": "Homework",
+  "mainGrades": "Grades",
   "homeLunchesNotLoaded": "Could not load lunches",
   "homeNoLunchToday": "You don't have any lunch for today",
   "homeLunchToday": "You have lunch number {lunch}",
