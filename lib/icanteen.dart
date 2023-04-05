@@ -82,9 +82,10 @@ class ICanteenPageState extends State<ICanteenPage> {
                         children: [
                           if (lunchOpt["ordered"]) const Icon(Icons.check),
                           if (!lunchOpt["can_order"]) const Icon(Icons.block),
-                          Text(
-                            lunchOpt["item_name"],
-                            overflow: TextOverflow.clip,
+                          Expanded(
+                            child: Text(
+                              lunchOpt["item_name"],
+                            ),
                           ),
                         ],
                       ),

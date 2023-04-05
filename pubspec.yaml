@@ -43,6 +43,9 @@ dependencies:
     sdk: flutter
   intl: any
   sentry_flutter: ^7.4.0
+  firebase_core: ^2.9.0
+  firebase_analytics: ^10.2.0
+  onesignal_flutter: ^3.5.0
 
 dev_dependencies:
   flutter_test:

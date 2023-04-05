@@ -23,6 +23,10 @@
   "@mainHomework": {
     "description":"Label for homework page button"
   },
+  "mainGrades": "Známky",
+  "@mainGrades": {
+    "description": "Label for grade page button"
+  },
   "homeLunchesNotLoaded": "Obědy nebyly načteny",
   "@homeLunchesNotLoaded": {
     "description": "Displayed when lunches weren't loaded"

@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "515530161188",
+    "project_id": "cool-beanbag-355116",
+    "storage_bucket": "cool-beanbag-355116.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515530161188:android:b2eab7f36d46ae03586cb1",
+        "android_client_info": {
+          "package_name": "com.vypal.eduapge2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515530161188-fmfmgm425f7rr7atgpfovvkl4btf0ib2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaOabatY2bheZOiD8YnI_D8loaDOF6WqM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515530161188-fmfmgm425f7rr7atgpfovvkl4btf0ib2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "515530161188-6em8bou6f47mqqlukre85q7vmet5lkbr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.eduapge2"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

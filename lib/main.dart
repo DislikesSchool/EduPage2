@@ -10,8 +10,15 @@ import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'home.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await SentryFlutter.init(
     (options) {
       options.dsn =
@@ -20,6 +27,8 @@ Future<void> main() async {
     },
     appRunner: () => runApp(const MyApp()),
   );
+  OneSignal.shared.setAppId("85587dc6-0a3c-4e91-afd6-e0ca82361763");
+  OneSignal.shared.promptUserForPushNotificationPermission();
 }
 
 class MyApp extends StatelessWidget {
@@ -32,6 +41,7 @@ class MyApp extends StatelessWidget {
       title: 'EduPage2',
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      navigatorObservers: [SentryNavigatorObserver()],
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -170,6 +180,11 @@ class PageBaseState extends State<PageBase> {
             icon: const Icon(Icons.home_work),
             label: AppLocalizations.of(context)!.mainHomework,
             selectedIcon: const Icon(Icons.home_work_outlined),
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.assignment),
+            label: AppLocalizations.of(context)!.mainGrades,
+            selectedIcon: const Icon(Icons.assignment_outlined),
           ),
         ],
         selectedIndex: _selectedIndex,

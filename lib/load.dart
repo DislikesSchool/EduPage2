@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class LoadingScreen extends StatefulWidget {
   final Function loadedCallback;
@@ -81,6 +82,7 @@ class LoadingScreenState extends State<LoadingScreen> {
       });
 
       if (response.statusCode == 200) {
+        OneSignal.shared.setExternalUserId(token!);
         progress = 0.5;
         loaderText = local!.loadLoggedIn;
         setState(() {});
@@ -161,6 +163,7 @@ class LoadingScreenState extends State<LoadingScreen> {
           });
 
           if (response.statusCode == 200) {
+            OneSignal.shared.setExternalUserId(response.data["token"]);
             progress = 0.6;
             loaderText = local!.loadLoggedIn;
             setState(() {});
