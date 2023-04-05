@@ -140,6 +140,7 @@ class LoadingScreenState extends State<LoadingScreen> {
           sessionManager.set("token", response.data["token"]);
           loaderText = local!.loadVerify;
           setState(() {});
+          String token = response.data["token"];
           response = await dio
               .get(
             "$baseUrl/login",
@@ -163,7 +164,7 @@ class LoadingScreenState extends State<LoadingScreen> {
           });
 
           if (response.statusCode == 200) {
-            OneSignal.shared.setExternalUserId(response.data["token"]);
+            OneSignal.shared.setExternalUserId(token);
             progress = 0.6;
             loaderText = local!.loadLoggedIn;
             setState(() {});
