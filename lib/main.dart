@@ -5,6 +5,7 @@ import 'package:eduapge2/icanteen.dart';
 import 'package:eduapge2/load.dart';
 import 'package:eduapge2/messages.dart';
 import 'package:eduapge2/timetable.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -34,6 +35,10 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: analytics);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -41,7 +46,7 @@ class MyApp extends StatelessWidget {
       title: 'EduPage2',
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      navigatorObservers: [SentryNavigatorObserver()],
+      navigatorObservers: [SentryNavigatorObserver(), observer],
       theme: ThemeData(
         // This is the theme of your application.
         //
