@@ -1,3 +1,4 @@
+import 'package:eduapge2/message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -80,7 +81,16 @@ class TimeTablePageState extends State<MessagesPage> {
           : "";
       rows.add(Card(
         color: msg["isSeen"] ? null : const Color.fromARGB(255, 124, 95, 0),
-        child: Padding(
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext buildContext) => MessagePage(
+                        sessionManager: widget.sessionManager,
+                        id: int.parse(msg["id"]))));
+          },
+          child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -130,7 +140,9 @@ class TimeTablePageState extends State<MessagesPage> {
                     ),
                   ),
               ],
-            )),
+            ),
+          ),
+        ),
       ));
     }
     return Card(
