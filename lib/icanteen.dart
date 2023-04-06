@@ -71,8 +71,8 @@ class ICanteenPageState extends State<ICanteenPage> {
 
     if (response.statusCode == 500) {
       lunches.add(
-        Card(
-          child: Text(AppLocalizations.of(context)!.iCanteenCantLoad),
+        const Card(
+          child: Text("Sorry, but there was an issue accessing iCanteen"),
         ),
       );
     }

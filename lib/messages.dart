@@ -74,6 +74,7 @@ class TimeTablePageState extends State<MessagesPage> {
     ];
     apidataMsg = apidataMsg.where((msg) => msg["type"] == "sprava").toList();
     for (Map<String, dynamic> msg in apidataMsg) {
+      if (msg["replyOf"] != null) continue;
       String attText = msg["attachments"].length < 5
           ? msg["attachments"].length > 1
               ? "y"
@@ -97,16 +98,23 @@ class TimeTablePageState extends State<MessagesPage> {
               children: [
                 Row(
                   children: [
-                    Text(msg["owner"]["firstname"] +
-                        " " +
-                        msg["owner"]["lastname"]),
-                    const Icon(Icons.arrow_right_rounded),
+                    Text(
+                      msg["owner"]["firstname"] +
+                          " " +
+                          msg["owner"]["lastname"],
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                    const Icon(
+                      Icons.arrow_right_rounded,
+                      size: 18,
+                    ),
                     Expanded(
                       child: Text(
                         msg["title"],
                         overflow: TextOverflow.fade,
                         maxLines: 5,
                         softWrap: false,
+                        style: const TextStyle(fontSize: 18),
                       ),
                     )
                   ],
@@ -116,7 +124,7 @@ class TimeTablePageState extends State<MessagesPage> {
                     Expanded(
                       child: Text(
                         msg["text"],
-                        style: const TextStyle(fontSize: 10),
+                        style: const TextStyle(fontSize: 12),
                         overflow: TextOverflow.fade,
                         maxLines: 5,
                         softWrap: false,
@@ -124,6 +132,16 @@ class TimeTablePageState extends State<MessagesPage> {
                     )
                   ],
                 ),
+                for (Map<String, dynamic> r in msg["replies"])
+                  Row(
+                    children: [
+                      const SizedBox(width: 10),
+                      const Icon(Icons.subdirectory_arrow_right_rounded),
+                      Text(
+                        r["owner"] + ": " + r["text"],
+                      ),
+                    ],
+                  ),
                 if (msg["attachments"].length > 0)
                   Padding(
                     padding: const EdgeInsets.only(top: 5),
