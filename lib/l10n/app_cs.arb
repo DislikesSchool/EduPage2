@@ -102,5 +102,7 @@
   "loadVerify": "Ověřování...",
   "loadDownloadTimetable": "Stahování rozvrhu...",
   "loadDownloadMessages": "Stahování zpráv...",
-  "loadDone": "Hotovo!"
+  "loadDone": "Hotovo!",
+  "iCanteenLoading": "Načítání obědů (tohle by mohlo chvíli zabrat)",
+  "iCanteenCantLoad": "Nelze načst obědy"
 }
