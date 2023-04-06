@@ -103,5 +103,6 @@
   "loadDownloadTimetable": "Stahování rozvrhu...",
   "loadDownloadMessages": "Stahování zpráv...",
   "loadDone": "Hotovo!",
-  "iCanteenLoading": "Načítání obědů (tohle by mohlo chvíli zabrat)"
+  "iCanteenLoading": "Načítání obědů (tohle by mohlo chvíli zabrat)",
+  "iCanteenCantLoad": "Nelze načst obědy"
 }

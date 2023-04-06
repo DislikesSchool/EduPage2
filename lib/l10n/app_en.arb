@@ -35,5 +35,6 @@
   "loadDownloadTimetable": "Downloading time table...",
   "loadDownloadMessages": "Downloading messages...",
   "loadDone": "Done!",
-  "iCanteenLoading": "Loading lunches (this could take a while)"
+  "iCanteenLoading": "Loading lunches (this could take a while)",
+  "iCanteenCantLoad": "Unable to load lunches"
 }
