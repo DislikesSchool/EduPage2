@@ -246,7 +246,7 @@ String getLabel(DateTime date, AppLocalizations? local) {
 Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
     AppLocalizations? local, bool userInteracted) {
   List<TableRow> rows = <TableRow>[];
-  if (daydiff == 0) {
+  if (daydiff == 0 && tt.classes.isNotEmpty) {
     String endTime = tt.classes.last.endTime;
     DateTime now = DateTime.now();
     DateTime end = DateTime(now.year, now.month, now.day,
