@@ -97,18 +97,23 @@ class MessagePageState extends State<MessagePage> {
               children: [
                 const SizedBox(width: 20),
                 const Icon(Icons.subdirectory_arrow_right_rounded, size: 36),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      children: [
-                        Text(
-                          "${r["owner"]["firstname"]} ${r["owner"]["lastname"]}: ",
-                          style: const TextStyle(fontSize: 18),
-                          textAlign: TextAlign.left,
-                        ),
-                        Text(r["text"])
-                      ],
+                Expanded(
+                  child: Card(
+                    elevation: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        children: [
+                          Text(
+                            "${r["owner"]["firstname"]} ${r["owner"]["lastname"]}: ",
+                            style: const TextStyle(fontSize: 18),
+                            textAlign: TextAlign.left,
+                          ),
+                          Text(
+                            r["text"],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
