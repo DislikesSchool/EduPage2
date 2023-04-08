@@ -12,7 +12,7 @@
   </p>
 </p>
 
-[![build-release-android](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml/badge.svg)](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/dislikesschool/edupage2) ![Downloads](https://img.shields.io/github/downloads/DislikesSchool/EduPage2/total) ![Contributors](https://img.shields.io/github/contributors/DislikesSchool/EduPage2?color=dark-green) ![Issues](https://img.shields.io/github/issues/DislikesSchool/EduPage2) ![License](https://img.shields.io/github/license/DislikesSchool/EduPage2) 
+[![build-release-android](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml/badge.svg)](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/dislikesschool/edupage2) ![Downloads](https://img.shields.io/github/downloads/DislikesSchool/EduPage2/total) ![Contributors](https://img.shields.io/github/contributors/DislikesSchool/EduPage2?color=dark-green) ![Issues](https://img.shields.io/github/issues/DislikesSchool/EduPage2) ![License](https://img.shields.io/github/license/DislikesSchool/EduPage2)
 
 ## Table Of Contents
 
@@ -34,26 +34,26 @@
 
 If you have ever used EduPage, you already know that it's slow. And not just on the school WiFi network, where there are hundreds or thousands of other people, using the network at the same time, but also on your home network, which should be faster right? Well, your network is in most cases faster than the school network, which indicates, that the issue is not on our side, but rather EduPage's servers just being slow.
 
-And that's why we made EduPage2. So far, EduPage 2 lacks a pretty big amount of features, that are included in the official app. But don't worry! With almost dayly updates, we are constantly releasing new features, and optimising the existing ones. 
+And that's why we made EduPage2. So far, EduPage 2 lacks a pretty big amount of features, that are included in the official app. But don't worry! With almost dayly updates, we are constantly releasing new features, and optimising the existing ones.
 
 EduPage2 uses local caching on your device, and a caching server with our own privte software, which periodically updates data from EduPage, strips it of all useless data (which EduPage includes for some reason), and finally sends out to your device when requested.
 
-__IMPORTANT__ EduPage2 is a cutom client for EduPage. We do not have any connection to EduPage.
+**IMPORTANT** EduPage2 is a cutom client for EduPage. We do not have any connection to EduPage.
 
 ## Built With
 
 This is a list of all the main tools, libraries and frameworks, that were used in this project
 
-* [Firebase](https://firebase.google.com/)
-* [OneSignal](https://onesignal.com/)
-* [Flutter](https://flutter.dev/)
-* [Express.js](https://expressjs.com/)
-* [PlanetScale](https://planetscale.com/)
-* [Passport.js](https://www.passportjs.org/)
+- [Firebase](https://firebase.google.com/)
+- [OneSignal](https://onesignal.com/)
+- [Flutter](https://flutter.dev/)
+- [Express.js](https://expressjs.com/)
+- [PlanetScale](https://planetscale.com/)
+- [Passport.js](https://www.passportjs.org/)
 
 ## Getting Started
 
-All our backend stuff is luckily managed by us, which makes getting started very esasy for you. 
+All our backend stuff is luckily managed by us, which makes getting started very esasy for you.
 
 ### Prerequisites
 
@@ -80,10 +80,11 @@ Or the [project board](https://github.com/orgs/DislikesSchool/projects/1/views/2
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-* If you have suggestions for adding or removing projects, feel free to [open an issue](https://github.com/DislikesSchool/EduPage2/issues/new) to discuss it, or directly create a pull request after you edit the *README.md* file with necessary changes.
-* Please make sure you check your spelling and grammar.
-* Create individual PR for each suggestion.
-* Please also read through the [Code Of Conduct](https://github.com/DislikesSchool/EduPage2/blob/master/CODE_OF_CONDUCT) before posting your first idea as well.
+
+- If you have suggestions for adding or removing projects, feel free to [open an issue](https://github.com/DislikesSchool/EduPage2/issues/new) to discuss it, or directly create a pull request after you edit the _README.md_ file with necessary changes.
+- Please make sure you check your spelling and grammar.
+- Create individual PR for each suggestion.
+- Please also read through the [Code Of Conduct](https://github.com/DislikesSchool/EduPage2/blob/master/CODE_OF_CONDUCT) before posting your first idea as well.
 
 ### Creating A Pull Request
 
@@ -99,11 +100,11 @@ Distributed under the MIT License. See [LICENSE](https://github.com/DislikesScho
 
 ## Authors
 
-* **vyPal** - *A highschool student, who is bored* - [vyPal](https://github.com/vyPal) - *Author of EduPage2*
-* **czmatejt9** - *Friend* - [czmatejt9](https://github.com/czmatejt9) - *Helped fix bugs*
+- **vyPal** - _A highschool student, who is bored_ - [vyPal](https://github.com/vyPal) - _Author of EduPage2_
+- **czmatejt9** - _Friend_ - [czmatejt9](https://github.com/czmatejt9) - _Helped fix bugs_
 
 ## Acknowledgements
 
-* [ShaanCoding](https://github.com/ShaanCoding/)
-* [Othneil Drew](https://github.com/othneildrew/Best-README-Template)
-* [ImgShields](https://shields.io/)
+- [ShaanCoding](https://github.com/ShaanCoding/)
+- [Othneil Drew](https://github.com/othneildrew/Best-README-Template)
+- [ImgShields](https://shields.io/)
