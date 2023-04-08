@@ -52,70 +52,95 @@ class MessagePageState extends State<MessagePage> {
     );
 
     Map<String, dynamic> data = response.data;
-    messages = Padding(
-      padding: const EdgeInsets.all(20),
-      child: ListView(
-        children: [
-          Card(
-            elevation: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Row(
+    messages = Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(30),
+          child: ListView(
+            children: [
+              Card(
+                elevation: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
                     children: [
-                      Text(
-                        data["owner"]["firstname"] +
-                            " " +
-                            data["owner"]["lastname"],
-                        style: const TextStyle(fontSize: 24),
-                      ),
-                      const Icon(Icons.arrow_right_rounded, size: 24),
-                      Expanded(
-                        child: Text(
-                          data["title"],
-                          overflow: TextOverflow.fade,
-                          maxLines: 5,
-                          softWrap: true,
-                          style: const TextStyle(fontSize: 24),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 40),
+                        child: Row(
+                          children: [
+                            Text(
+                              data["owner"]["firstname"] +
+                                  " " +
+                                  data["owner"]["lastname"],
+                              style: const TextStyle(fontSize: 24),
+                            ),
+                            const Icon(Icons.arrow_right_rounded, size: 24),
+                            Expanded(
+                              child: Text(
+                                data["title"],
+                                overflow: TextOverflow.fade,
+                                maxLines: 5,
+                                softWrap: true,
+                                style: const TextStyle(fontSize: 24),
+                              ),
+                            )
+                          ],
                         ),
-                      )
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(data["text"]),
+                      for (Map<String, dynamic> att in data["attachments"]!)
+                        Image.network(att["src"]),
                     ],
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Text(data["text"]),
-                  for (Map<String, dynamic> att in data["attachments"]!)
-                    Image.network(att["src"]),
-                ],
+                ),
               ),
+              for (Map<String, dynamic> r in data["replies"])
+                Row(
+                  children: [
+                    const SizedBox(width: 20),
+                    const Icon(Icons.subdirectory_arrow_right_rounded,
+                        size: 36),
+                    Card(
+                      elevation: 10,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          children: [
+                            Text(
+                              "${r["owner"]["firstname"]} ${r["owner"]["lastname"]}: ",
+                              style: const TextStyle(fontSize: 18),
+                              textAlign: TextAlign.left,
+                            ),
+                            Text(r["text"])
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        ),
+        Positioned(
+          top: 15,
+          left: 15,
+          child: Card(
+            elevation: 10,
+            child: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_rounded,
+                size: 40,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
           ),
-          for (Map<String, dynamic> r in data["replies"])
-            Row(
-              children: [
-                const SizedBox(width: 20),
-                const Icon(Icons.subdirectory_arrow_right_rounded, size: 36),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      children: [
-                        Text(
-                          "${r["owner"]["firstname"]} ${r["owner"]["lastname"]}: ",
-                          style: const TextStyle(fontSize: 18),
-                          textAlign: TextAlign.left,
-                        ),
-                        Text(r["text"])
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            )
-        ],
-      ),
+        ),
+      ],
     );
 
     loading = false;
