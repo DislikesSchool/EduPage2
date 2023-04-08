@@ -1,5 +1,14 @@
 name: build-release-android
 run-name: Building a release version apk file
+permissions:
+  contents: write
+  packages: write
+  deployments: write
+  issues: write
+  pull-requests: write
+  repository-projects: write
+  security-events: write
+  statuses: write
 on:
   push:
     branches:
