@@ -46,7 +46,7 @@ jobs:
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n
-    - run: flutter build apk
+    - run: flutter build apk --build-name ${{ steps.semvers.outputs.patch }}
     - name: 'Get Previous tag'
       id: previoustag
       uses: "WyriHaximus/github-action-get-previous-tag@v1"
@@ -65,7 +65,7 @@ jobs:
         prerelease: true
         title: "EduPage2 Beta ${{ steps.semvers.outputs.v_patch }}"
         files: |
-          "EduPage2-${{ steps.semvers.outputs.v_patch }}.apk"
+          EduPage2-${{ steps.semvers.outputs.v_patch }}.apk
     - uses: actions/upload-artifact@v1
       with:
         name: release-apk
