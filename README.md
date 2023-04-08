@@ -34,7 +34,7 @@
 
 If you have ever used EduPage, you already know that it's slow. And not just on the school Wi-Fi network, where there are hundreds or thousands of other people, using the network at the same time, but also on your home network, which should be faster right? Well, your network is in most cases faster than the school network, which indicates, that the issue is not on our side, but rather EduPage's servers just being slow.
 
-And that's why we made EduPage2. So far, EduPage 2 lacks a pretty big amount of features, that are included in the official app. But don't worry! With almost daily updates, we are constantly releasing new features, and optimising the existing ones.
+And that's why we made EduPage2. So far, EduPage2 lacks a pretty big amount of features, that are included in the official app. But don't worry! With almost daily updates, we are constantly releasing new features, and optimising the existing ones.
 
 EduPage2 uses local caching on your device, and a caching server with our own privte software, which periodically updates data from EduPage, strips it of all useless data (which EduPage includes for some reason), and finally sends out to your device when requested.
 
