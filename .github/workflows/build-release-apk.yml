@@ -31,7 +31,7 @@ jobs:
         KEY_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
         KEY_PASSWORD: ${{ secrets.KEY_PASS }}
       run: |
-        echo "storePassword=$KEYSTORE_PASSWORD\nkeyPassword=$KEY_PASSWORD\nkeyAlias=$KEY_ALIAS\nstoreFile=$RUNNER_TEMP/keystore.jks" > android/key.properties
+        echo -e "storePassword=$KEYSTORE_PASSWORD\nkeyPassword=$KEY_PASSWORD\nkeyAlias=$KEY_ALIAS\nstoreFile=$RUNNER_TEMP/keystore.jks" > android/key.properties
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n
