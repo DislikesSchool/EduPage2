@@ -62,7 +62,7 @@ jobs:
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "${{ steps.semvers.outputs.v_patch }}"
-        prerelease: true
+        prerelease: false
         title: "EduPage2 Beta ${{ steps.semvers.outputs.v_patch }}"
         files: |
           EduPage2-${{ steps.semvers.outputs.v_patch }}.apk
