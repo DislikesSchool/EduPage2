@@ -100,6 +100,7 @@ Distributed under the MIT License. See [LICENSE](https://github.com/DislikesScho
 ## Authors
 
 * **vyPal** - *A highschool student, who is bored* - [vyPal](https://github.com/vyPal) - *Author of EduPage2*
+* **czmatejt9** - *Friend* - [czmatejt9](https://github.com/czmatejt9) - *Helped fix bugs*
 
 ## Acknowledgements
 
