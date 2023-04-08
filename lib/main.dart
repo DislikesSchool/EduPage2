@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:eduapge2/grades.dart';
 import 'package:eduapge2/homework.dart';
 import 'package:eduapge2/icanteen.dart';
 import 'package:eduapge2/load.dart';
@@ -185,11 +186,6 @@ class PageBaseState extends State<PageBase> {
             icon: const Icon(Icons.home_work),
             label: AppLocalizations.of(context)!.mainHomework,
             selectedIcon: const Icon(Icons.home_work_outlined),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.assignment),
-            label: AppLocalizations.of(context)!.mainGrades,
-            selectedIcon: const Icon(Icons.assignment_outlined),
           ),
         ],
         selectedIndex: _selectedIndex,
