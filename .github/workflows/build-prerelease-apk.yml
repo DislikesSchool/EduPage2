@@ -1,5 +1,5 @@
-name: build-release-android
-run-name: Building a release version apk file
+name: build-prerelease-android
+run-name: Building a prerelease version apk file
 permissions:
   contents: write
   packages: write
@@ -12,7 +12,7 @@ permissions:
 on:
   push:
     branches:
-      - master
+      - beta
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -56,17 +56,17 @@ jobs:
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n
-    - run: flutter build apk --build-name ${{ steps.semvers.outputs.minor }}
-    - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semvers.outputs.v_minor }}.apk"
+    - run: flutter build apk --build-name ${{ steps.semvers.outputs.patch }}
+    - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semvers.outputs.v_patch }}.apk"
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "${{ steps.previoustag.outputs.tag }}"
-        prerelease: false
-        title: "EduPage2 ${{ steps.semvers.outputs.v_minor }}"
+        prerelease: true
+        title: "EduPage2 Beta ${{ steps.semvers.outputs.v_patch }}"
         files: |
-          EduPage2-${{ steps.semvers.outputs.v_minor }}.apk
+          EduPage2-${{ steps.semvers.outputs.v_patch }}.apk
     - uses: actions/upload-artifact@v1
       with:
         name: release-apk
-        path: "EduPage2-${{ steps.semvers.outputs.v_minor }}.apk"
+        path: "EduPage2-${{ steps.semvers.outputs.v_patch }}.apk"
