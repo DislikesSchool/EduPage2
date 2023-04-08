@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:eduapge2/login.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -199,9 +200,11 @@ class LoadingScreenState extends State<LoadingScreen> {
     progress = 0.7;
     loaderText = local!.loadDownloadTimetable;
     setState(() {});
+    final metric = FirebasePerformance.instance.newHttpMetric(
+        "$baseUrl/timetable/${getWeekDay().toString()}", HttpMethod.Get);
 
     String token = sharedPreferences.getString("token")!;
-
+    metric.start();
     Response response = await dio.get(
       "$baseUrl/timetable/${getWeekDay().toString()}",
       options: buildCacheOptions(
@@ -214,6 +217,7 @@ class LoadingScreenState extends State<LoadingScreen> {
         ),
       ),
     );
+    metric.stop();
 
     sessionManager.set("timetable", response.data);
     return loadMessages();
@@ -223,9 +227,11 @@ class LoadingScreenState extends State<LoadingScreen> {
     progress = 0.9;
     loaderText = local!.loadDownloadMessages;
     setState(() {});
+    final metric = FirebasePerformance.instance
+        .newHttpMetric("$baseUrl/messages", HttpMethod.Get);
 
     String token = sharedPreferences.getString("token")!;
-
+    metric.start();
     Response response = await dio.get(
       "$baseUrl/messages",
       options: buildCacheOptions(
@@ -238,7 +244,7 @@ class LoadingScreenState extends State<LoadingScreen> {
         ),
       ),
     );
-
+    metric.stop();
     sessionManager.set("messages", jsonEncode(response.data));
 
     progress = 1.0;

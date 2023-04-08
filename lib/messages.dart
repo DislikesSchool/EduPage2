@@ -138,10 +138,16 @@ class TimeTablePageState extends State<MessagesPage> {
                       const SizedBox(width: 10),
                       const Icon(Icons.subdirectory_arrow_right_rounded),
                       Expanded(
-                        child: Text(
-                          r["owner"] + ": " + r["text"],
-                          overflow: TextOverflow.fade,
-                          softWrap: false,
+                        child: Card(
+                          elevation: 10,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              r["owner"] + ": " + r["text"],
+                              softWrap: false,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                         ),
                       ),
                     ],
