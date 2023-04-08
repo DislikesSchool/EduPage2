@@ -61,7 +61,7 @@ jobs:
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ steps.semvers.outputs.v_patch }}"
+        automatic_release_tag: "${{ steps.previoustag.outputs.tag }}"
         prerelease: true
         title: "EduPage2 Beta ${{ steps.semvers.outputs.v_patch }}"
         files: |
