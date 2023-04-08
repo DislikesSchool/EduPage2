@@ -19,6 +19,19 @@ jobs:
         cache: true
         cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:' # optional, change this to force refresh cache
         architecture: x64
+    - name: Create the Keystore
+      env:
+        KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+      run: |
+        # import keystore from secrets
+        echo $KEYSTORE_B64 | base64 -d > $RUNNER_TEMP/keystore.jks
+    - name: Create key.properties
+      env:
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
+        KEY_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASS }}
+      run: |
+        echo "storePassword=$KEYSTORE_PASSWORD\nkeyPassword=$KEY_PASSWORD\nkeyAlias=$KEY_ALIAS\nstoreFile=$RUNNER_TEMP/keystore.jks" > android/key.properties
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n
