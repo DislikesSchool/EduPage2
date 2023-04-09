@@ -106,26 +106,29 @@ class PageBaseState extends State<PageBase> {
   getMsgs() async {
     var msgs = await sessionManager.get('messages');
     if (msgs != Null && msgs != null) {
-      apidataMsg = msgs;
+      setState(() {
+        apidataMsg = msgs;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 0,
-      ),
-      body: !loaded
-          ? LoadingScreen(
-              sessionManager: sessionManager,
-              loadedCallback: () {
-                setState(() {
-                  loaded = true;
-                });
-              },
-            )
-          : IndexedStack(
+    return !loaded
+        ? LoadingScreen(
+            sessionManager: sessionManager,
+            loadedCallback: () {
+              getMsgs();
+              setState(() {
+                loaded = true;
+              });
+            },
+          )
+        : Scaffold(
+            appBar: AppBar(
+              toolbarHeight: 0,
+            ),
+            body: IndexedStack(
               index: _selectedIndex,
               children: <Widget>[
                 HomePage(
@@ -145,55 +148,55 @@ class PageBaseState extends State<PageBase> {
                 )
               ],
             ),
-      bottomNavigationBar: NavigationBar(
-        destinations: <NavigationDestination>[
-          NavigationDestination(
-            icon: const Icon(Icons.home),
-            label: AppLocalizations.of(context)!.mainHome,
-            selectedIcon: const Icon(Icons.home_outlined),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.calendar_month),
-            label: AppLocalizations.of(context)!.mainTimetable,
-            selectedIcon: const Icon(Icons.calendar_month_outlined),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.lunch_dining_rounded),
-            label: AppLocalizations.of(context)!.mainICanteen,
-            selectedIcon: const Icon(Icons.lunch_dining_outlined),
-          ),
-          NavigationDestination(
-            icon: Badge(
-              label: Text(apidataMsg
-                  .where((msg) => msg["isSeen"] == false)
-                  .toList()
-                  .length
-                  .toString()),
-              child: const Icon(Icons.mail),
+            bottomNavigationBar: NavigationBar(
+              destinations: <NavigationDestination>[
+                NavigationDestination(
+                  icon: const Icon(Icons.home),
+                  label: AppLocalizations.of(context)!.mainHome,
+                  selectedIcon: const Icon(Icons.home_outlined),
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.calendar_month),
+                  label: AppLocalizations.of(context)!.mainTimetable,
+                  selectedIcon: const Icon(Icons.calendar_month_outlined),
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.lunch_dining_rounded),
+                  label: AppLocalizations.of(context)!.mainICanteen,
+                  selectedIcon: const Icon(Icons.lunch_dining_outlined),
+                ),
+                NavigationDestination(
+                  icon: Badge(
+                    label: Text(apidataMsg
+                        .where((msg) => msg["isSeen"] == false)
+                        .toList()
+                        .length
+                        .toString()),
+                    child: const Icon(Icons.mail),
+                  ),
+                  label: AppLocalizations.of(context)!.mainMessages,
+                  selectedIcon: Badge(
+                    label: Text(apidataMsg
+                        .where((msg) => msg["isSeen"] == false)
+                        .toList()
+                        .length
+                        .toString()),
+                    child: const Icon(Icons.mail_outline),
+                  ),
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.home_work),
+                  label: AppLocalizations.of(context)!.mainHomework,
+                  selectedIcon: const Icon(Icons.home_work_outlined),
+                ),
+              ],
+              selectedIndex: _selectedIndex,
+              onDestinationSelected: (dest) => {
+                setState(() {
+                  _selectedIndex = dest;
+                })
+              },
             ),
-            label: AppLocalizations.of(context)!.mainMessages,
-            selectedIcon: Badge(
-              label: Text(apidataMsg
-                  .where((msg) => msg["isSeen"] == false)
-                  .toList()
-                  .length
-                  .toString()),
-              child: const Icon(Icons.mail_outline),
-            ),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.home_work),
-            label: AppLocalizations.of(context)!.mainHomework,
-            selectedIcon: const Icon(Icons.home_work_outlined),
-          ),
-        ],
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (dest) => {
-          setState(() {
-            _selectedIndex = dest;
-          })
-        },
-      ),
-    );
+          );
   }
 }
