@@ -48,7 +48,6 @@ jobs:
       uses: "WyriHaximus/github-action-get-previous-tag@v1"
       with:
         fallback: 1.0.0
-        prefix: release-
     - name: 'Get next minor version'
       id: semvers
       uses: "WyriHaximus/github-action-next-semvers@v1"
