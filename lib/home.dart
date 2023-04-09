@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class HomePage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -33,6 +34,8 @@ class HomePageState extends State<HomePage> {
   late Map<String, dynamic> apidataTT;
   late String username;
 
+  late String version;
+
   @override
   void initState() {
     dio.interceptors
@@ -54,6 +57,8 @@ class HomePageState extends State<HomePage> {
       loading = true;
     });
     sharedPreferences = await SharedPreferences.getInstance();
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    version = packageInfo.version;
     Map<String, dynamic> user = await widget.sessionManager.get('user');
     username = user["firstname"] + " " + user["lastname"];
     String token = sharedPreferences.getString("token")!;
@@ -253,10 +258,10 @@ class HomePageState extends State<HomePage> {
                 onTap: () {},
               ),
             ),
-            const AboutListTile(
-              icon: Icon(Icons.info_outline),
+            AboutListTile(
+              icon: const Icon(Icons.info_outline),
               applicationName: 'EduPage2',
-              applicationVersion: 'Beta 1.3.1 Build 1',
+              applicationVersion: version,
               applicationLegalese: '©2023 Jakub Palacký',
               dense: true,
             ),
