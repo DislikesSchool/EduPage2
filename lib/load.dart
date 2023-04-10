@@ -88,6 +88,11 @@ class LoadingScreenState extends State<LoadingScreen> {
         loaderText = local!.loadLoggedIn;
         setState(() {});
         sessionManager.set('user', response.data);
+        if (response.data['icanteen'] == true) {
+          sessionManager.set('icanteen', true);
+        } else {
+          sessionManager.set('icanteen', false);
+        }
         return loadTimetable();
       } else {
         failedToken = token;
@@ -170,6 +175,11 @@ class LoadingScreenState extends State<LoadingScreen> {
             loaderText = local!.loadLoggedIn;
             setState(() {});
             sessionManager.set('user', response.data);
+            if (response.data['icanteen'] == true) {
+              sessionManager.set('icanteen', true);
+            } else {
+              sessionManager.set('icanteen', false);
+            }
             return loadTimetable();
           } else {
             runningInit = false;

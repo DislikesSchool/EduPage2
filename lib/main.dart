@@ -9,6 +9,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -138,9 +139,10 @@ class PageBaseState extends State<PageBase> {
                 TimeTablePage(
                   sessionManager: sessionManager,
                 ),
-                ICanteenPage(
-                  sessionManager: sessionManager,
-                ),
+                if (sessionManager.get('icanteen') as bool == true)
+                  ICanteenPage(
+                    sessionManager: sessionManager,
+                  ),
                 MessagesPage(
                   sessionManager: sessionManager,
                 ),
@@ -161,11 +163,12 @@ class PageBaseState extends State<PageBase> {
                   label: AppLocalizations.of(context)!.mainTimetable,
                   selectedIcon: const Icon(Icons.calendar_month_outlined),
                 ),
-                NavigationDestination(
-                  icon: const Icon(Icons.lunch_dining_rounded),
-                  label: AppLocalizations.of(context)!.mainICanteen,
-                  selectedIcon: const Icon(Icons.lunch_dining_outlined),
-                ),
+                if (sessionManager.get('icanteen') as bool == true)
+                  NavigationDestination(
+                    icon: const Icon(Icons.lunch_dining_rounded),
+                    label: AppLocalizations.of(context)!.mainICanteen,
+                    selectedIcon: const Icon(Icons.lunch_dining_outlined),
+                  ),
                 NavigationDestination(
                   icon: Badge(
                     label: Text(apidataMsg
