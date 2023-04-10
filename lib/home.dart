@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -254,8 +255,13 @@ class HomePageState extends State<HomePage> {
               splashColor: Colors.transparent,
               child: ListTile(
                 leading: const Icon(Icons.logout),
-                title: const Text('Odhlásit se'),
-                onTap: () {},
+                title: Text(local.homeLogout),
+                onTap: () {
+                  sharedPreferences.remove("token");
+                  sharedPreferences.remove("email");
+                  sharedPreferences.remove("password");
+                  Phoenix.rebirth(context);
+                },
               ),
             ),
             AboutListTile(
