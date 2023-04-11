@@ -9,8 +9,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
   final SessionManager sessionManager;
+  final Function reLogin;
 
-  const HomePage({super.key, required this.sessionManager});
+  const HomePage(
+      {super.key, required this.sessionManager, required this.reLogin});
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -249,8 +251,13 @@ class HomePageState extends State<HomePage> {
               splashColor: Colors.transparent,
               child: ListTile(
                 leading: const Icon(Icons.logout),
-                title: const Text('Odhlásit se'),
-                onTap: () {},
+                title: Text(local.homeLogout),
+                onTap: () {
+                  sharedPreferences.remove('email');
+                  sharedPreferences.remove('password');
+                  sharedPreferences.remove('token');
+                  widget.reLogin();
+                },
               ),
             ),
             const AboutListTile(

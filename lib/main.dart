@@ -132,8 +132,12 @@ class PageBaseState extends State<PageBase> {
               index: _selectedIndex,
               children: <Widget>[
                 HomePage(
-                  sessionManager: sessionManager,
-                ),
+                    sessionManager: sessionManager,
+                    reLogin: () {
+                      setState(() {
+                        loaded = true;
+                      });
+                    }),
                 TimeTablePage(
                   sessionManager: sessionManager,
                 ),
