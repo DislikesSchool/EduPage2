@@ -115,14 +115,19 @@ class PageBaseState extends State<PageBase> {
   @override
   Widget build(BuildContext context) {
     return !loaded
-        ? LoadingScreen(
-            sessionManager: sessionManager,
-            loadedCallback: () {
-              getMsgs();
-              setState(() {
-                loaded = true;
-              });
-            },
+        ? Scaffold(
+            appBar: AppBar(
+              toolbarHeight: 0,
+            ),
+            body: LoadingScreen(
+              sessionManager: sessionManager,
+              loadedCallback: () {
+                getMsgs();
+                setState(() {
+                  loaded = true;
+                });
+              },
+            ),
           )
         : Scaffold(
             appBar: AppBar(

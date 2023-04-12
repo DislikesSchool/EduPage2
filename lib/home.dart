@@ -263,7 +263,7 @@ class HomePageState extends State<HomePage> {
             const AboutListTile(
               icon: Icon(Icons.info_outline),
               applicationName: 'EduPage2',
-              applicationVersion: 'Beta 1.3.1 Build 1',
+              applicationVersion: String.fromEnvironment('BVS'),
               applicationLegalese: '©2023 Jakub Palacký',
               dense: true,
             ),
