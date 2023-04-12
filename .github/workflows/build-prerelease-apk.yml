@@ -57,7 +57,7 @@ jobs:
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n
-    - run: flutter build apk --build-name ${{ steps.semvers.outputs.patch }} --dart-define=BVS="Patch ${{ steps.semvers.output.minor }} GitHub"
+    - run: flutter build apk --build-name ${{ steps.semvers.outputs.patch }} --dart-define=BVS="Patch ${{ steps.semvers.outputs.patch }} GitHub"
     - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semvers.outputs.v_patch }}.apk"
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
