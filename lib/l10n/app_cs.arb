@@ -105,5 +105,10 @@
   "loadDownloadMessages": "Stahování zpráv...",
   "loadDone": "Hotovo!",
   "iCanteenLoading": "Načítání obědů (tohle by mohlo chvíli zabrat)",
-  "iCanteenCantLoad": "Nelze načst obědy"
+  "iCanteenCantLoad": "Nelze načst obědy",
+  "iCanteenSetupPleaseLogin": "Přihlašte se do systému iCanteen",
+  "iCanteenSetupDetails": "Adresu URL zadejte ve formátu https://stravovani.skola.cz/login",
+  "iCanteenSetupServer": "Adresa URL",
+  "iCanteenSetupEmail": "Přihlašovací jméno",
+  "iCanteenSetupPassword": "Heslo"
 }

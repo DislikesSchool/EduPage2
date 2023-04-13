@@ -54,6 +54,9 @@ class LoadingScreenState extends State<LoadingScreen> {
   }
 
   Future<void> loadUser() async {
+    if (sharedPreferences.getBool("ice") == true) {
+      sessionManager.set("iCanteenEnabled", true);
+    }
     String? failedToken;
     if (sharedPreferences.getString("token") != null) {
       String? token = sharedPreferences.getString("token");
