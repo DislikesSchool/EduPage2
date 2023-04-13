@@ -11,6 +11,7 @@
   "homeLunchToday": "You have lunch number {lunch}",
   "homeLunchDontForget": "Don't forget to order lunch for {date}",
   "homeLogout": "Logout",
+  "homeSetupICanteen": "Setup iCanteen",
   "homeworkTitle": "Homework",
   "messagesTitle": "Messages",
   "loginPleaseLogin": "Please login to EduPage2",

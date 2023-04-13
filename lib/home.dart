@@ -250,6 +250,15 @@ class HomePageState extends State<HomePage> {
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
               child: ListTile(
+                leading: const Icon(Icons.lunch_dining_rounded),
+                title: Text(local.homeSetupICanteen),
+                onTap: () {},
+              ),
+            ),
+            InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: ListTile(
                 leading: const Icon(Icons.logout),
                 title: Text(local.homeLogout),
                 onTap: () {
