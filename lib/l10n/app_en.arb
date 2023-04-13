@@ -11,6 +11,7 @@
   "homeLunchToday": "You have lunch number {lunch}",
   "homeLunchDontForget": "Don't forget to order lunch for {date}",
   "homeLogout": "Logout",
+  "homeSetupICanteen": "Setup iCanteen",
   "homeworkTitle": "Homework",
   "messagesTitle": "Messages",
   "loginPleaseLogin": "Please login to EduPage2",
@@ -36,5 +37,10 @@
   "loadDownloadMessages": "Downloading messages...",
   "loadDone": "Done!",
   "iCanteenLoading": "Loading lunches (this could take a while)",
-  "iCanteenCantLoad": "Unable to load lunches"
+  "iCanteenCantLoad": "Unable to load lunches",
+  "iCanteenSetupPleaseLogin": "Login to iCanteen",
+  "iCanteenSetupDetails": "URL address in this format: https://lunches.yourschool.com/login",
+  "iCanteenSetupServer": "Server address",
+  "iCanteenSetupEmail": "Username",
+  "iCanteenSetupPassword": "Password"
 }

@@ -90,6 +90,7 @@ class PageBaseState extends State<PageBase> {
   String errmsg = ""; //to assing any error message from API/runtime
   List<dynamic> apidataMsg = [];
   bool refresh = true;
+  bool iCanteenEnabled = false;
 
   SessionManager sessionManager = SessionManager();
 
@@ -105,6 +106,10 @@ class PageBaseState extends State<PageBase> {
 
   getMsgs() async {
     var msgs = await sessionManager.get('messages');
+    var ic = await sessionManager.get('iCanteenEnabled');
+    if (ic == true) {
+      iCanteenEnabled = true;
+    }
     if (msgs != Null && msgs != null) {
       setState(() {
         apidataMsg = msgs;
@@ -140,15 +145,16 @@ class PageBaseState extends State<PageBase> {
                     sessionManager: sessionManager,
                     reLogin: () {
                       setState(() {
-                        loaded = true;
+                        loaded = false;
                       });
                     }),
                 TimeTablePage(
                   sessionManager: sessionManager,
                 ),
-                ICanteenPage(
-                  sessionManager: sessionManager,
-                ),
+                if (iCanteenEnabled)
+                  ICanteenPage(
+                    sessionManager: sessionManager,
+                  ),
                 MessagesPage(
                   sessionManager: sessionManager,
                 ),
@@ -169,11 +175,12 @@ class PageBaseState extends State<PageBase> {
                   label: AppLocalizations.of(context)!.mainTimetable,
                   selectedIcon: const Icon(Icons.calendar_month_outlined),
                 ),
-                NavigationDestination(
-                  icon: const Icon(Icons.lunch_dining_rounded),
-                  label: AppLocalizations.of(context)!.mainICanteen,
-                  selectedIcon: const Icon(Icons.lunch_dining_outlined),
-                ),
+                if (iCanteenEnabled)
+                  NavigationDestination(
+                    icon: const Icon(Icons.lunch_dining_rounded),
+                    label: AppLocalizations.of(context)!.mainICanteen,
+                    selectedIcon: const Icon(Icons.lunch_dining_outlined),
+                  ),
                 NavigationDestination(
                   icon: Badge(
                     label: Text(apidataMsg

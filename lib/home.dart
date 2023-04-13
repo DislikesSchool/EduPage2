@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:eduapge2/icanteen_setup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -245,6 +246,27 @@ class HomePageState extends State<HomePage> {
           children: [
             const Padding(
               padding: EdgeInsets.only(top: 15),
+            ),
+            InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: ListTile(
+                leading: const Icon(Icons.lunch_dining_rounded),
+                title: Text(local.homeSetupICanteen),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ICanteenSetupScreen(
+                        sessionManager: widget.sessionManager,
+                        loadedCallback: () {
+                          widget.reLogin();
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
             InkWell(
               highlightColor: Colors.transparent,
