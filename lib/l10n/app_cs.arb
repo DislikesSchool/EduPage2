@@ -59,6 +59,7 @@
     "description": "Logout button on home page"
   },
   "homeSetupICanteen": "Nastavit iCanteen",
+  "homeNoClasses": "Dneska nemáš skolu! :D",
   "homeworkTitle": "Domácí úkoly",
   "@homeworkTitle": {
     "description": "Title of homework page"

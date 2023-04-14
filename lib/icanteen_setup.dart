@@ -93,7 +93,6 @@ class ICanteenSetupScreenState extends State<ICanteenSetupScreen> {
       ),
     );
     sharedPreferences.setBool("ice", true);
-    widget.loadedCallback();
   }
 
   @override
@@ -137,6 +136,7 @@ class ICanteenSetupScreenState extends State<ICanteenSetupScreen> {
                   hintText: local!.iCanteenSetupEmail,
                 ),
                 onChanged: (text) => {email = text},
+                autocorrect: false,
                 keyboardType: TextInputType.emailAddress,
               ),
               TextField(
@@ -149,8 +149,13 @@ class ICanteenSetupScreenState extends State<ICanteenSetupScreen> {
                 keyboardType: TextInputType.visiblePassword,
               ),
               ElevatedButton(
-                onPressed: () => {
-                  if (!hasLogin) login(),
+                onPressed: () async => {
+                  if (!hasLogin)
+                    {
+                      await login(),
+                      Navigator.pop(context),
+                      widget.loadedCallback()
+                    },
                 },
                 child: !hasLogin
                     ? Text(local!.loginLogin)
