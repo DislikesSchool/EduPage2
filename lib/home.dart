@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:eduapge2/icanteen_setup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,8 +10,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
   final SessionManager sessionManager;
+  final Function reLogin;
 
-  const HomePage({super.key, required this.sessionManager});
+  const HomePage(
+      {super.key, required this.sessionManager, required this.reLogin});
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -31,6 +34,7 @@ class HomePageState extends State<HomePage> {
   bool refresh = false;
 
   late Map<String, dynamic> apidataTT;
+  List<dynamic> apidataMsg = [];
   late String username;
 
   @override
@@ -54,6 +58,12 @@ class HomePageState extends State<HomePage> {
       loading = true;
     });
     sharedPreferences = await SharedPreferences.getInstance();
+    var msgs = await widget.sessionManager.get('messages');
+    if (msgs != Null && msgs != null) {
+      setState(() {
+        apidataMsg = msgs;
+      });
+    }
     Map<String, dynamic> user = await widget.sessionManager.get('user');
     username = user["firstname"] + " " + user["lastname"];
     String token = sharedPreferences.getString("token")!;
@@ -114,9 +124,11 @@ class HomePageState extends State<HomePage> {
         }
       }
     }
+    apidataMsg.removeWhere(
+        (element) => element["replyOf"] != null || element["type"] != "sprava");
     return Scaffold(
       key: scaffoldKey,
-      body: Stack(
+      body: Column(
         children: <Widget>[
           Container(
             width: MediaQuery.of(context).size.width,
@@ -159,7 +171,7 @@ class HomePageState extends State<HomePage> {
           ),
           Container(
             width: MediaQuery.of(context).size.width,
-            margin: const EdgeInsets.only(left: 20, right: 20, top: 70),
+            margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -171,6 +183,14 @@ class HomePageState extends State<HomePage> {
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         children: [
+                          if (apidataTT["lessons"].length == 0)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                local!.homeNoClasses,
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                            ),
                           for (Map<String, dynamic> lesson
                               in apidataTT["lessons"])
                             Card(
@@ -202,39 +222,80 @@ class HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            margin: const EdgeInsets.only(left: 20, right: 20, top: 180),
-            child: Card(
-              elevation: 5,
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    lunch == -1
-                        ? Text(
-                            local!.homeLunchesNotLoaded,
-                            style: const TextStyle(fontSize: 20),
-                            textAlign: TextAlign.center,
-                          )
-                        : lunch == 0
-                            ? Text(
-                                local!.homeNoLunchToday,
-                                style: const TextStyle(fontSize: 20),
-                                textAlign: TextAlign.center,
-                              )
-                            : Text(
-                                local!.homeLunchToday(lunch),
-                                style: const TextStyle(fontSize: 20),
-                                textAlign: TextAlign.center,
-                              ),
-                    Text(local.homeLunchDontForget(orderLunchesFor)),
-                  ],
+          if (lunch != -1)
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+              child: Card(
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      lunch == -1
+                          ? Text(
+                              local!.homeLunchesNotLoaded,
+                              style: const TextStyle(fontSize: 20),
+                              textAlign: TextAlign.center,
+                            )
+                          : lunch == 0
+                              ? Text(
+                                  local!.homeNoLunchToday,
+                                  style: const TextStyle(fontSize: 20),
+                                  textAlign: TextAlign.center,
+                                )
+                              : Text(
+                                  local!.homeLunchToday(lunch),
+                                  style: const TextStyle(fontSize: 20),
+                                  textAlign: TextAlign.center,
+                                ),
+                      Text(local.homeLunchDontForget(orderLunchesFor)),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
+          if (apidataMsg != [])
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+              child: Card(
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (Map<String, dynamic> m in apidataMsg.length < 5
+                          ? apidataMsg
+                          : apidataMsg.getRange(0, 4))
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Card(
+                                elevation: 10,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    m["owner"]["firstname"] +
+                                        " " +
+                                        m["owner"]["lastname"] +
+                                        ": " +
+                                        m["text"],
+                                    softWrap: false,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
       backgroundColor: theme.colorScheme.background,
@@ -247,16 +308,46 @@ class HomePageState extends State<HomePage> {
             InkWell(
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
+              child: Badge(
+                label: const Text("Beta"),
+                alignment: AlignmentDirectional.topEnd,
+                child: ListTile(
+                  leading: const Icon(Icons.lunch_dining_rounded),
+                  title: Text(local!.homeSetupICanteen),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ICanteenSetupScreen(
+                          sessionManager: widget.sessionManager,
+                          loadedCallback: () {
+                            widget.reLogin();
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
               child: ListTile(
                 leading: const Icon(Icons.logout),
-                title: const Text('Odhlásit se'),
-                onTap: () {},
+                title: Text(local.homeLogout),
+                onTap: () {
+                  sharedPreferences.remove('email');
+                  sharedPreferences.remove('password');
+                  sharedPreferences.remove('token');
+                  widget.reLogin();
+                },
               ),
             ),
             const AboutListTile(
               icon: Icon(Icons.info_outline),
               applicationName: 'EduPage2',
-              applicationVersion: 'Beta 1.3.1 Build 1',
+              applicationVersion: String.fromEnvironment('BVS'),
               applicationLegalese: '©2023 Jakub Palacký',
               dense: true,
             ),

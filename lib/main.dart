@@ -7,6 +7,7 @@ import 'package:eduapge2/messages.dart';
 import 'package:eduapge2/timetable.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'home.dart';
@@ -42,6 +43,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
       title: 'EduPage2',
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -90,6 +95,7 @@ class PageBaseState extends State<PageBase> {
   String errmsg = ""; //to assing any error message from API/runtime
   List<dynamic> apidataMsg = [];
   bool refresh = true;
+  bool iCanteenEnabled = false;
 
   SessionManager sessionManager = SessionManager();
 
@@ -105,6 +111,10 @@ class PageBaseState extends State<PageBase> {
 
   getMsgs() async {
     var msgs = await sessionManager.get('messages');
+    var ic = await sessionManager.get('iCanteenEnabled');
+    if (ic == true) {
+      iCanteenEnabled = true;
+    }
     if (msgs != Null && msgs != null) {
       setState(() {
         apidataMsg = msgs;
@@ -115,14 +125,19 @@ class PageBaseState extends State<PageBase> {
   @override
   Widget build(BuildContext context) {
     return !loaded
-        ? LoadingScreen(
-            sessionManager: sessionManager,
-            loadedCallback: () {
-              getMsgs();
-              setState(() {
-                loaded = true;
-              });
-            },
+        ? Scaffold(
+            appBar: AppBar(
+              toolbarHeight: 0,
+            ),
+            body: LoadingScreen(
+              sessionManager: sessionManager,
+              loadedCallback: () {
+                getMsgs();
+                setState(() {
+                  loaded = true;
+                });
+              },
+            ),
           )
         : Scaffold(
             appBar: AppBar(
@@ -132,14 +147,19 @@ class PageBaseState extends State<PageBase> {
               index: _selectedIndex,
               children: <Widget>[
                 HomePage(
-                  sessionManager: sessionManager,
-                ),
+                    sessionManager: sessionManager,
+                    reLogin: () {
+                      setState(() {
+                        loaded = false;
+                      });
+                    }),
                 TimeTablePage(
                   sessionManager: sessionManager,
                 ),
-                ICanteenPage(
-                  sessionManager: sessionManager,
-                ),
+                if (iCanteenEnabled)
+                  ICanteenPage(
+                    sessionManager: sessionManager,
+                  ),
                 MessagesPage(
                   sessionManager: sessionManager,
                 ),
@@ -160,11 +180,12 @@ class PageBaseState extends State<PageBase> {
                   label: AppLocalizations.of(context)!.mainTimetable,
                   selectedIcon: const Icon(Icons.calendar_month_outlined),
                 ),
-                NavigationDestination(
-                  icon: const Icon(Icons.lunch_dining_rounded),
-                  label: AppLocalizations.of(context)!.mainICanteen,
-                  selectedIcon: const Icon(Icons.lunch_dining_outlined),
-                ),
+                if (iCanteenEnabled)
+                  NavigationDestination(
+                    icon: const Icon(Icons.lunch_dining_rounded),
+                    label: AppLocalizations.of(context)!.mainICanteen,
+                    selectedIcon: const Icon(Icons.lunch_dining_outlined),
+                  ),
                 NavigationDestination(
                   icon: Badge(
                     label: Text(apidataMsg

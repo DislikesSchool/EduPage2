@@ -47,6 +47,7 @@ dependencies:
   firebase_analytics: ^10.2.0
   onesignal_flutter: ^3.5.0
   firebase_performance: ^0.9.1
+  html_unescape: ^2.0.0
 
 dev_dependencies:
   flutter_test:
