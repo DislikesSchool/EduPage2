@@ -1,14 +1,8 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
-import 'package:eduapge2/login.dart';
-import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class ICanteenSetupScreen extends StatefulWidget {
   final Function loadedCallback;
@@ -85,12 +79,12 @@ class ICanteenSetupScreenState extends State<ICanteenSetupScreen> {
       hasLogin = true;
     });
     String? token = sharedPreferences.getString("token");
-    Response response = await dio.post(
+    await dio.post(
       "$baseUrl/set_icanteen",
       data: {
-        email: email,
-        password: password,
-        server: server,
+        'email': email,
+        'password': password,
+        'server': server,
       },
       options: Options(
         headers: {
