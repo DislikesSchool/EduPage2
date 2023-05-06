@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:eduapge2/message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
@@ -10,6 +12,20 @@ class MessagesPage extends StatefulWidget {
 
   @override
   State<MessagesPage> createState() => TimeTablePageState();
+}
+
+extension MoveElement<T> on List<T> {
+  void move(int from, int to) {
+    RangeError.checkValidIndex(from, this, "from", length);
+    RangeError.checkValidIndex(to, this, "to", length);
+    var element = this[from];
+    if (from < to) {
+      setRange(from, to, this, from + 1);
+    } else {
+      setRange(to + 1, from + 1, this, to);
+    }
+    this[to] = element;
+  }
 }
 
 class TimeTablePageState extends State<MessagesPage> {
@@ -72,9 +88,24 @@ class TimeTablePageState extends State<MessagesPage> {
         "text": "Nebude to trvat dlouho",
       }
     ];
-    apidataMsg = apidataMsg.where((msg) => msg["type"] == "sprava").toList();
-    for (Map<String, dynamic> msg in apidataMsg) {
-      if (msg["replyOf"] != null) continue;
+    List<dynamic> msgs =
+        apidataMsg.where((msg) => msg["type"] == "sprava").toList();
+    List<dynamic> msgsWOR = List.from(msgs);
+    msgsWOR.addAll(msgs);
+    List<Map<String, int>> bump = [];
+    for (Map<String, dynamic> msg in msgs) {
+      if (msg["replyOf"] != null) {
+        if (!bump.any((element) =>
+            element["id"]!.compareTo(int.parse(msg["replyOf"])) == 0)) {
+          bump.add(
+              {"id": int.parse(msg["replyOf"]), "index": msgsWOR.indexOf(msg)});
+          msgsWOR.remove(msg);
+        } else {
+          msgsWOR.remove(msg);
+        }
+      }
+    }
+    for (Map<String, dynamic> msg in msgsWOR) {
       String attText = msg["attachments"].length < 5
           ? msg["attachments"].length > 1
               ? "y"
@@ -172,6 +203,12 @@ class TimeTablePageState extends State<MessagesPage> {
           ),
         ),
       ));
+    }
+    for (Map<String, int> b in bump) {
+      rows.move(
+          msgsWOR.indexOf(msgsWOR
+              .firstWhere((element) => int.parse(element["id"]) == b["id"])),
+          b["index"]!);
     }
     return Card(
       elevation: 5,

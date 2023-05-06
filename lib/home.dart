@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:eduapge2/icanteen_setup.dart';
+import 'package:eduapge2/message.dart';
+import 'package:eduapge2/messages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -124,8 +126,29 @@ class HomePageState extends State<HomePage> {
         }
       }
     }
-    apidataMsg.removeWhere(
-        (element) => element["replyOf"] != null || element["type"] != "sprava");
+    List<dynamic> msgs =
+        apidataMsg.where((msg) => msg["type"] == "sprava").toList();
+    List<dynamic> msgsWOR = List.from(msgs);
+    msgsWOR.addAll(msgs);
+    List<Map<String, int>> bump = [];
+    for (Map<String, dynamic> msg in msgs) {
+      if (msg["replyOf"] != null) {
+        if (!bump.any((element) =>
+            element["id"]!.compareTo(int.parse(msg["replyOf"])) == 0)) {
+          bump.add(
+              {"id": int.parse(msg["replyOf"]), "index": msgsWOR.indexOf(msg)});
+          msgsWOR.remove(msg);
+        } else {
+          msgsWOR.remove(msg);
+        }
+      }
+    }
+    for (Map<String, int> b in bump) {
+      msgsWOR.move(
+          msgsWOR.indexOf(msgsWOR
+              .firstWhere((element) => int.parse(element["id"]) == b["id"])),
+          b["index"]!);
+    }
     return Scaffold(
       key: scaffoldKey,
       body: Column(
@@ -169,59 +192,52 @@ class HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Card(
-                    elevation: 5,
-                    child: SizedBox(
-                      height: 100,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          if (apidataTT["lessons"].length == 0)
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                local!.homeNoClasses,
-                                style: const TextStyle(fontSize: 20),
-                              ),
-                            ),
-                          for (Map<String, dynamic> lesson
-                              in apidataTT["lessons"])
-                            Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      lesson["period"]["name"] + ".",
-                                      style: const TextStyle(fontSize: 10),
-                                    ),
-                                    Text(
-                                      lesson["subject"]["short"],
-                                      style: const TextStyle(fontSize: 20),
-                                    ),
-                                    Text(
-                                      lesson["classrooms"][0]["short"],
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                  ],
+          if (apidataTT["lessons"].length > 0)
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Card(
+                      elevation: 5,
+                      child: SizedBox(
+                        height: 100,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: [
+                            for (Map<String, dynamic> lesson
+                                in apidataTT["lessons"])
+                              Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        lesson["period"]["name"] + ".",
+                                        style: const TextStyle(fontSize: 10),
+                                      ),
+                                      Text(
+                                        lesson["subject"]["short"],
+                                        style: const TextStyle(fontSize: 20),
+                                      ),
+                                      Text(
+                                        lesson["classrooms"][0]["short"],
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
           if (lunch != -1)
             Container(
               width: MediaQuery.of(context).size.width,
@@ -256,7 +272,7 @@ class HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-          if (apidataMsg != [])
+          if (msgsWOR != [])
             Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
@@ -267,29 +283,41 @@ class HomePageState extends State<HomePage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      for (Map<String, dynamic> m in apidataMsg.length < 5
-                          ? apidataMsg
-                          : apidataMsg.getRange(0, 4))
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Card(
-                                elevation: 10,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    m["owner"]["firstname"] +
-                                        " " +
-                                        m["owner"]["lastname"] +
-                                        ": " +
-                                        m["text"],
-                                    softWrap: false,
-                                    overflow: TextOverflow.ellipsis,
+                      for (Map<String, dynamic> m in msgsWOR.length < 5
+                          ? msgsWOR
+                          : msgsWOR.getRange(0, 4))
+                        InkWell(
+                          highlightColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Card(
+                                  elevation: 10,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      m["owner"]["firstname"] +
+                                          " " +
+                                          m["owner"]["lastname"] +
+                                          ": " +
+                                          m["text"],
+                                      softWrap: false,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MessagePage(
+                                        sessionManager: widget.sessionManager,
+                                        id: int.parse(m["id"]))));
+                          },
                         ),
                     ],
                   ),

@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class MessagePage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -96,7 +100,30 @@ class MessagePageState extends State<MessagePage> {
                       ),
                       Text(data["text"]),
                       for (Map<String, dynamic> att in data["attachments"]!)
-                        Image.network(att["src"]),
+                        if (att["name"]!.endsWith(".jpg") ||
+                            att["name"]!.endsWith(".png"))
+                          Image.network(att["src"]!)
+                        else if (att["name"]!.endsWith(".pdf"))
+                          const PDF(
+                            enableSwipe: true,
+                            swipeHorizontal: true,
+                            autoSpacing: false,
+                            pageFling: false,
+                          ).cachedFromUrl(
+                            att["src"],
+                            placeholder: (progress) =>
+                                Center(child: Text('$progress %')),
+                            errorWidget: (error) =>
+                                Center(child: Text(error.toString())),
+                          )
+                        else
+                          SizedBox(
+                            width: width,
+                            height: 500,
+                            child: WebViewWidget(
+                                controller: WebViewController()
+                                  ..loadRequest(Uri.parse(att["src"]!))),
+                          ),
                     ],
                   ),
                 ),
@@ -112,8 +139,7 @@ class MessagePageState extends State<MessagePage> {
                       child: Padding(
                         padding: const EdgeInsets.all(10),
                         child: Container(
-                          constraints:
-                              BoxConstraints(maxHeight: 200, maxWidth: width),
+                          constraints: BoxConstraints(maxWidth: width),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [

@@ -111,5 +111,6 @@
   "iCanteenSetupDetails": "Adresu URL zadejte ve formátu https://stravovani.skola.cz/login",
   "iCanteenSetupServer": "Adresa URL",
   "iCanteenSetupEmail": "Přihlašovací jméno",
-  "iCanteenSetupPassword": "Heslo"
+  "iCanteenSetupPassword": "Heslo",
+  "messagesLoadingAttachment": "Načítání pdf souboru..."
 }
