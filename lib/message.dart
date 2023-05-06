@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:html_unescape/html_unescape.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class MessagePage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -24,6 +29,8 @@ class MessagePageState extends State<MessagePage> {
   Dio dio = Dio();
 
   late Widget messages;
+
+  double width = 0;
 
   @override
   void initState() {
@@ -55,44 +62,68 @@ class MessagePageState extends State<MessagePage> {
     messages = Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.all(30),
+          padding: const EdgeInsets.all(10),
           child: ListView(
             children: [
               Card(
                 elevation: 2,
                 child: Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(15),
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: 40),
+                        padding: const EdgeInsets.only(left: 60, top: 5),
                         child: Row(
                           children: [
                             Text(
                               data["owner"]["firstname"] +
                                   " " +
                                   data["owner"]["lastname"],
-                              style: const TextStyle(fontSize: 24),
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
                             ),
-                            const Icon(Icons.arrow_right_rounded, size: 24),
+                            const Icon(Icons.arrow_right_rounded, size: 18),
                             Expanded(
                               child: Text(
                                 data["title"],
                                 overflow: TextOverflow.fade,
                                 maxLines: 5,
                                 softWrap: true,
-                                style: const TextStyle(fontSize: 24),
+                                style: const TextStyle(fontSize: 14),
                               ),
                             )
                           ],
                         ),
                       ),
                       const SizedBox(
-                        height: 10,
+                        height: 30,
                       ),
                       Text(data["text"]),
                       for (Map<String, dynamic> att in data["attachments"]!)
-                        Image.network(att["src"]),
+                        if (att["name"]!.endsWith(".jpg") ||
+                            att["name"]!.endsWith(".png"))
+                          Image.network(att["src"]!)
+                        else if (att["name"]!.endsWith(".pdf"))
+                          const PDF(
+                            enableSwipe: true,
+                            swipeHorizontal: true,
+                            autoSpacing: false,
+                            pageFling: false,
+                          ).cachedFromUrl(
+                            att["src"],
+                            placeholder: (progress) =>
+                                Center(child: Text('$progress %')),
+                            errorWidget: (error) =>
+                                Center(child: Text(error.toString())),
+                          )
+                        else
+                          SizedBox(
+                            width: width,
+                            height: 500,
+                            child: WebViewWidget(
+                                controller: WebViewController()
+                                  ..loadRequest(Uri.parse(att["src"]!))),
+                          ),
                     ],
                   ),
                 ),
@@ -102,20 +133,23 @@ class MessagePageState extends State<MessagePage> {
                   children: [
                     const SizedBox(width: 20),
                     const Icon(Icons.subdirectory_arrow_right_rounded,
-                        size: 36),
+                        size: 32),
                     Card(
                       elevation: 10,
                       child: Padding(
                         padding: const EdgeInsets.all(10),
-                        child: Column(
-                          children: [
-                            Text(
-                              "${r["owner"]["firstname"]} ${r["owner"]["lastname"]}: ",
-                              style: const TextStyle(fontSize: 18),
-                              textAlign: TextAlign.left,
-                            ),
-                            Text(r["text"])
-                          ],
+                        child: Container(
+                          constraints: BoxConstraints(maxWidth: width),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                  "${r["owner"]["firstname"]} ${r["owner"]["lastname"]}: "),
+                              Text(
+                                HtmlUnescape().convert(r["text"]),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -149,6 +183,11 @@ class MessagePageState extends State<MessagePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (width == 0) {
+      setState(() {
+        width = MediaQuery.of(context).size.width - 100;
+      });
+    }
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,

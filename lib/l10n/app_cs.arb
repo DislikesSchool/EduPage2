@@ -59,6 +59,7 @@
     "description": "Logout button on home page"
   },
   "homeSetupICanteen": "Nastavit iCanteen",
+  "homeNoClasses": "Dneska nemáš skolu! :D",
   "homeworkTitle": "Domácí úkoly",
   "@homeworkTitle": {
     "description": "Title of homework page"
@@ -110,5 +111,6 @@
   "iCanteenSetupDetails": "Adresu URL zadejte ve formátu https://stravovani.skola.cz/login",
   "iCanteenSetupServer": "Adresa URL",
   "iCanteenSetupEmail": "Přihlašovací jméno",
-  "iCanteenSetupPassword": "Heslo"
+  "iCanteenSetupPassword": "Heslo",
+  "messagesLoadingAttachment": "Načítání pdf souboru..."
 }

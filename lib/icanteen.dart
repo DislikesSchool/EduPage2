@@ -29,7 +29,6 @@ class ICanteenPageState extends State<ICanteenPage> {
 
   String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
   bool loading = true;
-  BuildContext? c;
 
   List<Widget> lunches = [];
 
@@ -38,7 +37,7 @@ class ICanteenPageState extends State<ICanteenPage> {
     super.initState();
   }
 
-  getData(BuildContext context) async {
+  getData() async {
     sharedPreferences = await SharedPreferences.getInstance();
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
@@ -53,7 +52,7 @@ class ICanteenPageState extends State<ICanteenPage> {
         .get(
       "$baseUrl/lunches",
       options: buildCacheOptions(
-        const Duration(days: 1),
+        const Duration(days: 0),
         forceRefresh: true,
         options: Options(
           headers: {
@@ -121,26 +120,19 @@ class ICanteenPageState extends State<ICanteenPage> {
   }
 
   Future<void> _pullRefresh() async {
-    getData(c!);
+    await getData();
   }
 
   @override
   Widget build(BuildContext context) {
     sessionManager = widget.sessionManager;
-    c = context;
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 0,
+    return RefreshIndicator(
+      onRefresh: _pullRefresh,
+      child: ListView(
+        children: loading
+            ? [Text(AppLocalizations.of(context)!.iCanteenLoading)]
+            : lunches,
       ),
-      body: !loading
-          ? RefreshIndicator(
-              onRefresh: _pullRefresh,
-              child: ListView(
-                children: lunches,
-              ),
-            )
-          : Text(AppLocalizations.of(context)!.iCanteenLoading),
-      backgroundColor: Theme.of(context).colorScheme.background,
     );
   }
 }
