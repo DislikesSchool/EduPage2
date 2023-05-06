@@ -1,5 +1,5 @@
-name: build-prerelease-android
-run-name: Building a prerelease version apk file
+name: test-coverage
+run-name: est the project coverage and upload to codecov
 permissions:
   contents: write
   packages: write
