@@ -54,7 +54,7 @@ jobs:
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n
-    - run: full_coverage
+    - run: dart pub global run full_coverage
     - run: flutter test --coverage --dart-define=USERNAME=${{ secrets.USERNAME }} --dart-define=PASSWORD=${{ secrets.PASSWORD }}
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
