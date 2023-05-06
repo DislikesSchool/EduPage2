@@ -1,5 +1,5 @@
 name: test-coverage
-run-name: est the project coverage and upload to codecov
+run-name: Test the project coverage and upload to codecov
 permissions:
   contents: write
   packages: write
