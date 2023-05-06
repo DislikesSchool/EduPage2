@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:eduapge2/message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
