@@ -28,29 +28,6 @@ jobs:
         cache: true
         cache-key: 'flutter-:os:-:channel:-:version:' # optional, change this to force refresh cache
         architecture: x64
-    - name: Create the Keystore
-      env:
-        KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
-      run: |
-        # import keystore from secrets
-        echo $KEYSTORE_B64 | base64 -d > $RUNNER_TEMP/keystore.jks
-    - name: Create key.properties
-      env:
-        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
-        KEY_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
-        KEY_PASSWORD: ${{ secrets.KEY_PASS }}
-      run: |
-        echo -e "storePassword=$KEYSTORE_PASSWORD\nkeyPassword=$KEY_PASSWORD\nkeyAlias=$KEY_ALIAS\nstoreFile=$RUNNER_TEMP/keystore.jks" > android/key.properties
-    - name: 'Get Previous tag'
-      id: previoustag
-      uses: "WyriHaximus/github-action-get-previous-tag@v1"
-      with:
-        fallback: 1.0.0
-    - name: 'Get next minor version'
-      id: semvers
-      uses: "WyriHaximus/github-action-next-semvers@v1"
-      with:
-        version: ${{ steps.previoustag.outputs.tag }}
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n
