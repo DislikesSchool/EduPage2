@@ -43,5 +43,6 @@
   "iCanteenSetupDetails": "URL address in this format: https://lunches.yourschool.com/login",
   "iCanteenSetupServer": "Server address",
   "iCanteenSetupEmail": "Username",
-  "iCanteenSetupPassword": "Password"
+  "iCanteenSetupPassword": "Password",
+  "messagesLoadingAttachment": "Loading pdf..."
 }
