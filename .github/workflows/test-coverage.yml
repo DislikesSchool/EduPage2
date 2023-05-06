@@ -29,6 +29,7 @@ jobs:
         cache-key: 'flutter-:os:-:channel:-:version:' # optional, change this to force refresh cache
         architecture: x64
     - run: flutter pub get
+    - run: dart pub global activate full_coverage
     - run: flutter analyze .
     - run: flutter gen-l10n
     - run: dart pub global run full_coverage
