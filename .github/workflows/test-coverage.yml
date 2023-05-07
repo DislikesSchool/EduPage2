@@ -57,13 +57,13 @@ jobs:
     - run: flutter gen-l10n
     - run: dart pub global run full_coverage
     - run: flutter test --coverage --dart-define=USERNAME=${{ secrets.USERNAME }} --dart-define=PASSWORD=${{ secrets.PASSWORD }}
-    - name: run tests
+    - name: run integration tests
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: 29
         force-avd-creation: false
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
         disable-animations: true
-        script: flutter test integration_test --coverage --dart-define=USERNAME=${{ secrets.USERNAME }} --dart-define=PASSWORD=${{ secrets.PASSWORD }}
+        script: flutter test integration_test --coverage --dart-define=USERNAME=${{ secrets.USERNAME }} --dart-define=PASSWORD=${{ secrets.PASSWORD }} --dart-define=NAME=${{ secrets.NAME }}
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
