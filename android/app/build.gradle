@@ -59,6 +59,7 @@ android {
         targetSdkVersion 33
         minSdkVersion 21
         compileSdkVersion 33
+        multiDexEnabled true
     }
 
     signingConfigs {
@@ -89,12 +90,5 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "androidx.core:core-ktx:1.6.0"
-}
-
-configurations.all {
-  resolutionStrategy {
-    force 'androidx.core:core:1.6.0'
-    force 'androidx.core:core-ktx:1.6.0'
-  }
+    implementation 'com.android.support:multidex:1.0.3'
 }

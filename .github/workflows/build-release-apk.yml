@@ -58,8 +58,6 @@ jobs:
     - run: flutter analyze .
     - run: flutter gen-l10n
     - run: flutter build apk --build-name ${{ steps.semvers.outputs.minor }} --dart-define=BVS="Release ${{ steps.semvers.outputs.minor }} GitHub"
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
     - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semvers.outputs.v_minor }}.apk"
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
