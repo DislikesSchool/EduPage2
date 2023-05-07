@@ -42,6 +42,6 @@ jobs:
         force-avd-creation: false
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
         disable-animations: true
-        script: flutter test integration_test --coverage --dart-define=USERNAME=${{ secrets.USERNAME }} --dart-define=PASSWORD=${{ secrets.PASSWORD }} --dart-define=NAME=${{ secrets.NAME }}
+        script: flutter test integration_test/app_test.dart --coverage --dart-define=USERNAME=${{ secrets.USERNAME }} --dart-define=PASSWORD=${{ secrets.PASSWORD }} --dart-define=NAME=${{ secrets.NAME }}
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
