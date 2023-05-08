@@ -36,6 +36,7 @@ jobs:
       with:
         api-level: 31
         arch: x86_64
+        profile: pixel_6_pro
         force-avd-creation: false
         emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
         disable-animations: false
@@ -63,6 +64,7 @@ jobs:
       with:
         api-level: 31
         arch: x86_64
+        profile: pixel_6_pro
         force-avd-creation: false
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
         disable-animations: true
