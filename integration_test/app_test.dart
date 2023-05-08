@@ -21,8 +21,6 @@ void main() {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       expect(prefs.get("email"), equals(username));
       expect(prefs.get("password"), equals(password));
-
-      await tester.pump(const Duration(seconds: 1));
     });
 
     testWidgets('Test TimeTable page', (tester) async {
