@@ -21,6 +21,12 @@ class LoinPageState extends State<LoginPage> {
     super.initState();
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
+  }
+
   Future<void> getPrefs() async {
     sharedPreferences = await SharedPreferences.getInstance();
   }

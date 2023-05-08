@@ -48,6 +48,12 @@ class TimeTablePageState extends State<TimeTablePage> {
     super.initState();
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
+  }
+
   DateTime getWeekDay() {
     DateTime now = DateTime.now();
     if (now.weekday > 5) {

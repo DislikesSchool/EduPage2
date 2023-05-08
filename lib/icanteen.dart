@@ -37,6 +37,12 @@ class ICanteenPageState extends State<ICanteenPage> {
     super.initState();
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
+  }
+
   getData() async {
     sharedPreferences = await SharedPreferences.getInstance();
     dio.interceptors

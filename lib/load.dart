@@ -42,6 +42,12 @@ class LoadingScreenState extends State<LoadingScreen> {
     super.initState();
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
+  }
+
   Future<void> init() async {
     startedInit = true;
     sharedPreferences = await SharedPreferences.getInstance();

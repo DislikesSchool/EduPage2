@@ -48,9 +48,9 @@ class HomePageState extends State<HomePage> {
   }
 
   @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
   }
 
   DateTime getWeekDay() {
