@@ -211,7 +211,6 @@ class LoadingScreenState extends State<LoadingScreen> {
     setState(() {});
     final metric = FirebasePerformance.instance.newHttpMetric(
         "$baseUrl/timetable/${getWeekDay().toString()}", HttpMethod.Get);
-
     String token = sharedPreferences.getString("token")!;
     metric.start();
     Response response = await dio.get(

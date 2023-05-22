@@ -123,7 +123,9 @@ class TimeTablePageState extends State<TimeTablePage> {
           ttLesson["teachers"][0]["short"],
           ttLesson["period"]["startTime"],
           ttLesson["period"]["endTime"],
-          ttLesson["classrooms"][0]["short"],
+          ttLesson["classrooms"].length > 0
+              ? ttLesson["classrooms"][0]["short"]
+              : "?",
           0,
           ttLesson,
         ),
@@ -368,7 +370,10 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
                   onPressed: () {
                     modifyDayDiff(1);
                   },
-                  icon: const Icon(Icons.keyboard_arrow_right)),
+                  icon: const Icon(
+                    Icons.keyboard_arrow_right,
+                    key: Key("TimeTableScrollForward"),
+                  )),
             ],
           ),
           Table(

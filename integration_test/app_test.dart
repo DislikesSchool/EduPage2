@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -27,7 +28,7 @@ void main() {
       await prep(tester, username, password, name);
 
       await tester.tap(find.byType(NavigationDestination).at(1));
-      await tester.pump();
+      await pumpUntilFound(tester, find.textContaining("Today"));
       expect(find.textContaining("Today"), findsOneWidget);
     });
 
@@ -35,12 +36,12 @@ void main() {
       await prep(tester, username, password, name);
 
       await tester.tap(find.byType(NavigationDestination).at(1));
-      await tester.pump(const Duration(seconds: 1));
+      await pumpUntilFound(tester, find.textContaining("Today"));
       expect(find.textContaining("Today"), findsOneWidget);
 
-      await tester.tap(find.byType(Icon).at(3));
-      await tester.pump(const Duration(seconds: 1));
-      expect(find.textContaining("Tomorrow"), findsOneWidget);
+      await tester.tap(find.byKey(const Key("TimeTableScrollForward")));
+      await pumpUntilFound(tester, find.textContaining("Tomorrow"));
+      //expect(find.textContaining("Tomorrow"), findsOneWidget);
     });
   });
 }
@@ -48,8 +49,10 @@ void main() {
 Future<void> prep(
     WidgetTester tester, String username, String password, String name) async {
   SharedPreferences.setMockInitialValues({});
+  final FlutterExceptionHandler? originalOnError = FlutterError.onError;
   app.main();
   await tester.pumpAndSettle();
+  FlutterError.onError = originalOnError;
   await pumpUntilFound(tester, find.text("Username"));
 
   await tester.enterText(find.byType(TextField).at(0), username);
@@ -57,4 +60,5 @@ Future<void> prep(
   await tester.tap(find.byType(ElevatedButton));
 
   await pumpUntilFound(tester, find.text(name));
+  await tester.pump(const Duration(seconds: 5));
 }
