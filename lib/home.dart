@@ -41,10 +41,16 @@ class HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    super.initState();
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
     getData(); //fetching data
-    super.initState();
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
   }
 
   DateTime getWeekDay() {

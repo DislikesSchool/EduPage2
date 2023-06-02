@@ -23,6 +23,12 @@ class HomeworkPageState extends State<HomeworkPage> {
     super.initState();
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
+  }
+
   getData() async {
     setState(() {
       loading = true; //make loading true to show progressindicator

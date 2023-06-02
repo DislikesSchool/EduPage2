@@ -13,33 +13,30 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   testWidgets('Login page', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+    // Initiates SharedPreferences
     SharedPreferences.setMockInitialValues({});
+
+    // Gets test user's username and password from environment
     String? username = const String.fromEnvironment("USERNAME");
     String? password = const String.fromEnvironment("PASSWORD");
+
+    // Initiates widget
     await tester.pumpWidget(const LocalizationsInj(child: LoginPage()));
+
+    // Checks for TextFields and login button
     expect(find.text('Username'), findsOneWidget);
     expect(find.text('Password'), findsOneWidget);
     expect(find.text('Login'), findsOneWidget);
+
+    // Types test user's credentails into fields
     await tester.enterText(find.byType(TextField).at(0), username);
     await tester.enterText(find.byType(TextField).at(1), password);
     await tester.tap(find.byType(ElevatedButton));
+
+    // Checks that the credentails were stored correctly
     SharedPreferences prefs = await SharedPreferences.getInstance();
     expect(prefs.get("email"), equals(username));
     expect(prefs.get("password"), equals(password));
-    /*
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
-    */
   });
 }
 

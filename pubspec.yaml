@@ -55,6 +55,8 @@ dependency_overrides:
   flutter_pdfview: 1.2.9
 
 dev_dependencies:
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
 

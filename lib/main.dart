@@ -109,6 +109,12 @@ class PageBaseState extends State<PageBase> {
     super.initState();
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
+  }
+
   getMsgs() async {
     var msgs = await sessionManager.get('messages');
     var ic = await sessionManager.get('iCanteenEnabled');
