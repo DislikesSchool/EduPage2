@@ -92,6 +92,9 @@ class LoadingScreenState extends State<LoadingScreen> {
       });
 
       if (response.statusCode == 200) {
+        if (jsonDecode(response.data)["icanteen"] == true) {
+          await sessionManager.set('iCanteenEnabled', true);
+        }
         OneSignal.shared.setExternalUserId(token!);
         progress = 0.5;
         loaderText = local!.loadLoggedIn;
@@ -174,6 +177,9 @@ class LoadingScreenState extends State<LoadingScreen> {
           });
 
           if (response.statusCode == 200) {
+            if (jsonDecode(response.data)["icanteen"] == true) {
+              await sessionManager.set('iCanteenEnabled', true);
+            }
             OneSignal.shared.setExternalUserId(token);
             progress = 0.6;
             loaderText = local!.loadLoggedIn;

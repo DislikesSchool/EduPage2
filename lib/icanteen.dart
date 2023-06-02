@@ -101,11 +101,19 @@ class ICanteenPageState extends State<ICanteenPage> {
                         padding: const EdgeInsets.all(10),
                         child: Row(
                           children: [
-                            if (lunchOpt["ordered"]) const Icon(Icons.check),
-                            if (!lunchOpt["can_order"]) const Icon(Icons.block),
+                            if (lunchOpt["ordered"])
+                              const Padding(
+                                padding: EdgeInsets.only(right: 8.0),
+                                child: Icon(Icons.check),
+                              ),
+                            if (!lunchOpt["can_order"] && !lunchOpt["ordered"])
+                              const Padding(
+                                padding: EdgeInsets.only(right: 8.0),
+                                child: Icon(Icons.block),
+                              ),
                             Expanded(
                               child: Text(
-                                lunchOpt["item_name"],
+                                lunchOpt["name"],
                               ),
                             ),
                           ],
