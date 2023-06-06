@@ -3,15 +3,17 @@
 ## Supported Versions
 
 ### App versions
-| Version | API   | Supported          |
-| ------- | ----- | ------------------ |
-| 1.7.1   |  β13  | :white_check_mark: |
-| 1.7.0   |  β12  | :warning:          |
-| 1.6.0   |  β12  | :warning:          |
-| 1.5.x   |  β11  | :x:                |
-| < 1.5   |       | :x:                |
+
+| Version | API | Supported          |
+| ------- | --- | ------------------ |
+| 1.7.1   | β13 | :white_check_mark: |
+| 1.7.0   | β12 | :warning:          |
+| 1.6.0   | β12 | :warning:          |
+| 1.5.x   | β11 | :x:                |
+| < 1.5   |     | :x:                |
 
 ### API version
+
 | Version | Supported          |
 | ------- | ------------------ |
 | β13     | :white_check_mark: |
