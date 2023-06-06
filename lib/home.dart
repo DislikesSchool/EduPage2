@@ -392,10 +392,6 @@ class HomePageState extends State<HomePage> {
                 ),
             ],
           ),
-          Container(
-            margin: const EdgeInsets.only(right: 20, bottom: 20),
-            child: Text("5:41"),
-          )
         ],
       ),
       backgroundColor: theme.colorScheme.background,
