@@ -5,8 +5,10 @@ import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:eduapge2/icanteen_setup.dart';
 import 'package:eduapge2/message.dart';
 import 'package:eduapge2/messages.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -34,6 +36,7 @@ class HomePageState extends State<HomePage> {
   String errmsg = ""; //to assing any error message from API/runtime
   dynamic apidata; //for decoded JSON data
   bool refresh = false;
+  bool updateAvailable = false;
 
   late Map<String, dynamic> apidataTT;
   List<dynamic> apidataMsg = [];
@@ -44,6 +47,7 @@ class HomePageState extends State<HomePage> {
     super.initState();
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
+    fetchAndCompareBuildName();
     getData(); //fetching data
   }
 
@@ -92,6 +96,36 @@ class HomePageState extends State<HomePage> {
     setState(() {
       loading = false;
     }); //refresh UI
+  }
+
+  void fetchAndCompareBuildName() async {
+    final dio = Dio();
+
+    // Retrieve the package info
+    final packageInfo = await PackageInfo.fromPlatform();
+    final buildName = packageInfo.version;
+
+    try {
+      final response = await dio.get(
+          'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest');
+      final responseData = response.data;
+
+      // Extract the tag_name from the response JSON and remove the "v" prefix if present
+      final tag = responseData['tag_name'];
+      final formattedTag = tag.startsWith('v') ? tag.substring(1) : tag;
+
+      // Compare the tag_name to the app's build name
+      if (formattedTag != buildName) {
+        setState(() {
+          updateAvailable = true;
+        });
+      }
+    } catch (error) {
+      // Handle any errors that occur during the request
+      if (kDebugMode) {
+        print('Error: $error');
+      }
+    }
   }
 
   @override
@@ -157,179 +191,211 @@ class HomePageState extends State<HomePage> {
     }
     return Scaffold(
       key: scaffoldKey,
-      body: Column(
-        children: <Widget>[
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 50,
-            margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceVariant,
-              border: Border.all(
-                color: theme.colorScheme.background,
-              ),
-              borderRadius: BorderRadiusDirectional.circular(25),
-            ),
-            child: Stack(
-              children: <Widget>[
-                Center(
-                  child: Text(
-                    username,
-                    style: const TextStyle(
-                      fontSize: 24,
-                    ),
+      body: Stack(
+        children: [
+          Column(
+            children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: 50,
+                margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceVariant,
+                  border: Border.all(
+                    color: theme.colorScheme.background,
                   ),
+                  borderRadius: BorderRadiusDirectional.circular(25),
                 ),
-                Positioned(
-                  right: 5,
-                  child: IconButton(
-                    icon: loading
-                        ? const Icon(Icons.cloud_download)
-                        : const Icon(Icons.cloud_done),
-                    onPressed: () => {getData()},
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.menu),
-                  onPressed: () => {
-                    scaffoldKey.currentState?.openDrawer(),
-                  },
-                ),
-              ],
-            ),
-          ),
-          if (apidataTT["lessons"].length > 0)
-            Container(
-              width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                child: Stack(
                   children: <Widget>[
-                    Card(
-                      elevation: 5,
-                      child: SizedBox(
-                        height: 100,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            for (Map<String, dynamic> lesson
-                                in apidataTT["lessons"])
-                              Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        lesson["period"]["name"] + ".",
-                                        style: const TextStyle(fontSize: 10),
-                                      ),
-                                      Text(
-                                        lesson["subject"]["short"],
-                                        style: const TextStyle(fontSize: 20),
-                                      ),
-                                      Text(
-                                        lesson["classrooms"][0]["short"],
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                          ],
+                    Center(
+                      child: Text(
+                        username,
+                        style: const TextStyle(
+                          fontSize: 24,
                         ),
                       ),
+                    ),
+                    Positioned(
+                      right: 5,
+                      child: IconButton(
+                        icon: loading
+                            ? const Icon(Icons.cloud_download)
+                            : const Icon(Icons.cloud_done),
+                        onPressed: () => {getData()},
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.menu),
+                      onPressed: () => {
+                        scaffoldKey.currentState?.openDrawer(),
+                      },
                     ),
                   ],
                 ),
               ),
-            ),
-          if (lunch != -1)
-            Container(
-              width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
-              child: Card(
-                elevation: 5,
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      lunch == -1
-                          ? Text(
-                              local!.homeLunchesNotLoaded,
-                              style: const TextStyle(fontSize: 20),
-                              textAlign: TextAlign.center,
-                            )
-                          : lunch == 0
+              if (apidataTT["lessons"].length > 0)
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Card(
+                          elevation: 5,
+                          child: SizedBox(
+                            height: 100,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                for (Map<String, dynamic> lesson
+                                    in apidataTT["lessons"])
+                                  Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            lesson["period"]["name"] + ".",
+                                            style:
+                                                const TextStyle(fontSize: 10),
+                                          ),
+                                          Text(
+                                            lesson["subject"]["short"],
+                                            style:
+                                                const TextStyle(fontSize: 20),
+                                          ),
+                                          Text(
+                                            lesson["classrooms"][0]["short"],
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              if (updateAvailable)
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+                  child: Card(
+                    elevation: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10, bottom: 10),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(local!.homeUpdateTitle,
+                              style: const TextStyle(fontSize: 20)),
+                          Text(local.homeUpdateDescription,
+                              style: const TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              if (lunch != -1 && apidataTT["lessons"].length > 0)
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+                  child: Card(
+                    elevation: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          lunch == -1
                               ? Text(
-                                  local!.homeNoLunchToday,
+                                  local!.homeLunchesNotLoaded,
                                   style: const TextStyle(fontSize: 20),
                                   textAlign: TextAlign.center,
                                 )
-                              : Text(
-                                  local!.homeLunchToday(lunch),
-                                  style: const TextStyle(fontSize: 20),
-                                  textAlign: TextAlign.center,
-                                ),
-                      Text(local.homeLunchDontForget(orderLunchesFor)),
-                    ],
+                              : lunch == 0
+                                  ? Text(
+                                      local!.homeNoLunchToday,
+                                      style: const TextStyle(fontSize: 20),
+                                      textAlign: TextAlign.center,
+                                    )
+                                  : Text(
+                                      local!.homeLunchToday(lunch),
+                                      style: const TextStyle(fontSize: 20),
+                                      textAlign: TextAlign.center,
+                                    ),
+                          Text(local.homeLunchDontForget(orderLunchesFor)),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          if (msgsWOR != [])
-            Container(
-              width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
-              child: Card(
-                elevation: 5,
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      for (Map<String, dynamic> m in msgsWOR.length < 5
-                          ? msgsWOR
-                          : msgsWOR.getRange(0, 4))
-                        InkWell(
-                          highlightColor: Colors.transparent,
-                          splashColor: Colors.transparent,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Card(
-                                  elevation: 10,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      m["owner"]["firstname"] +
-                                          " " +
-                                          m["owner"]["lastname"] +
-                                          ": " +
-                                          m["text"],
-                                      softWrap: false,
-                                      overflow: TextOverflow.ellipsis,
+              if (msgsWOR != [])
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+                  child: Card(
+                    elevation: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          for (Map<String, dynamic> m in msgsWOR.length < 5
+                              ? msgsWOR
+                              : msgsWOR.getRange(0, 4))
+                            InkWell(
+                              highlightColor: Colors.transparent,
+                              splashColor: Colors.transparent,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Card(
+                                      elevation: 10,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          m["owner"]["firstname"] +
+                                              " " +
+                                              m["owner"]["lastname"] +
+                                              ": " +
+                                              m["text"],
+                                          softWrap: false,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MessagePage(
-                                        sessionManager: widget.sessionManager,
-                                        id: int.parse(m["id"]))));
-                          },
-                        ),
-                    ],
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MessagePage(
+                                            sessionManager:
+                                                widget.sessionManager,
+                                            id: int.parse(m["id"]))));
+                              },
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
+            ],
+          ),
+          Container(
+            margin: const EdgeInsets.only(right: 20, bottom: 20),
+            child: Text("5:41"),
+          )
         ],
       ),
       backgroundColor: theme.colorScheme.background,
