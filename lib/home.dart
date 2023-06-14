@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -23,6 +24,111 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => HomePageState();
 }
 
+class LessonStatus {
+  final bool hasLessonsToday;
+  final bool hasLesson;
+  final DateTime nextLessonTime;
+
+  LessonStatus({
+    required this.hasLessonsToday,
+    required this.hasLesson,
+    required this.nextLessonTime,
+  });
+}
+
+extension TimeOfDayExtension on TimeOfDay {
+  bool operator <(TimeOfDay other) {
+    if (hour < other.hour) {
+      return true;
+    } else if (hour == other.hour && minute < other.minute) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool operator <=(TimeOfDay other) {
+    if (hour < other.hour) {
+      return true;
+    } else if (hour == other.hour && minute <= other.minute) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool operator >(TimeOfDay other) {
+    if (hour > other.hour) {
+      return true;
+    } else if (hour == other.hour && minute > other.minute) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+extension DateTimeExtension on DateTime {
+  static DateTime parseTime(String timeString, {DateTime? date}) {
+    final time = TimeOfDay(
+      hour: int.parse(timeString.split(':')[0]),
+      minute: int.parse(timeString.split(':')[1]),
+    );
+    final dateTime = date ?? DateTime.now();
+    return DateTime(
+        dateTime.year, dateTime.month, dateTime.day, time.hour, time.minute);
+  }
+}
+
+LessonStatus getLessonStatus(List<dynamic> lessons, TimeOfDay currentTime) {
+  // Check if the user has any lessons today
+  final hasLessonsToday = lessons.isNotEmpty;
+
+  // Check if the user has a lesson
+  final hasLesson = hasLessonsToday &&
+      lessons.any((lesson) {
+        final startTime = TimeOfDay.fromDateTime(
+            DateTimeExtension.parseTime(lesson['period']['startTime']));
+        final endTime = TimeOfDay.fromDateTime(
+            DateTimeExtension.parseTime(lesson['period']['endTime']));
+        return startTime < endTime &&
+            startTime <= currentTime &&
+            endTime > currentTime;
+      });
+
+  // Calculate the end time of the current lesson or the start time of the next lesson
+  DateTime nextLessonTime;
+  if (hasLesson) {
+    final currentLesson = lessons.firstWhere((lesson) {
+      final startTime = TimeOfDay.fromDateTime(
+          DateTimeExtension.parseTime(lesson['period']['startTime']));
+      final endTime = TimeOfDay.fromDateTime(
+          DateTimeExtension.parseTime(lesson['period']['endTime']));
+      return startTime < endTime &&
+          startTime <= currentTime &&
+          endTime > currentTime;
+    });
+    nextLessonTime =
+        DateTimeExtension.parseTime(currentLesson['period']['endTime']);
+  } else if (hasLessonsToday) {
+    final nextLesson = lessons.firstWhere((lesson) {
+      final startTime = TimeOfDay.fromDateTime(
+          DateTimeExtension.parseTime(lesson['period']['startTime']));
+      return startTime > currentTime;
+    });
+    nextLessonTime =
+        DateTimeExtension.parseTime(nextLesson['period']['startTime']);
+  } else {
+    nextLessonTime = DateTime.now();
+  }
+
+  return LessonStatus(
+    hasLessonsToday: hasLessonsToday,
+    hasLesson: hasLesson,
+    nextLessonTime: nextLessonTime,
+  );
+}
+
 class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   late SharedPreferences sharedPreferences;
@@ -41,6 +147,8 @@ class HomePageState extends State<HomePage> {
   late Map<String, dynamic> apidataTT;
   List<dynamic> apidataMsg = [];
   late String username;
+  late LessonStatus _lessonStatus;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -76,6 +184,7 @@ class HomePageState extends State<HomePage> {
         apidataMsg = msgs;
       });
     }
+
     Map<String, dynamic> user = await widget.sessionManager.get('user');
     username = user["firstname"] + " " + user["lastname"];
     String token = sharedPreferences.getString("token")!;
@@ -93,9 +202,24 @@ class HomePageState extends State<HomePage> {
       ),
     );
     apidataTT = jsonDecode(response.data);
+    _lessonStatus = getLessonStatus(apidataTT["lessons"], TimeOfDay.now());
+    if (_lessonStatus.hasLessonsToday) {
+      _startTimer();
+    }
     setState(() {
       loading = false;
     }); //refresh UI
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      setState(() {
+        _lessonStatus = getLessonStatus(apidataTT["lessons"], TimeOfDay.now());
+        if (!_lessonStatus.hasLessonsToday) {
+          _timer?.cancel();
+        }
+      });
+    });
   }
 
   void fetchAndCompareBuildName() async {
@@ -189,6 +313,13 @@ class HomePageState extends State<HomePage> {
               .firstWhere((element) => int.parse(element["id"]) == b["id"])),
           b["index"]!);
     }
+    final remainingTime =
+        _lessonStatus.nextLessonTime.difference(DateTime.now());
+    final minutes =
+        remainingTime.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seconds =
+        remainingTime.inSeconds.remainder(60).toString().padLeft(2, '0');
+    final remainingTimeString = '$minutes:$seconds';
     return Scaffold(
       key: scaffoldKey,
       body: Stack(
@@ -216,15 +347,29 @@ class HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    Positioned(
-                      right: 5,
-                      child: IconButton(
-                        icon: loading
-                            ? const Icon(Icons.cloud_download)
-                            : const Icon(Icons.cloud_done),
-                        onPressed: () => {getData()},
+                    if (_lessonStatus.hasLessonsToday)
+                      Positioned(
+                        right: 15,
+                        top: 10,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.circle,
+                              color: Color.fromARGB(
+                                  255,
+                                  _lessonStatus.hasLesson ? 0 : 255,
+                                  _lessonStatus.hasLesson ? 255 : 0,
+                                  0),
+                              size: 8,
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              remainingTimeString,
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
                     IconButton(
                       icon: const Icon(Icons.menu),
                       onPressed: () => {
@@ -287,20 +432,37 @@ class HomePageState extends State<HomePage> {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
-                  child: Card(
-                    elevation: 5,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 10, bottom: 10),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(local!.homeUpdateTitle,
-                              style: const TextStyle(fontSize: 20)),
-                          Text(local.homeUpdateDescription,
-                              style: const TextStyle(fontSize: 12)),
-                        ],
+                  child: Stack(
+                    children: [
+                      Card(
+                        elevation: 5,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 10, bottom: 10, left: 10, right: 10),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(local!.homeUpdateTitle,
+                                  style: const TextStyle(fontSize: 20)),
+                              Text(local.homeUpdateDescription,
+                                  style: const TextStyle(fontSize: 12)),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () {
+                            setState(() {
+                              updateAvailable = false;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               if (lunch != -1 && apidataTT["lessons"].length > 0)
@@ -331,7 +493,8 @@ class HomePageState extends State<HomePage> {
                                       style: const TextStyle(fontSize: 20),
                                       textAlign: TextAlign.center,
                                     ),
-                          Text(local.homeLunchDontForget(orderLunchesFor)),
+                          if (orderLunchesFor != DateTime(1998, 4, 10))
+                            Text(local.homeLunchDontForget(orderLunchesFor)),
                         ],
                       ),
                     ),
