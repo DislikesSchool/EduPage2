@@ -35,6 +35,7 @@ class ICanteenPageState extends State<ICanteenPage> {
   @override
   void initState() {
     super.initState();
+    getData();
   }
 
   @override
