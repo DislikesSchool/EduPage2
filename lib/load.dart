@@ -42,6 +42,12 @@ class LoadingScreenState extends State<LoadingScreen> {
     super.initState();
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
+  }
+
   Future<void> init() async {
     startedInit = true;
     sharedPreferences = await SharedPreferences.getInstance();
@@ -86,6 +92,9 @@ class LoadingScreenState extends State<LoadingScreen> {
       });
 
       if (response.statusCode == 200) {
+        if (jsonDecode(response.data)["icanteen"] == true) {
+          await sessionManager.set('iCanteenEnabled', true);
+        }
         OneSignal.shared.setExternalUserId(token!);
         progress = 0.5;
         loaderText = local!.loadLoggedIn;
@@ -168,6 +177,9 @@ class LoadingScreenState extends State<LoadingScreen> {
           });
 
           if (response.statusCode == 200) {
+            if (jsonDecode(response.data)["icanteen"] == true) {
+              await sessionManager.set('iCanteenEnabled', true);
+            }
             OneSignal.shared.setExternalUserId(token);
             progress = 0.6;
             loaderText = local!.loadLoggedIn;
@@ -205,7 +217,6 @@ class LoadingScreenState extends State<LoadingScreen> {
     setState(() {});
     final metric = FirebasePerformance.instance.newHttpMetric(
         "$baseUrl/timetable/${getWeekDay().toString()}", HttpMethod.Get);
-
     String token = sharedPreferences.getString("token")!;
     metric.start();
     Response response = await dio.get(

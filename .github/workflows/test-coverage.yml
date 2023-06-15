@@ -12,18 +12,43 @@ permissions:
 on: push
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0
+
+    - name: Gradle cache
+      uses: gradle/gradle-build-action@v2
+      
+    - name: AVD cache
+      uses: actions/cache@v3
+      id: avd-cache
+      with:
+        path: |
+          ~/.android/avd/*
+          ~/.android/adb*
+        key: avd-33
+
+    - name: create AVD and generate snapshot for caching
+      if: steps.avd-cache.outputs.cache-hit != 'true'
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 31
+        arch: x86_64
+        profile: pixel_6_pro
+        force-avd-creation: false
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: false
+        script: echo "Generated AVD snapshot for caching."
+
     - uses: actions/setup-java@v2
       with:
         distribution: 'zulu'
         java-version: '11'
     - uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.7.7'
+        flutter-version: '3.7.12'
         channel: 'stable'
         cache: true
         cache-key: 'flutter-:os:-:channel:-:version:' # optional, change this to force refresh cache
@@ -34,5 +59,15 @@ jobs:
     - run: flutter gen-l10n
     - run: dart pub global run full_coverage
     - run: flutter test --coverage --dart-define=USERNAME=${{ secrets.USERNAME }} --dart-define=PASSWORD=${{ secrets.PASSWORD }}
+    - name: run integration tests
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 31
+        arch: x86_64
+        profile: pixel_6_pro
+        force-avd-creation: false
+        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: true
+        script: flutter test integration_test/app_test.dart --coverage --dart-define=USERNAME=${{ secrets.USERNAME }} --dart-define=PASSWORD=${{ secrets.PASSWORD }} --dart-define=NAME="${{ secrets.NAME }}"
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3

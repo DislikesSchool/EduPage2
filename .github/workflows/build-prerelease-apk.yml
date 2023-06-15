@@ -12,7 +12,7 @@ permissions:
 on:
   push:
     branches:
-      - beta
+      - build-prerelease
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,7 +26,7 @@ jobs:
         java-version: '11'
     - uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.7.7'
+        flutter-version: '3.7.12'
         channel: 'stable'
         cache: true
         cache-key: 'flutter-:os:-:channel:-:version:' # optional, change this to force refresh cache
@@ -58,8 +58,6 @@ jobs:
     - run: flutter analyze .
     - run: flutter gen-l10n
     - run: flutter build apk --build-name ${{ steps.semvers.outputs.patch }} --dart-define=BVS="Patch ${{ steps.semvers.outputs.patch }} GitHub"
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
     - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semvers.outputs.v_patch }}.apk"
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
