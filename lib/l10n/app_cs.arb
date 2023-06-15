@@ -35,7 +35,7 @@
   "@homeNoLunchToday": {
     "description": "Displayed when the user hasn't ordered a lunch for today"
   },
-  "homeLunchToday": "Dneska máš oběd {lunch}",
+  "homeLunchToday": "Dneska máš oběd číslo {lunch}",
   "@homeLunchToday": {
     "description": "Shows the user the lunch that is ordered",
     "placeholders": {
@@ -60,6 +60,8 @@
   },
   "homeSetupICanteen": "Nastavit iCanteen",
   "homeNoClasses": "Dneska nemáš skolu! :D",
+  "homeUpdateTitle": "Nová verze dostupná",
+  "homeUpdateDescription": "Prosím navštivte https://github.com/DislikesSchool/EduPage2/releases pro nejnovější verzi",
   "homeworkTitle": "Domácí úkoly",
   "@homeworkTitle": {
     "description": "Title of homework page"
