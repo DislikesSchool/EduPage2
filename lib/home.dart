@@ -98,35 +98,42 @@ LessonStatus getLessonStatus(List<dynamic> lessons, TimeOfDay currentTime) {
 
   // Calculate the end time of the current lesson or the start time of the next lesson
   DateTime nextLessonTime;
-  if (hasLesson) {
-    final currentLesson = lessons.firstWhere((lesson) {
-      final startTime = TimeOfDay.fromDateTime(
-          DateTimeExtension.parseTime(lesson['period']['startTime']));
-      final endTime = TimeOfDay.fromDateTime(
-          DateTimeExtension.parseTime(lesson['period']['endTime']));
-      return startTime < endTime &&
-          startTime <= currentTime &&
-          endTime > currentTime;
-    });
-    nextLessonTime =
-        DateTimeExtension.parseTime(currentLesson['period']['endTime']);
-  } else if (hasLessonsToday) {
-    final nextLesson = lessons.firstWhere((lesson) {
-      final startTime = TimeOfDay.fromDateTime(
-          DateTimeExtension.parseTime(lesson['period']['startTime']));
-      return startTime > currentTime;
-    });
-    nextLessonTime =
-        DateTimeExtension.parseTime(nextLesson['period']['startTime']);
-  } else {
-    nextLessonTime = DateTime.now();
-  }
+  try {
+    if (hasLesson) {
+      final currentLesson = lessons.firstWhere((lesson) {
+        final startTime = TimeOfDay.fromDateTime(
+            DateTimeExtension.parseTime(lesson['period']['startTime']));
+        final endTime = TimeOfDay.fromDateTime(
+            DateTimeExtension.parseTime(lesson['period']['endTime']));
+        return startTime < endTime &&
+            startTime <= currentTime &&
+            endTime > currentTime;
+      });
+      nextLessonTime =
+          DateTimeExtension.parseTime(currentLesson['period']['endTime']);
+    } else if (hasLessonsToday) {
+      final nextLesson = lessons.firstWhere((lesson) {
+        final startTime = TimeOfDay.fromDateTime(
+            DateTimeExtension.parseTime(lesson['period']['startTime']));
+        return startTime > currentTime;
+      });
+      nextLessonTime =
+          DateTimeExtension.parseTime(nextLesson['period']['startTime']);
+    } else {
+      nextLessonTime = DateTime.now();
+    }
 
-  return LessonStatus(
-    hasLessonsToday: hasLessonsToday,
-    hasLesson: hasLesson,
-    nextLessonTime: nextLessonTime,
-  );
+    return LessonStatus(
+      hasLessonsToday: hasLessonsToday,
+      hasLesson: hasLesson,
+      nextLessonTime: nextLessonTime,
+    );
+  } catch (e) {
+    return LessonStatus(
+        hasLessonsToday: false,
+        hasLesson: false,
+        nextLessonTime: DateTime.now());
+  }
 }
 
 class HomePageState extends State<HomePage> {
