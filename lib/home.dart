@@ -133,7 +133,6 @@ class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   late SharedPreferences sharedPreferences;
   String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
-  String token = "abcd";
   late Response response;
   Dio dio = Dio();
 
@@ -267,26 +266,28 @@ class HomePageState extends State<HomePage> {
     String? l = sharedPreferences.getString("lunches");
     if (l != null) {
       var lunches = jsonDecode(l) as List<dynamic>;
-      var lunchToday = lunches[0] as Map<String, dynamic>;
-      lunch = 0;
-      var todayLunches = lunchToday["lunches"];
-      for (int i = 0; i < todayLunches.length; i++) {
-        if (todayLunches[i]["ordered"]) lunch = i + 1;
-      }
-      for (Map<String, dynamic> li in lunches) {
-        bool canOrder = false;
-        bool hasOrdered = false;
-        for (Map<String, dynamic> l in li["lunches"]) {
-          if (l["can_order"]) {
-            canOrder = true;
-          }
-          if (l["ordered"]) {
-            hasOrdered = true;
-          }
+      if (lunches.isNotEmpty) {
+        var lunchToday = lunches[0] as Map<String, dynamic>;
+        lunch = 0;
+        var todayLunches = lunchToday["lunches"];
+        for (int i = 0; i < todayLunches.length; i++) {
+          if (todayLunches[i]["ordered"]) lunch = i + 1;
         }
-        if (canOrder && !hasOrdered) {
-          orderLunchesFor = DateTime.parse(li["day"]);
-          break;
+        for (Map<String, dynamic> li in lunches) {
+          bool canOrder = false;
+          bool hasOrdered = false;
+          for (Map<String, dynamic> l in li["lunches"]) {
+            if (l["can_order"]) {
+              canOrder = true;
+            }
+            if (l["ordered"]) {
+              hasOrdered = true;
+            }
+          }
+          if (canOrder && !hasOrdered) {
+            orderLunchesFor = DateTime.parse(li["day"]);
+            break;
+          }
         }
       }
     }
