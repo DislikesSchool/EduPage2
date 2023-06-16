@@ -75,7 +75,7 @@ class ICanteenPageState extends State<ICanteenPage> {
       );
     });
 
-    if (response.statusCode == 500) {
+    if (response.statusCode != 200) {
       lunches.add(
         const Card(
           child: Text("Sorry, but there was an issue accessing iCanteen"),
@@ -83,7 +83,7 @@ class ICanteenPageState extends State<ICanteenPage> {
       );
     }
 
-    if (response.statusCode != 500) {
+    if (response.statusCode == 200 && response.data.length > 0) {
       sharedPreferences.setString("lunches", jsonEncode(response.data));
       for (Map<String, dynamic> lunch in response.data) {
         lunches.add(
