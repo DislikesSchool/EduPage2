@@ -149,6 +149,7 @@ class HomePageState extends State<HomePage> {
   dynamic apidata; //for decoded JSON data
   bool refresh = false;
   bool updateAvailable = false;
+  bool quickstart = false;
 
   late Map<String, dynamic> apidataTT;
   List<dynamic> apidataMsg = [];
@@ -184,6 +185,7 @@ class HomePageState extends State<HomePage> {
       loading = true;
     });
     sharedPreferences = await SharedPreferences.getInstance();
+    quickstart = sharedPreferences.getBool('quickstart') ?? false;
     var msgs = await widget.sessionManager.get('messages');
     if (msgs != Null && msgs != null) {
       setState(() {
@@ -575,28 +577,54 @@ class HomePageState extends State<HomePage> {
             InkWell(
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
+              child: ListTile(
+                leading: const Icon(Icons.lunch_dining_rounded),
+                title: Text(local!.homeSetupICanteen),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ICanteenSetupScreen(
+                        sessionManager: widget.sessionManager,
+                        loadedCallback: () {
+                          widget.reLogin();
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
               child: Badge(
-                label: const Text("Beta"),
+                label: const Text("Preview"),
                 alignment: AlignmentDirectional.topEnd,
                 child: ListTile(
-                  leading: const Icon(Icons.lunch_dining_rounded),
-                  title: Text(local!.homeSetupICanteen),
+                  leading: const Icon(Icons.bolt_rounded),
+                  title: const Text("Quick-Start"),
+                  trailing: Transform.scale(
+                    scale: 0.75,
+                    child: Switch(
+                      value: quickstart,
+                      onChanged: (bool value) {
+                        sharedPreferences.setBool('quickstart', value);
+                        setState(() {
+                          quickstart = value;
+                        });
+                      },
+                    ),
+                  ),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ICanteenSetupScreen(
-                          sessionManager: widget.sessionManager,
-                          loadedCallback: () {
-                            widget.reLogin();
-                          },
-                        ),
-                      ),
-                    );
+                    setState(() {
+                      quickstart = !quickstart;
+                    });
                   },
                 ),
               ),
             ),
+            const Divider(),
             InkWell(
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
