@@ -17,8 +17,8 @@
 
 | Version | Supported          | New features in version |
 | ------- | ------------------ | ----------------------- |
-| β13     | :white_check_mark: | 
-| β12     | :warning:          | 
+| β13     | :white_check_mark: |
+| β12     | :warning:          |
 | β11     | :warning:          | iCanteen setup          |
 | < β11   | :x:                |                         |
 
