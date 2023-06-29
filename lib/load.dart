@@ -37,6 +37,8 @@ class LoadingScreenState extends State<LoadingScreen> {
 
   late AppLocalizations? local;
 
+  late bool quickstart;
+
   @override
   void initState() {
     super.initState();
@@ -51,6 +53,7 @@ class LoadingScreenState extends State<LoadingScreen> {
   Future<void> init() async {
     startedInit = true;
     sharedPreferences = await SharedPreferences.getInstance();
+    quickstart = sharedPreferences.getBool('quickstart') ?? false;
     progress = 0.1;
     loaderText = local!.loadCredentials;
     dio.interceptors
@@ -74,7 +77,7 @@ class LoadingScreenState extends State<LoadingScreen> {
         "$baseUrl/login",
         options: buildCacheOptions(
           const Duration(days: 5),
-          forceRefresh: true,
+          forceRefresh: !quickstart,
           options: Options(
             headers: {
               "Authorization": "Bearer $token",
@@ -122,7 +125,7 @@ class LoadingScreenState extends State<LoadingScreen> {
         },
         options: buildCacheOptions(
           const Duration(days: 5),
-          forceRefresh: true,
+          forceRefresh: !quickstart,
         ),
       )
           .catchError((obj) {
@@ -159,7 +162,7 @@ class LoadingScreenState extends State<LoadingScreen> {
             "$baseUrl/login",
             options: buildCacheOptions(
               const Duration(days: 5),
-              forceRefresh: true,
+              forceRefresh: !quickstart,
               options: Options(
                 headers: {
                   "Authorization": "Bearer ${response.data["token"]}",
@@ -223,7 +226,7 @@ class LoadingScreenState extends State<LoadingScreen> {
       "$baseUrl/timetable/${getWeekDay().toString()}",
       options: buildCacheOptions(
         const Duration(days: 5),
-        forceRefresh: true,
+        forceRefresh: !quickstart,
         options: Options(
           headers: {
             "Authorization": "Bearer $token",
@@ -250,7 +253,7 @@ class LoadingScreenState extends State<LoadingScreen> {
       "$baseUrl/messages",
       options: buildCacheOptions(
         const Duration(days: 5),
-        forceRefresh: true,
+        forceRefresh: !quickstart,
         options: Options(
           headers: {
             "Authorization": "Bearer $token",
