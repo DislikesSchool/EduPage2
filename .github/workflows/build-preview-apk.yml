@@ -76,16 +76,16 @@ jobs:
     - run: flutter analyze .
     - run: flutter gen-l10n
     - run: flutter build apk --build-name ${{ steps.semver.outputs.version }} --dart-define=BVS="Preview ${{ steps.semver.outputs.version }} GitHub"
-    - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semver.outputs.version_tag }}.apk"
-#    - uses: "marvinpinto/action-automatic-releases@latest"
-#      with:
-#        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-#        automatic_release_tag: "${{ steps.semvers.outputs.v_patch }}"
-#        prerelease: false
-#        title: "EduPage2 Beta ${{ steps.semvers.outputs.v_patch }}"
-#        files: |
-#          EduPage2-${{ steps.semvers.outputs.v_patch }}.apk
+    - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-v${{ steps.semver.outputs.version }}.apk"
+    - uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "v${{ steps.semver.outputs.version }}"
+        prerelease: false
+        title: "EduPage2 Preview v${{ steps.semver.outputs.version }}"
+        files: |
+          "EduPage2-v${{ steps.semver.outputs.version }}.apk"
     - uses: actions/upload-artifact@v1
       with:
         name: release-apk
-        path: "EduPage2-${{ steps.semver.outputs.version_tag }}.apk"
+        path: "EduPage2-v${{ steps.semver.outputs.version }}.apk"

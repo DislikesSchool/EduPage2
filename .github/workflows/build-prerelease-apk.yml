@@ -67,7 +67,3 @@ jobs:
         title: "EduPage2 Beta ${{ steps.semvers.outputs.v_patch }}"
         files: |
           EduPage2-${{ steps.semvers.outputs.v_patch }}.apk
-    - uses: actions/upload-artifact@v1
-      with:
-        name: release-apk
-        path: "EduPage2-${{ steps.semvers.outputs.v_patch }}.apk"

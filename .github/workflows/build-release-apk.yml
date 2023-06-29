@@ -67,7 +67,3 @@ jobs:
         title: "EduPage2 ${{ steps.semvers.outputs.v_minor }}"
         files: |
           EduPage2-${{ steps.semvers.outputs.v_minor }}.apk
-    - uses: actions/upload-artifact@v1
-      with:
-        name: release-apk
-        path: "EduPage2-${{ steps.semvers.outputs.v_minor }}.apk"
