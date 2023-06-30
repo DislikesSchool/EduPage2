@@ -74,4 +74,4 @@ jobs:
         prerelease: true
         title: "EduPage2 Preview v${{ steps.semver.outputs.version }}"
         files: |
-          "EduPage2-v${{ steps.semver.outputs.version }}.apk"
+          EduPage2-v${{ steps.semver.outputs.version }}.apk
