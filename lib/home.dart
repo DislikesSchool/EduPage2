@@ -617,6 +617,7 @@ class HomePageState extends State<HomePage> {
                     ),
                   ),
                   onTap: () {
+                    sharedPreferences.setBool('quickstart', !quickstart);
                     setState(() {
                       quickstart = !quickstart;
                     });
