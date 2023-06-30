@@ -16,7 +16,7 @@ on:
       - build-release
 jobs:
   build:
-    if: (github.event_name == 'push' && contains(toJSON(github.event.head_commit.message), 'Merge pull request ') == false)
+    if: contains(toJSON(github.event.head_commit.message), 'Merge pull request ') == false
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
