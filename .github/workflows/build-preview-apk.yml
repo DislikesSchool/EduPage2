@@ -16,6 +16,7 @@ on:
       - build-release
 jobs:
   build:
+    if: (github.event_name == 'push' && contains(toJSON(github.event.head_commit.message), 'Merge pull request ') == false)
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -65,13 +66,13 @@ jobs:
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n
-    - run: flutter build apk --build-name ${{ steps.semver.outputs.version }} --dart-define=BVS="Preview ${{ steps.semver.outputs.version }} GitHub"
+    - run: flutter build apk --build-name ${{ steps.semver.outputs.version }} --dart-define=BVS="Preview ${{ steps.semver.outputs.version }} ${{ github.ref_name }} GitHub"
     - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-v${{ steps.semver.outputs.version }}.apk"
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "v${{ steps.semver.outputs.version }}"
         prerelease: true
-        title: "EduPage2 Preview v${{ steps.semver.outputs.version }}"
+        title: "EduPage2 Preview v${{ steps.semver.outputs.version }} ${{ github.ref_name }}"
         files: |
           EduPage2-v${{ steps.semver.outputs.version }}.apk
