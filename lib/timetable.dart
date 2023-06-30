@@ -101,6 +101,7 @@ class TimeTablePageState extends State<TimeTablePage> {
         "$baseUrl/timetable/${getWeekDay().toString()}",
         options: buildCacheOptions(
           const Duration(days: 5),
+          maxStale: const Duration(days: 14),
           forceRefresh: true,
           options: Options(
             headers: {
@@ -145,8 +146,8 @@ class TimeTablePageState extends State<TimeTablePage> {
     Response response = await dio.get(
       "$baseUrl/timetable/${DateTime(date.year, date.month, date.day).toString()}",
       options: buildCacheOptions(
-        Duration.zero,
-        maxStale: const Duration(days: 7),
+        const Duration(days: 4),
+        maxStale: const Duration(days: 14),
         options: Options(
           headers: {
             "Authorization": "Bearer $token",

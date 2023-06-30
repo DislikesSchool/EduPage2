@@ -77,6 +77,7 @@ class LoadingScreenState extends State<LoadingScreen> {
         "$baseUrl/login",
         options: buildCacheOptions(
           const Duration(days: 5),
+          maxStale: const Duration(days: 14),
           forceRefresh: !quickstart,
           options: Options(
             headers: {
@@ -162,6 +163,7 @@ class LoadingScreenState extends State<LoadingScreen> {
             "$baseUrl/login",
             options: buildCacheOptions(
               const Duration(days: 5),
+              maxStale: const Duration(days: 14),
               forceRefresh: !quickstart,
               options: Options(
                 headers: {
@@ -226,6 +228,7 @@ class LoadingScreenState extends State<LoadingScreen> {
       "$baseUrl/timetable/${getWeekDay().toString()}",
       options: buildCacheOptions(
         const Duration(days: 5),
+        maxStale: const Duration(days: 14),
         forceRefresh: !quickstart,
         options: Options(
           headers: {
@@ -253,6 +256,7 @@ class LoadingScreenState extends State<LoadingScreen> {
       "$baseUrl/messages",
       options: buildCacheOptions(
         const Duration(days: 5),
+        maxStale: const Duration(days: 14),
         forceRefresh: !quickstart,
         options: Options(
           headers: {
