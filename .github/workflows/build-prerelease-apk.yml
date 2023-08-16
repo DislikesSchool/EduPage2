@@ -56,35 +56,18 @@ jobs:
       uses: "WyriHaximus/github-action-next-semvers@v1"
       with:
         version: ${{ steps.previoustag.outputs.tag }}
-    - uses: paulhatch/semantic-version@v5.0.2
-      id: semver
-      with:
-        # The prefix to use to identify tags
-        tag_prefix: ""
-        # A string which, if present in a git commit, indicates that a change represents a
-        # major (breaking) change, supports regular expressions wrapped with '/'
-        major_pattern: "(MAJOR)"
-        # A string which indicates the flags used by the `major_pattern` regular expression. Supported flags: idgs
-        major_regexp_flags: ""
-        # Same as above except indicating a minor change, supports regular expressions wrapped with '/'
-        minor_pattern: "(MINOR)"
-        # A string which indicates the flags used by the `minor_pattern` regular expression. Supported flags: idgs
-        minor_regexp_flags: ""
-        # A string to determine the format of the version output
-        version_format: "${major}.${minor}.${patch}+${increment}"
-        bump_each_commit: false
     - name: Update pubspec.yaml
       uses: fjogeleit/yaml-update-action@main
       with:
         valueFile: 'pubspec.yaml'
         propertyPath: 'version'
-        value: "${{ steps.semver.outputs.version }}"
+        value: "${{ steps.semvers.outputs.patch }}"
         commitChange: false
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n
     - name: 🚀 Shorebird Patch
-      run: shorebird release android --force --artifact apk '--' --dart-define=BVS="Prerelease v${{ steps.semver.outputs.version }} ShoreBird"
+      run: shorebird release android --force --artifact apk '--' --dart-define=BVS="Prerelease ${{ steps.semvers.outputs.v_patch }} ShoreBird"
       env:
         SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
     - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semvers.outputs.v_patch }}.apk"

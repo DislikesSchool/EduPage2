@@ -56,11 +56,18 @@ jobs:
       uses: "WyriHaximus/github-action-next-semvers@v1"
       with:
         version: ${{ steps.previoustag.outputs.tag }}
+    - name: Update pubspec.yaml
+      uses: fjogeleit/yaml-update-action@main
+      with:
+        valueFile: 'pubspec.yaml'
+        propertyPath: 'version'
+        value: "${{ steps.semvers.outputs.patch }}"
+        commitChange: false
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n
     - name: 🚀 Shorebird Patch
-      run: shorebird release android --force --artifact apk '--' --dart-define=BVS="Release v${{ steps.semver.outputs.version }} ShoreBird"
+      run: shorebird release android --force --artifact apk '--' --dart-define=BVS="Release ${{ steps.semvers.outputs.v_patch }} ShoreBird"
       env:
         SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
     - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semvers.outputs.v_minor }}.apk"
