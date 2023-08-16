@@ -91,6 +91,48 @@ class TimeTablePageState extends State<TimeTablePage> {
     loading = false;
     refresh = false;
     setState(() {}); //refresh UI
+
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    if (sp.getBool('quickstart') ?? false) {
+      String token = sp.getString("token")!;
+      String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
+      Dio dio = Dio();
+      Response response = await dio.get(
+        "$baseUrl/timetable/${getWeekDay().toString()}",
+        options: buildCacheOptions(
+          const Duration(days: 5),
+          forceRefresh: true,
+          options: Options(
+            headers: {
+              "Authorization": "Bearer $token",
+            },
+          ),
+        ),
+      );
+      widget.sessionManager.set("timetable", jsonEncode(response.data));
+
+      List<TimeTableClass> ttClasses = <TimeTableClass>[];
+      List<dynamic> lessons = jsonDecode(response.data)["lessons"];
+      for (Map<String, dynamic> ttLesson in lessons) {
+        ttClasses.add(
+          TimeTableClass(
+            ttLesson["period"]["name"],
+            ttLesson["subject"]["short"],
+            ttLesson["teachers"][0]["short"],
+            ttLesson["period"]["startTime"],
+            ttLesson["period"]["endTime"],
+            ttLesson["classrooms"][0]["short"],
+            0,
+            ttLesson,
+          ),
+        );
+      }
+      tt = TimeTableData(DateTime.parse(apidataTT["date"]), ttClasses);
+      timetables.clear();
+      timetables.add(tt);
+
+      setState(() {});
+    }
   }
 
   Future<TimeTableData> loadTt(DateTime date) async {
@@ -264,7 +306,7 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
     }
   }
   for (TimeTableClass ttclass in tt.classes) {
-    Row extrasRow = Row(
+    const Row extrasRow = Row(
       // ignore: prefer_const_literals_to_create_immutables
       children: [],
     );

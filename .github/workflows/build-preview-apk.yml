@@ -1,5 +1,5 @@
-name: build-prerelease-android
-run-name: Building a prerelease version apk file
+name: build-preview-android
+run-name: Building a preview version apk file
 permissions:
   contents: write
   packages: write
@@ -12,9 +12,12 @@ permissions:
 on:
   push:
     branches:
-      - build-prerelease
+      - 'build-**'
+      - '!build-prerelease'
+      - '!build-release'
 jobs:
   build:
+    if: (github.event_name == 'push' && contains(toJSON(github.event.head_commit.message), 'Merge pull request ') == false)
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -31,8 +34,6 @@ jobs:
         cache: true
         cache-key: 'flutter-:os:-:channel:-:version:' # optional, change this to force refresh cache
         architecture: x64
-    - name: 🐦 Setup Shorebird
-      uses: shorebirdtech/setup-shorebird@v0
     - name: Create the Keystore
       env:
         KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
@@ -46,21 +47,11 @@ jobs:
         KEY_PASSWORD: ${{ secrets.KEY_PASS }}
       run: |
         echo -e "storePassword=$KEYSTORE_PASSWORD\nkeyPassword=$KEY_PASSWORD\nkeyAlias=$KEY_ALIAS\nstoreFile=$RUNNER_TEMP/keystore.jks" > android/key.properties
-    - name: 'Get Previous tag'
-      id: previoustag
-      uses: "WyriHaximus/github-action-get-previous-tag@v1"
-      with:
-        fallback: 1.0.0
-    - name: 'Get next minor version'
-      id: semvers
-      uses: "WyriHaximus/github-action-next-semvers@v1"
-      with:
-        version: ${{ steps.previoustag.outputs.tag }}
     - uses: paulhatch/semantic-version@v5.0.2
       id: semver
       with:
         # The prefix to use to identify tags
-        tag_prefix: ""
+        tag_prefix: "v"
         # A string which, if present in a git commit, indicates that a change represents a
         # major (breaking) change, supports regular expressions wrapped with '/'
         major_pattern: "(MAJOR)"
@@ -73,26 +64,16 @@ jobs:
         # A string to determine the format of the version output
         version_format: "${major}.${minor}.${patch}+${increment}"
         bump_each_commit: false
-    - name: Update pubspec.yaml
-      uses: fjogeleit/yaml-update-action@main
-      with:
-        valueFile: 'pubspec.yaml'
-        propertyPath: 'version'
-        value: "${{ steps.semver.outputs.version }}"
-        commitChange: false
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n
-    - name: 🚀 Shorebird Patch
-      run: shorebird release android --force --artifact apk '--' --dart-define=BVS="Prerelease v${{ steps.semver.outputs.version }} ShoreBird"
-      env:
-        SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
-    - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semvers.outputs.v_patch }}.apk"
+    - run: flutter build apk --build-name ${{ steps.semver.outputs.version }} --dart-define=BVS="Preview ${{ steps.semver.outputs.version }} ${{ github.ref_name }} GitHub"
+    - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-v${{ steps.semver.outputs.version }}.apk"
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ steps.semvers.outputs.v_patch }}"
-        prerelease: false
-        title: "EduPage2 Beta ${{ steps.semvers.outputs.v_patch }}"
+        automatic_release_tag: "v${{ steps.semver.outputs.version }}"
+        prerelease: true
+        title: "EduPage2 Preview v${{ steps.semver.outputs.version }} ${{ github.ref_name }}"
         files: |
-          EduPage2-${{ steps.semvers.outputs.v_patch }}.apk
+          EduPage2-v${{ steps.semver.outputs.version }}.apk

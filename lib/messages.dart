@@ -1,7 +1,12 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:eduapge2/message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MessagesPage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -54,6 +59,28 @@ class TimeTablePageState extends State<MessagesPage> {
 
     loading = false;
     setState(() {}); //refresh UI
+
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    if (sp.getBool('quickstart') ?? false) {
+      String token = sp.getString("token")!;
+      String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
+      Dio dio = Dio();
+      Response response = await dio.get(
+        "$baseUrl/messages",
+        options: buildCacheOptions(
+          const Duration(days: 5),
+          forceRefresh: true,
+          options: Options(
+            headers: {
+              "Authorization": "Bearer $token",
+            },
+          ),
+        ),
+      );
+      widget.sessionManager.set("messages", jsonEncode(response.data));
+      messages = getMessages(response.data);
+      setState(() {});
+    }
   }
 
   @override
