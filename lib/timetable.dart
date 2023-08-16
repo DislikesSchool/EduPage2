@@ -306,7 +306,7 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
     }
   }
   for (TimeTableClass ttclass in tt.classes) {
-    Row extrasRow = Row(
+    const Row extrasRow = Row(
       // ignore: prefer_const_literals_to_create_immutables
       children: [],
     );

@@ -1,5 +1,5 @@
-name: build-prerelease-android
-run-name: Building a prerelease version apk file
+name: build-patch-android
+run-name: Builds a patch and uploads to shorebird
 permissions:
   contents: write
   packages: write
@@ -12,7 +12,7 @@ permissions:
 on:
   push:
     branches:
-      - build-prerelease
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -84,15 +84,6 @@ jobs:
     - run: flutter analyze .
     - run: flutter gen-l10n
     - name: 🚀 Shorebird Patch
-      run: shorebird release android --force --artifact apk '--' --dart-define=BVS="Prerelease v${{ steps.semver.outputs.version }} ShoreBird"
+      run: shorebird patch android --release-version ${{ steps.semvers.outputs.patch }} --force '--' --dart-define=BVS="Patch v${{ steps.semver.outputs.version }} ShoreBird"
       env:
         SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
-    - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semvers.outputs.v_patch }}.apk"
-    - uses: "marvinpinto/action-automatic-releases@latest"
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ steps.semvers.outputs.v_patch }}"
-        prerelease: false
-        title: "EduPage2 Beta ${{ steps.semvers.outputs.v_patch }}"
-        files: |
-          EduPage2-${{ steps.semvers.outputs.v_patch }}.apk
