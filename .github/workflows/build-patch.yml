@@ -1,5 +1,5 @@
-name: build-release-android
-run-name: Building a release version apk file
+name: build-patch-android
+run-name: Builds a patch and uploads to shorebird
 permissions:
   contents: write
   packages: write
@@ -12,10 +12,28 @@ permissions:
 on:
   push:
     branches:
-      - build-release
+      - master
 jobs:
+  check_changes:
+    outputs:
+      run_build: ${{ steps.verify-changed-files.outputs.files_changed }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Verify Changed files
+        uses: tj-actions/verify-changed-files@v16
+        id: verify-changed-files
+        with:
+          files: |
+              pubspec.yaml
+              pubspec.lock
+              l10n.yaml
+              lib
+              android
   build:
     runs-on: ubuntu-latest
+    needs: check_changes
+    if: needs.check_changes.outputs.run_build == 'true'
     steps:
     - uses: actions/checkout@v3
       with:
@@ -56,26 +74,34 @@ jobs:
       uses: "WyriHaximus/github-action-next-semvers@v1"
       with:
         version: ${{ steps.previoustag.outputs.tag }}
+    - uses: paulhatch/semantic-version@v5.0.2
+      id: semver
+      with:
+        # The prefix to use to identify tags
+        tag_prefix: "v"
+        # A string which, if present in a git commit, indicates that a change represents a
+        # major (breaking) change, supports regular expressions wrapped with '/'
+        major_pattern: "(MAJOR)"
+        # A string which indicates the flags used by the `major_pattern` regular expression. Supported flags: idgs
+        major_regexp_flags: ""
+        # Same as above except indicating a minor change, supports regular expressions wrapped with '/'
+        minor_pattern: "(MINOR)"
+        # A string which indicates the flags used by the `minor_pattern` regular expression. Supported flags: idgs
+        minor_regexp_flags: ""
+        # A string to determine the format of the version output
+        version_format: "${major}.${minor}.${patch}+${increment}"
+        bump_each_commit: false
     - name: Update pubspec.yaml
       uses: fjogeleit/yaml-update-action@main
       with:
         valueFile: 'pubspec.yaml'
         propertyPath: 'version'
-        value: "${{ steps.semvers.outputs.patch }}"
+        value: "${{ steps.semver.outputs.version }}"
         commitChange: false
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n
     - name: 🚀 Shorebird Patch
-      run: shorebird release android --force --artifact apk '--' --dart-define=BVS="Release ${{ steps.semvers.outputs.v_patch }} ShoreBird"
+      run: shorebird patch android --release-version ${{ steps.previoustag.outputs.tag }}+1 --force '--' --dart-define=BVS="Patch v${{ steps.semver.outputs.version }} ShoreBird"
       env:
         SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
-    - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semvers.outputs.v_minor }}.apk"
-    - uses: "marvinpinto/action-automatic-releases@latest"
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ steps.semvers.outputs.v_minor }}"
-        prerelease: false
-        title: "EduPage2 ${{ steps.semvers.outputs.v_minor }}"
-        files: |
-          EduPage2-${{ steps.semvers.outputs.v_minor }}.apk
