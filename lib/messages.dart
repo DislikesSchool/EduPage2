@@ -69,6 +69,7 @@ class TimeTablePageState extends State<MessagesPage> {
         "$baseUrl/messages",
         options: buildCacheOptions(
           const Duration(days: 5),
+          maxStale: const Duration(days: 14),
           forceRefresh: true,
           options: Options(
             headers: {

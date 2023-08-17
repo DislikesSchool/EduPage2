@@ -599,11 +599,11 @@ class HomePageState extends State<HomePage> {
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
               child: Badge(
-                label: const Text("Preview"),
+                label: Text(local.homePreview),
                 alignment: AlignmentDirectional.topEnd,
                 child: ListTile(
                   leading: const Icon(Icons.bolt_rounded),
-                  title: const Text("Quick-Start"),
+                  title: Text(local.homeQuickstart),
                   trailing: Transform.scale(
                     scale: 0.75,
                     child: Switch(
@@ -617,6 +617,7 @@ class HomePageState extends State<HomePage> {
                     ),
                   ),
                   onTap: () {
+                    sharedPreferences.setBool('quickstart', !quickstart);
                     setState(() {
                       quickstart = !quickstart;
                     });
