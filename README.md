@@ -1,7 +1,7 @@
 <br/>
 <p align="center">
   <a href="https://github.com/DislikesSchool/EduPage2">
-    <img src="https://raw.githubusercontent.com/DislikesSchool/EduPage2/master/android/app/src/main/res/mipmap-hdpi/ic_launcher.png" alt="Logo" width="80" height="80">
+    <img src="https://raw.githubusercontent.com/DislikesSchool/EduPage2/master/EduPage2.png" alt="Logo" width="80" height="80">
   </a>
   <h3 align="center">EduPage2</h3>
 
