@@ -264,6 +264,7 @@ packages:
       sha256: "6faa1d2cab7336c9b91b123eb2b70ac3f721a33f90924166e75ac8471b6c6087"
       url: "https://pub.dev"
     source: hosted
+    version: "0.1.4+5"
   firebase_performance_web:
     dependency: transitive
     description:
