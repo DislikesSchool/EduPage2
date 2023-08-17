@@ -15,6 +15,8 @@
   "homeNoClasses": "No school today :D",
   "homeUpdateTitle": "New version available",
   "homeUpdateDescription": "Please visit https://github.com/DislikesSchool/EduPage2/releases to download the latest version",
+  "homeQuickstart": "QuickStart",
+  "homePreview": "Preview",
   "homeworkTitle": "Homework",
   "messagesTitle": "Messages",
   "loginPleaseLogin": "Please login to EduPage2",

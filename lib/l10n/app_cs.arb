@@ -62,6 +62,8 @@
   "homeNoClasses": "Dneska nemáš skolu! :D",
   "homeUpdateTitle": "Nová verze dostupná",
   "homeUpdateDescription": "Prosím navštivte https://github.com/DislikesSchool/EduPage2/releases pro nejnovější verzi",
+  "homeQuickstart": "Rychlý start",
+  "homePreview": "Náhled",
   "homeworkTitle": "Domácí úkoly",
   "@homeworkTitle": {
     "description": "Title of homework page"
