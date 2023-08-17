@@ -60,7 +60,7 @@ jobs:
       id: semver
       with:
         # The prefix to use to identify tags
-        tag_prefix: ""
+        tag_prefix: "v"
         # A string which, if present in a git commit, indicates that a change represents a
         # major (breaking) change, supports regular expressions wrapped with '/'
         major_pattern: "(MAJOR)"
@@ -84,6 +84,6 @@ jobs:
     - run: flutter analyze .
     - run: flutter gen-l10n
     - name: 🚀 Shorebird Patch
-      run: shorebird patch android --release-version ${{ steps.semvers.outputs.patch }} --force '--' --dart-define=BVS="Patch v${{ steps.semver.outputs.version }} ShoreBird"
+      run: shorebird patch android --release-version ${{ steps.previoustag.outputs.tag }} --force '--' --dart-define=BVS="Patch v${{ steps.semver.outputs.version }} ShoreBird"
       env:
         SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
