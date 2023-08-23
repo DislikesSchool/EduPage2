@@ -15,7 +15,8 @@
   </p>
 </p>
 
-[![build-release-android](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml/badge.svg)](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/dislikesschool/edupage2) ![Downloads](https://img.shields.io/github/downloads/DislikesSchool/EduPage2/total) ![Contributors](https://img.shields.io/github/contributors/DislikesSchool/EduPage2?color=dark-green) ![Issues](https://img.shields.io/github/issues/DislikesSchool/EduPage2) ![License](https://img.shields.io/github/license/DislikesSchool/EduPage2) [![codecov](https://codecov.io/github/DislikesSchool/EduPage2/branch/master/graph/badge.svg?token=HKP9WFL0LN)](https://codecov.io/github/DislikesSchool/EduPage2)
+[![build-release-android](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml/badge.svg)](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/dislikesschool/edupage2) ![Downloads](https://img.shields.io/github/downloads/DislikesSchool/EduPage2/total) ![Contributors](https://img.shields.io/github/contributors/DislikesSchool/EduPage2?color=dark-green) ![Issues](https://img.shields.io/github/issues/DislikesSchool/EduPage2) ![License](https://img.shields.io/github/license/DislikesSchool/EduPage2) [![codecov](https://codecov.io/github/DislikesSchool/EduPage2/branch/master/graph/badge.svg?token=HKP9WFL0LN)](https://codecov.io/github/DislikesSchool/EduPage2) [![Discord](https://img.shields.io/discord/1143488418840584224)](https://discord.gg/xy5nqWa2kQ)
+
 
 ## Table Of Contents
 
@@ -31,6 +32,7 @@
   - [Creating A Pull Request](#creating-a-pull-request)
 - [License](#license)
 - [Authors](#authors)
+- [Join Our Discord!](#join-our-discord)
 - [Acknowledgements](#acknowledgements)
 
 ## About The Project
@@ -105,6 +107,9 @@ Distributed under the MIT License. See [LICENSE](https://github.com/DislikesScho
 
 - **vyPal** - _A highschool student, who is bored_ - [vyPal](https://github.com/vyPal) - _Author of EduPage2_
 - **czmatejt9** - _Friend_ - [czmatejt9](https://github.com/czmatejt9) - _Helped fix bugs_
+
+## Join Our Discord!
+<iframe src="https://discord.com/widget?id=1143488418840584224&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
 
 ## Acknowledgements
 
