@@ -22,6 +22,7 @@
 
 - [Table Of Contents](#table-of-contents)
 - [About The Project](#about-the-project)
+- [Join Our Discord!](#join-our-discord)
 - [Built With](#built-with)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
@@ -32,7 +33,6 @@
   - [Creating A Pull Request](#creating-a-pull-request)
 - [License](#license)
 - [Authors](#authors)
-- [Join Our Discord!](#join-our-discord)
 - [Acknowledgements](#acknowledgements)
 
 ## About The Project
@@ -44,6 +44,9 @@ And that's why we made EduPage2. So far, EduPage2 lacks a pretty big amount of f
 EduPage2 uses local caching on your device, and a caching server with our own privte software, which periodically updates data from EduPage, strips it of all useless data (which EduPage includes for some reason), and finally sends out to your device when requested.
 
 **IMPORTANT** EduPage2 is a cutom client for EduPage. We do not have any connection to EduPage.
+
+## Join Our Discord!
+[![Discord](https://discordapp.com/api/guilds/1143488418840584224/widget.png?style=banner2)](https://discord.gg/xy5nqWa2kQ)
 
 ## Built With
 
@@ -107,9 +110,6 @@ Distributed under the MIT License. See [LICENSE](https://github.com/DislikesScho
 
 - **vyPal** - _A highschool student, who is bored_ - [vyPal](https://github.com/vyPal) - _Author of EduPage2_
 - **czmatejt9** - _Friend_ - [czmatejt9](https://github.com/czmatejt9) - _Helped fix bugs_
-
-## Join Our Discord!
-<iframe src="https://discord.com/widget?id=1143488418840584224&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
 
 ## Acknowledgements
 
