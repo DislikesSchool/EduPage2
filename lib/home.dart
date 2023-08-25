@@ -12,6 +12,7 @@ import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -303,7 +304,6 @@ class HomePageState extends State<HomePage> {
     List<dynamic> msgs =
         apidataMsg.where((msg) => msg["type"] == "sprava").toList();
     List<dynamic> msgsWOR = List.from(msgs);
-    msgsWOR.addAll(msgs);
     List<Map<String, int>> bump = [];
     for (Map<String, dynamic> msg in msgs) {
       if (msg["replyOf"] != null) {
@@ -439,40 +439,51 @@ class HomePageState extends State<HomePage> {
                   ),
                 ),
               if (updateAvailable)
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
-                  child: Stack(
-                    children: [
-                      Card(
-                        elevation: 5,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              top: 10, bottom: 10, left: 10, right: 10),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(local!.homeUpdateTitle,
-                                  style: const TextStyle(fontSize: 20)),
-                              Text(local.homeUpdateDescription,
-                                  style: const TextStyle(fontSize: 12)),
-                            ],
+                GestureDetector(
+                  onTap: () async {
+                    final url = Uri.parse(
+                        'https://github.com/DislikesSchool/EduPage2/releases/latest');
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url);
+                    } else {
+                      throw 'Could not launch $url';
+                    }
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+                    child: Stack(
+                      children: [
+                        Card(
+                          elevation: 5,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 10, bottom: 10, left: 10, right: 10),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(local!.homeUpdateTitle,
+                                    style: const TextStyle(fontSize: 20)),
+                                Text(local.homeUpdateDescription,
+                                    style: const TextStyle(fontSize: 12)),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            setState(() {
-                              updateAvailable = false;
-                            });
-                          },
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              setState(() {
+                                updateAvailable = false;
+                              });
+                            },
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               if (lunch != -1 && apidataTT["lessons"].length > 0)

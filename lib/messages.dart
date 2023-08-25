@@ -123,7 +123,6 @@ class TimeTablePageState extends State<MessagesPage> {
     List<dynamic> msgs =
         apidataMsg.where((msg) => msg["type"] == "sprava").toList();
     List<dynamic> msgsWOR = List.from(msgs);
-    msgsWOR.addAll(msgs);
     List<Map<String, int>> bump = [];
     for (Map<String, dynamic> msg in msgs) {
       if (msg["replyOf"] != null) {
