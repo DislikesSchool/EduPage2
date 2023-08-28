@@ -35,4 +35,4 @@
 
 Any security vulnerabilities can be reported on GiHub by going to [issues](https://github.com/DislikesSchool/EduPage2/issues) > New Issue > Report a security vulnerability
 
-Or via discord to vypal420
+Or on our [discord](https://discord.gg/3cxZtQ3fAd)
