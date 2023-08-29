@@ -23,6 +23,7 @@
   "loginUseExistingCredentials": "Use your existing EduPage credentials",
   "loginUsername": "Username",
   "loginPassword": "Password",
+  "loginServer": "Server (e.g., school.edupage.org)",
   "loginLogin": "Login",
   "today": "Today",
   "tomorrow": "Tomorrow",

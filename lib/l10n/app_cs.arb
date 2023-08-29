@@ -88,6 +88,7 @@
   "@loginPassword": {
     "description": "User's password"
   },
+  "loginServer": "Server (např. skola.edupage.org)",
   "loginLogin": "Přihlásit se",
   "@loginLogin": {
     "description": "Login button"
