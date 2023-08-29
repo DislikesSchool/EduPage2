@@ -6,6 +6,7 @@ import 'package:eduapge2/login.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
@@ -62,6 +63,35 @@ class LoadingScreenState extends State<LoadingScreen> {
     loadUser();
   }
 
+  Future<void> loadUser() async {
+    String? token = sharedPreferences.getString("token");
+    String? email = sharedPreferences.getString("email");
+    String? password = sharedPreferences.getString("password");
+    String? server = sharedPreferences.getString("server");
+
+    if (token != null) {
+      bool isExpired = JwtDecoder.isExpired(token);
+      if (isExpired) {
+        if (email != null && password != null) {
+        } else {
+          runningInit = false;
+          Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const LoginPage(err: "")))
+              .then((value) => init());
+        }
+      } else {}
+    } else if (email != null && password != null) {
+    } else {
+      runningInit = false;
+      Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const LoginPage(err: "")))
+          .then((value) => init());
+    }
+  }
+
+/*
   Future<void> loadUser() async {
     if (sharedPreferences.getBool("ice") == true) {
       sessionManager.set("iCanteenEnabled", true);
@@ -213,7 +243,7 @@ class LoadingScreenState extends State<LoadingScreen> {
           .then((value) => init());
     }
   }
-
+*/
   DateTime getWeekDay() {
     DateTime now = DateTime.now();
     if (now.weekday > 5) {
