@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -63,6 +64,19 @@ class LoadingScreenState extends State<LoadingScreen> {
     loadUser();
   }
 
+  Future<Object> login(String email, String password, String? server) async {
+    server ??= "";
+    Response resp;
+    try {
+      resp = await dio.post("$baseUrl/login",
+          data: {"username": email, "password": password, "server": server});
+    } catch (e) {
+      print(e);
+    }
+
+    return {};
+  }
+
   Future<void> loadUser() async {
     String? token = sharedPreferences.getString("token");
     String? email = sharedPreferences.getString("email");
@@ -73,6 +87,7 @@ class LoadingScreenState extends State<LoadingScreen> {
       bool isExpired = JwtDecoder.isExpired(token);
       if (isExpired) {
         if (email != null && password != null) {
+          login(email, password, server);
         } else {
           runningInit = false;
           Navigator.push(
@@ -83,6 +98,7 @@ class LoadingScreenState extends State<LoadingScreen> {
         }
       } else {}
     } else if (email != null && password != null) {
+      login(email, password, server);
     } else {
       runningInit = false;
       Navigator.push(context,
