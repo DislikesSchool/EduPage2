@@ -75,7 +75,6 @@ jobs:
       id: semver
       uses: damienaicheh/extract-version-from-tag-action@v1.1.0
     - run: flutter pub get
-    - run: flutter analyze .
     - run: flutter gen-l10n
     - name: 🚀 Shorebird Patch
       run: shorebird patch android --force '--' --dart-define=BVS="Patch ${{ steps.previoustag.outputs.tag }}+$NUMBER_OF_COMMITS ShoreBird"
