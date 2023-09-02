@@ -26,7 +26,6 @@ jobs:
         java-version: '11'
     - uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.10.6'
         channel: 'stable'
         cache: true
         cache-key: 'flutter-:os:-:channel:-:version:' # optional, change this to force refresh cache
@@ -62,11 +61,15 @@ jobs:
         valueFile: 'pubspec.yaml'
         propertyPath: 'version'
         value: "${{ steps.semvers.outputs.patch }}"
-        commitChange: false
+        commitChange: true
+        branch: 'build-release'
+        labels: 'bump'
+        message: 'Bump version to ${{ steps.semvers.outputs.patch }}'
+        description: 'Automatic version bump to ${{ steps.semvers.outputs.patch }} for release build'
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n
-    - name: 🚀 Shorebird Patch
+    - name: 🚀 Shorebird Release
       run: shorebird release android --force --artifact apk '--' --dart-define=BVS="Release ${{ steps.semvers.outputs.v_patch }} ShoreBird"
       env:
         SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}

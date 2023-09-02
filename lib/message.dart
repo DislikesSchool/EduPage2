@@ -62,6 +62,8 @@ class MessagePageState extends State<MessagePage> {
       ),
     );
 
+    HtmlUnescape unescape = HtmlUnescape();
+
     Map<String, dynamic> data = response.data;
     messages = Stack(
       children: [
@@ -89,7 +91,7 @@ class MessagePageState extends State<MessagePage> {
                             const Icon(Icons.arrow_right_rounded, size: 18),
                             Expanded(
                               child: Text(
-                                data["title"],
+                                unescape.convert(data["title"]),
                                 overflow: TextOverflow.fade,
                                 maxLines: 5,
                                 softWrap: true,
@@ -102,7 +104,7 @@ class MessagePageState extends State<MessagePage> {
                       const SizedBox(
                         height: 30,
                       ),
-                      Text(data["text"]),
+                      Text(unescape.convert(data["text"])),
                       for (Map<String, dynamic> att in data["attachments"]!)
                         if (att["name"]!.endsWith(".jpg") ||
                             att["name"]!.endsWith(".png"))
@@ -150,7 +152,7 @@ class MessagePageState extends State<MessagePage> {
                               Text(
                                   "${r["owner"]["firstname"]} ${r["owner"]["lastname"]}: "),
                               Text(
-                                HtmlUnescape().convert(r["text"]),
+                                unescape.convert(r["text"]),
                               ),
                             ],
                           ),

@@ -12,6 +12,8 @@ import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shorebird_code_push/shorebird_code_push_web.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -142,6 +144,7 @@ class HomePageState extends State<HomePage> {
   String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
   late Response response;
   Dio dio = Dio();
+  final ShorebirdCodePush shorebird = ShorebirdCodePush();
 
   bool error = false; //for error status
   bool loading = true; //for data featching status
@@ -149,6 +152,8 @@ class HomePageState extends State<HomePage> {
   dynamic apidata; //for decoded JSON data
   bool refresh = false;
   bool updateAvailable = false;
+  bool patchAvailable = false;
+  bool patchDownloaded = false;
   bool quickstart = false;
 
   late Map<String, dynamic> apidataTT;
@@ -162,6 +167,7 @@ class HomePageState extends State<HomePage> {
     super.initState();
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
+    downloadUpdate();
     fetchAndCompareBuildName();
     getData(); //fetching data
   }
@@ -178,6 +184,19 @@ class HomePageState extends State<HomePage> {
       now.add(Duration(days: 8 - now.weekday));
     }
     return DateTime(now.year, now.month, now.day);
+  }
+
+  downloadUpdate() async {
+    final isUpdateAvailable = await shorebird.isNewPatchAvailableForDownload();
+    if (isUpdateAvailable) {
+      setState(() {
+        patchAvailable = true;
+      });
+      await shorebird.downloadUpdateIfAvailable();
+      setState(() {
+        patchDownloaded = true;
+      });
+    }
   }
 
   getData() async {
@@ -303,7 +322,6 @@ class HomePageState extends State<HomePage> {
     List<dynamic> msgs =
         apidataMsg.where((msg) => msg["type"] == "sprava").toList();
     List<dynamic> msgsWOR = List.from(msgs);
-    msgsWOR.addAll(msgs);
     List<Map<String, int>> bump = [];
     for (Map<String, dynamic> msg in msgs) {
       if (msg["replyOf"] != null) {
@@ -439,6 +457,54 @@ class HomePageState extends State<HomePage> {
                   ),
                 ),
               if (updateAvailable)
+                GestureDetector(
+                  onTap: () async {
+                    final url = Uri.parse(
+                        'https://github.com/DislikesSchool/EduPage2/releases/latest');
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url);
+                    } else {
+                      throw 'Could not launch $url';
+                    }
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+                    child: Stack(
+                      children: [
+                        Card(
+                          elevation: 5,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 10, bottom: 10, left: 10, right: 10),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(local!.homeUpdateTitle,
+                                    style: const TextStyle(fontSize: 20)),
+                                Text(local.homeUpdateDescription,
+                                    style: const TextStyle(fontSize: 12)),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              setState(() {
+                                updateAvailable = false;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              if (patchAvailable)
                 Container(
                   width: MediaQuery.of(context).size.width,
                   margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
@@ -452,10 +518,11 @@ class HomePageState extends State<HomePage> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(local!.homeUpdateTitle,
+                              Text(
+                                  patchDownloaded
+                                      ? local!.homePatchDownloaded
+                                      : local!.homePatchAvailable,
                                   style: const TextStyle(fontSize: 20)),
-                              Text(local.homeUpdateDescription,
-                                  style: const TextStyle(fontSize: 12)),
                             ],
                           ),
                         ),

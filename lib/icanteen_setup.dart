@@ -31,49 +31,6 @@ class ICanteenSetupScreenState extends State<ICanteenSetupScreen> {
   String password = "";
   String server = "";
 
-/*
-  Future<void> init() async {
-    startedInit = true;
-    sharedPreferences = await SharedPreferences.getInstance();
-    progress = 0.1;
-    loaderText = local!.loadCredentials;
-    dio.interceptors
-        .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
-    setState(() {});
-    loadMessages();
-  }
-
-  Future<void> loadMessages() async {
-    progress = 0.9;
-    loaderText = local!.loadDownloadMessages;
-    setState(() {});
-    final metric = FirebasePerformance.instance
-        .newHttpMetric("$baseUrl/messages", HttpMethod.Get);
-
-    String token = sharedPreferences.getString("token")!;
-    metric.start();
-    Response response = await dio.get(
-      "$baseUrl/messages",
-      options: buildCacheOptions(
-        const Duration(days: 5),
-        forceRefresh: true,
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
-          },
-        ),
-      ),
-    );
-    metric.stop();
-    sessionManager.set("messages", jsonEncode(response.data));
-
-    progress = 1.0;
-    loaderText = local!.loadDone;
-    setState(() {});
-    widget.loadedCallback();
-  }
-*/
-
   Future<void> login() async {
     setState(() {
       hasLogin = true;
