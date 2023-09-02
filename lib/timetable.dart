@@ -307,11 +307,9 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
     }
   }
   for (TimeTableClass ttclass in tt.classes) {
-    Row extrasRow = const Row(
-      children: [],
-    );
+    List<Widget> extrasRow = <Widget>[];
     if (ttclass.data['curriculum'] != null) {
-      extrasRow.children.add(
+      extrasRow.add(
         Expanded(
           child: Text(
             ttclass.data['curriculum'],
@@ -324,7 +322,7 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
     }
     if (ttclass.data['homeworkNote'] != null &&
         ttclass.data['homeworkNote'] != "") {
-      extrasRow.children.add(
+      extrasRow.add(
         Expanded(
           child: Text(
             ttclass.data['homeworkNote'],
@@ -378,7 +376,9 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
                         )
                       ],
                     ),
-                    extrasRow,
+                    Row(
+                      children: extrasRow,
+                    ),
                   ],
                 )),
           ),
