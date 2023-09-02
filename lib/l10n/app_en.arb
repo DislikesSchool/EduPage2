@@ -17,6 +17,8 @@
   "homeUpdateDescription": "Please visit https://github.com/DislikesSchool/EduPage2/releases to download the latest version",
   "homeQuickstart": "QuickStart",
   "homePreview": "Preview",
+  "homePatchAvailable": "Installing new patch...",
+  "homePatchDownloaded": "Patch downloaded, please restart EduPage2",
   "homeworkTitle": "Homework",
   "messagesTitle": "Messages",
   "loginPleaseLogin": "Please login to EduPage2",

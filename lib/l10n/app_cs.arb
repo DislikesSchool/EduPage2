@@ -64,6 +64,8 @@
   "homeUpdateDescription": "Prosím navštivte https://github.com/DislikesSchool/EduPage2/releases pro nejnovější verzi",
   "homeQuickstart": "Rychlý start",
   "homePreview": "Náhled",
+  "homePatchAvailable": "Instaluje se nový patch...",
+  "homePatchDownloaded": "Patch byl stažen, restartujte aplikaci pro instalaci",
   "homeworkTitle": "Domácí úkoly",
   "@homeworkTitle": {
     "description": "Title of homework page"
