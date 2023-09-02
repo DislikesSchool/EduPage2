@@ -66,12 +66,6 @@ jobs:
         KEY_PASSWORD: ${{ secrets.KEY_PASS }}
       run: |
         echo -e "storePassword=$KEYSTORE_PASSWORD\nkeyPassword=$KEY_PASSWORD\nkeyAlias=$KEY_ALIAS\nstoreFile=$RUNNER_TEMP/keystore.jks" > android/key.properties
-    - name: Get tag
-      id: tag
-      uses: dawidd6/action-get-tag@v1
-      with:
-        # Optionally strip `v` prefix
-        strip_v: true
     - uses: paulhatch/semantic-version@v5.0.2
       id: semver
       with:
@@ -89,13 +83,6 @@ jobs:
         # A string to determine the format of the version output
         version_format: "${major}.${minor}.${patch}+${increment}"
         bump_each_commit: false
-    - name: Update pubspec.yaml
-      uses: fjogeleit/yaml-update-action@main
-      with:
-        valueFile: 'pubspec.yaml'
-        propertyPath: 'version'
-        value: "${{steps.tag.outputs.tag}}+1"
-        commitChange: false
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n

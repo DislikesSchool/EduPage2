@@ -62,11 +62,15 @@ jobs:
         valueFile: 'pubspec.yaml'
         propertyPath: 'version'
         value: "${{ steps.semvers.outputs.patch }}"
-        commitChange: false
+        commitChange: true
+        branch: 'build-prerelease'
+        labels: 'bump'
+        message: 'Bump version to ${{ steps.semvers.outputs.patch }}'
+        description: 'Automatic version bump to ${{ steps.semvers.outputs.patch }} for prerelease build'
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n
-    - name: 🚀 Shorebird Patch
+    - name: 🚀 Shorebird Release
       run: shorebird release android --force --artifact apk '--' --dart-define=BVS="Prerelease ${{ steps.semvers.outputs.v_patch }} ShoreBird"
       env:
         SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
