@@ -66,27 +66,18 @@ jobs:
         KEY_PASSWORD: ${{ secrets.KEY_PASS }}
       run: |
         echo -e "storePassword=$KEYSTORE_PASSWORD\nkeyPassword=$KEY_PASSWORD\nkeyAlias=$KEY_ALIAS\nstoreFile=$RUNNER_TEMP/keystore.jks" > android/key.properties
-    - uses: paulhatch/semantic-version@v5.0.2
-      id: semver
+    - name: 'Get Previous tag'
+      id: previoustag
+      uses: "WyriHaximus/github-action-get-previous-tag@v1"
       with:
-        # The prefix to use to identify tags
-        tag_prefix: "v"
-        # A string which, if present in a git commit, indicates that a change represents a
-        # major (breaking) change, supports regular expressions wrapped with '/'
-        major_pattern: "somethingiwillneverwriteinacommit"
-        # A string which indicates the flags used by the `major_pattern` regular expression. Supported flags: idgs
-        major_regexp_flags: ""
-        # Same as above except indicating a minor change, supports regular expressions wrapped with '/'
-        minor_pattern: "somethingiwillalsoneverwriteinacommit"
-        # A string which indicates the flags used by the `minor_pattern` regular expression. Supported flags: idgs
-        minor_regexp_flags: ""
-        # A string to determine the format of the version output
-        version_format: "${major}.${minor}.${patch}+${increment}"
-        bump_each_commit: false
+        fallback: 1.0.0
+    - name: Extract version from tag
+      id: semver
+      uses: damienaicheh/extract-version-from-tag-action@v1.1.0
     - run: flutter pub get
     - run: flutter analyze .
     - run: flutter gen-l10n
     - name: 🚀 Shorebird Patch
-      run: shorebird patch android --force '--' --dart-define=BVS="Patch v${{ steps.semver.outputs.version }} ShoreBird"
+      run: shorebird patch android --force '--' --dart-define=BVS="Patch ${{ steps.previoustag.outputs.tag }}+$NUMBER_OF_COMMITS ShoreBird"
       env:
         SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
