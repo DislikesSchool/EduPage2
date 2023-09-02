@@ -12,12 +12,12 @@
 #include <url_launcher_windows/url_launcher_windows.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
-  ConnectivityPlusWindowsPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("ConnectivityPlusWindowsPlugin"));
-  FirebaseCorePluginCApiRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FirebaseCorePluginCApi"));
-  SentryFlutterPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("SentryFlutterPlugin"));
-  UrlLauncherWindowsRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("UrlLauncherWindows"));
+    ConnectivityPlusWindowsPluginRegisterWithRegistrar(
+        registry->GetRegistrarForPlugin("ConnectivityPlusWindowsPlugin"));
+    FirebaseCorePluginCApiRegisterWithRegistrar(
+        registry->GetRegistrarForPlugin("FirebaseCorePluginCApi"));
+    SentryFlutterPluginRegisterWithRegistrar(
+        registry->GetRegistrarForPlugin("SentryFlutterPlugin"));
+    UrlLauncherWindowsRegisterWithRegistrar(
+        registry->GetRegistrarForPlugin("UrlLauncherWindows"));
 }
