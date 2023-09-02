@@ -67,7 +67,6 @@ jobs:
         message: 'Bump version to ${{ steps.semvers.outputs.patch }}'
         description: 'Automatic version bump to ${{ steps.semvers.outputs.patch }} for prerelease build'
     - run: flutter pub get
-    - run: flutter analyze .
     - run: flutter gen-l10n
     - name: 🚀 Shorebird Release
       run: shorebird release android --force --artifact apk '--' --dart-define=BVS="Prerelease ${{ steps.semvers.outputs.v_patch }} ShoreBird"

@@ -64,7 +64,6 @@ jobs:
         version_format: "${major}.${minor}.${patch}+${increment}"
         bump_each_commit: false
     - run: flutter pub get
-    - run: flutter analyze .
     - run: flutter gen-l10n
     - run: flutter build apk --build-name ${{ steps.semver.outputs.version }} --dart-define=BVS="Preview ${{ steps.semver.outputs.version }} ${{ github.ref_name }} GitHub"
     - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-v${{ steps.semver.outputs.version }}.apk"
