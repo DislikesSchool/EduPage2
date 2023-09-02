@@ -98,7 +98,7 @@ jobs:
       with:
         valueFile: 'pubspec.yaml'
         propertyPath: 'version'
-        value: "${{ steps.semver.outputs.version }}"
+        value: "${{ steps.previoustag.outputs.tag }}+1"
         commitChange: false
     - run: flutter pub get
     - run: flutter analyze .
