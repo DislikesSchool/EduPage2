@@ -155,7 +155,6 @@ class HomePageState extends State<HomePage> {
   bool refresh = false;
   bool updateAvailable = false;
   bool quickstart = false;
-  final _isShorebirdAvailable = _shorebirdCodePush.isShorebirdAvailable();
   bool _isCheckingForUpdate = false;
 
   late Map<String, dynamic> apidataTT;
@@ -578,13 +577,6 @@ class HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                  ),
-                ),
-              if (!_isShorebirdAvailable)
-                Text(
-                  'Shorebird Engine not available.',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.error,
                   ),
                 ),
               if (lunch != -1 && apidataTT["lessons"].length > 0)
