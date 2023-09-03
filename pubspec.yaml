@@ -27,6 +27,7 @@ dependencies:
   package_info: ^2.0.2
   url_launcher: ^6.1.12
   shorebird_code_push: ^1.1.0
+  restart_app: ^1.2.1
 dependency_overrides:
   flutter_pdfview: 1.2.9
 dev_dependencies:

@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:package_info/package_info.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shorebird_code_push/shorebird_code_push_web.dart';
@@ -138,13 +139,14 @@ LessonStatus getLessonStatus(List<dynamic> lessons, TimeOfDay currentTime) {
   }
 }
 
+final _shorebirdCodePush = ShorebirdCodePush();
+
 class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   late SharedPreferences sharedPreferences;
   String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
   late Response response;
   Dio dio = Dio();
-  final ShorebirdCodePush shorebird = ShorebirdCodePush();
 
   bool error = false; //for error status
   bool loading = true; //for data featching status
@@ -152,9 +154,9 @@ class HomePageState extends State<HomePage> {
   dynamic apidata; //for decoded JSON data
   bool refresh = false;
   bool updateAvailable = false;
-  bool patchAvailable = false;
-  bool patchDownloaded = false;
   bool quickstart = false;
+  final _isShorebirdAvailable = _shorebirdCodePush.isShorebirdAvailable();
+  bool _isCheckingForUpdate = false;
 
   late Map<String, dynamic> apidataTT;
   List<dynamic> apidataMsg = [];
@@ -167,9 +169,96 @@ class HomePageState extends State<HomePage> {
     super.initState();
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
-    downloadUpdate();
     fetchAndCompareBuildName();
     getData(); //fetching data
+    if (!_isCheckingForUpdate) _checkForUpdate(); // ik that it's not necessary
+  }
+
+  Future<void> _checkForUpdate() async {
+    setState(() {
+      _isCheckingForUpdate = true;
+    });
+
+    // Ask the Shorebird servers if there is a new patch available.
+    final isUpdateAvailable =
+        await _shorebirdCodePush.isNewPatchAvailableForDownload();
+
+    if (!mounted) return;
+
+    setState(() {
+      _isCheckingForUpdate = false;
+    });
+
+    if (isUpdateAvailable) {
+      _showUpdateAvailableBanner();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No update available'),
+        ),
+      );
+    }
+  }
+
+  void _showDownloadingBanner() {
+    ScaffoldMessenger.of(context).showMaterialBanner(
+      const MaterialBanner(
+        content: Text('Downloading...'),
+        actions: [
+          SizedBox(
+            height: 14,
+            width: 14,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  void _showUpdateAvailableBanner() {
+    ScaffoldMessenger.of(context).showMaterialBanner(
+      MaterialBanner(
+        content: const Text('Update available'),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+              await _downloadUpdate();
+
+              if (!mounted) return;
+              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+            },
+            child: const Text('Download'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRestartBanner() {
+    ScaffoldMessenger.of(context).showMaterialBanner(
+      const MaterialBanner(
+        content: Text('A new patch is ready!'),
+        actions: [
+          TextButton(
+            // Restart the app for the new patch to take effect.
+            onPressed: Restart.restartApp,
+            child: Text('Restart app'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _downloadUpdate() async {
+    _showDownloadingBanner();
+    await _shorebirdCodePush.downloadUpdateIfAvailable();
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+    _showRestartBanner();
   }
 
   @override
@@ -184,19 +273,6 @@ class HomePageState extends State<HomePage> {
       now.add(Duration(days: 8 - now.weekday));
     }
     return DateTime(now.year, now.month, now.day);
-  }
-
-  downloadUpdate() async {
-    final isUpdateAvailable = await shorebird.isNewPatchAvailableForDownload();
-    if (isUpdateAvailable) {
-      setState(() {
-        patchAvailable = true;
-      });
-      await shorebird.downloadUpdateIfAvailable();
-      setState(() {
-        patchDownloaded = true;
-      });
-    }
   }
 
   getData() async {
@@ -504,42 +580,11 @@ class HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-              if (patchAvailable)
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
-                  child: Stack(
-                    children: [
-                      Card(
-                        elevation: 5,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              top: 10, bottom: 10, left: 10, right: 10),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                  patchDownloaded
-                                      ? local!.homePatchDownloaded
-                                      : local!.homePatchAvailable,
-                                  style: const TextStyle(fontSize: 20)),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            setState(() {
-                              updateAvailable = false;
-                            });
-                          },
-                        ),
-                      ),
-                    ],
+              if (!_isShorebirdAvailable)
+                Text(
+                  'Shorebird Engine not available.',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: theme.colorScheme.error,
                   ),
                 ),
               if (lunch != -1 && apidataTT["lessons"].length > 0)
