@@ -163,7 +163,9 @@ class TimeTablePageState extends State<TimeTablePage> {
         TimeTableClass(
           ttLesson["period"]["name"],
           ttLesson["subject"]["short"],
-          ttLesson["teachers"][0]["short"],
+          ttLesson["teachers"].length > 0
+              ? ttLesson["teachers"][0]["short"]
+              : "?",
           ttLesson["period"]["startTime"],
           ttLesson["period"]["endTime"],
           ttLesson["classrooms"].length > 0
