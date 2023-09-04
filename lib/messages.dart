@@ -145,7 +145,9 @@ class TimeTablePageState extends State<MessagesPage> {
               : "a"
           : "";
       rows.add(Card(
-        color: msg["isSeen"] ? null : const Color.fromARGB(255, 124, 95, 0),
+        color: msg["isSeen"]
+            ? null
+            : Theme.of(context).colorScheme.tertiaryContainer,
         child: InkWell(
           onTap: () {
             Navigator.push(
