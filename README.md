@@ -22,6 +22,7 @@
 
 - [Table Of Contents](#table-of-contents)
 - [About The Project](#about-the-project)
+- [Disclaimer](#disclaimer)
 - [Built With](#built-with)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
@@ -42,7 +43,13 @@ And that's why we made EduPage2. So far, EduPage2 lacks a pretty big amount of f
 
 EduPage2 uses local caching on your device, and a caching server with our own privte software, which periodically updates data from EduPage, strips it of all useless data (which EduPage includes for some reason), and finally sends out to your device when requested.
 
-**IMPORTANT** EduPage2 is a cutom client for EduPage. We do not have any connection to EduPage.
+## Disclaimer
+
+**EduPage2** is an open-source project with contributions from multiple individuals and is not affiliated with or endorsed by the creators of EduPage. EduPage is a separate and (possibly) trademarked platform owned by asc Applied Software Consultants, s.r.o.
+
+Please note that while EduPage2 is designed to work as a drop-in replacement or alternative mobile client for EduPage, it is not officially supported by the EduPage team. Any issues or inquiries related to EduPage2 should be directed to the project's [GitHub Issues](https://github.com/DislikesSchool/EduPage2/issues) provided in this repository.
+
+This project is open source and distributed under the [GPL-3.0 license](https://choosealicense.com/licenses/gpl-3.0/), and all contributions are welcome from the community. However, use it responsibly and in compliance with the terms of use of the original EduPage platform.
 
 ## Built With
 
