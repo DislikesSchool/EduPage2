@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -191,39 +192,39 @@ class TimeTablePageState extends State<TimeTablePage> {
       body: Stack(
         children: <Widget>[
           getTimeTable(
-            timetables.firstWhere(
-              (element) => isSameDay(
-                element.date,
-                DateTime.now().add(
-                  Duration(days: daydiff),
-                ),
-              ),
-              orElse: () => tt,
-            ),
-            daydiff,
-            (diff) => {
-              setState(
-                () {
-                  daydiff = daydiff + diff;
-                  userInteracted = true;
-                },
-              ),
-              loadTt(
-                DateTime.now().add(
-                  Duration(days: daydiff),
-                ),
-              ).then(
-                (value) => {
-                  tt = value,
-                  setState(
-                    () {},
+              timetables.firstWhere(
+                (element) => isSameDay(
+                  element.date,
+                  DateTime.now().add(
+                    Duration(days: daydiff),
                   ),
-                },
+                ),
+                orElse: () => tt,
               ),
-            },
-            AppLocalizations.of(context),
-            userInteracted,
-          ),
+              daydiff,
+              (diff) => {
+                    setState(
+                      () {
+                        daydiff = daydiff + diff;
+                        userInteracted = true;
+                      },
+                    ),
+                    loadTt(
+                      DateTime.now().add(
+                        Duration(days: daydiff),
+                      ),
+                    ).then(
+                      (value) => {
+                        tt = value,
+                        setState(
+                          () {},
+                        ),
+                      },
+                    ),
+                  },
+              AppLocalizations.of(context),
+              userInteracted,
+              context),
         ],
       ),
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -258,46 +259,8 @@ class TimeTableClass {
   final dynamic data;
 }
 
-String getLabel(DateTime date, AppLocalizations? local) {
-  DateTime now = DateTime.now();
-  DateTime tmr = now.add(const Duration(days: 1));
-  if (date.day == now.day && date.month == now.month && date.year == now.year) {
-    return "${local!.today}: ${[
-      local.monday,
-      local.tuesday,
-      local.wednesday,
-      local.thursday,
-      local.friday,
-      local.saturday,
-      local.sunday
-    ][now.weekday - 1]} ${now.day}.${now.month}.${now.year}";
-  } else if (date.day == tmr.day &&
-      date.month == tmr.month &&
-      date.year == tmr.year) {
-    return "${local!.tomorrow}: ${[
-      local.monday,
-      local.tuesday,
-      local.wednesday,
-      local.thursday,
-      local.friday,
-      local.saturday,
-      local.sunday
-    ][tmr.weekday - 1]} ${tmr.day}.${tmr.month}.${tmr.year}";
-  } else {
-    return "${[
-      local?.monday,
-      local?.tuesday,
-      local?.wednesday,
-      local?.thursday,
-      local?.friday,
-      local?.saturday,
-      local?.sunday
-    ][date.weekday - 1]} ${date.day}.${date.month}.${date.year}";
-  }
-}
-
 Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
-    AppLocalizations? local, bool userInteracted) {
+    AppLocalizations? local, bool userInteracted, BuildContext context) {
   List<TableRow> rows = <TableRow>[];
   if (daydiff == 0 && tt.classes.isNotEmpty) {
     String endTime = tt.classes.last.endTime;
@@ -388,6 +351,75 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
       ],
     ));
   }
+
+  String getPrefix(DateTime date, Locale local, AppLocalizations? loc) {
+    DateTime now = DateTime.now();
+    DateTime today = DateTime.utc(now.year, now.month, now.day);
+    DateTime tomorrow = today.add(const Duration(days: 1));
+    if (date == today) {
+      return loc!.today;
+    } else if (date == tomorrow) {
+      return loc!.tomorrow;
+    } else {
+      return '';
+    }
+  }
+
+  Widget renderDate(DateTime date, Locale local, AppLocalizations? loc) {
+    String prefix = getPrefix(date, local, loc);
+    String weekday = DateFormat('EEEE', local.toString()).format(date);
+    String day = DateFormat('d', local.toString()).format(date);
+    String month = DateFormat('MMMM', local.toString()).format(date);
+
+    if (prefix.isNotEmpty) {
+      return Column(
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: Text(
+              prefix.toUpperCase(),
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Text(
+            '$weekday, $day $month',
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+      );
+    } else {
+      return Column(
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: Text(
+              weekday.toUpperCase(),
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Text(
+            '$day $month',
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+      );
+    }
+  }
+
   return Card(
     elevation: 5,
     child: Padding(
@@ -402,12 +434,7 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
                   },
                   icon: const Icon(Icons.keyboard_arrow_left)),
               const Spacer(),
-              Text(
-                getLabel(tt.date, local),
-                style: const TextStyle(
-                  fontSize: 20,
-                ),
-              ),
+              renderDate(tt.date, Localizations.localeOf(context), local),
               const Spacer(),
               IconButton(
                   onPressed: () {
