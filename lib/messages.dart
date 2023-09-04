@@ -163,9 +163,8 @@ class TimeTablePageState extends State<MessagesPage> {
                 Row(
                   children: [
                     Text(
-                      msg["owner"]["firstname"] +
-                          " " +
-                          msg["owner"]["lastname"],
+                      '${msg["owner"]["firstname"]?.trim()} ${msg["owner"]["lastname"]?.trim()}'
+                          .replaceAll(RegExp(r'\s+'), ' '),
                       style: const TextStyle(fontSize: 18),
                     ),
                     const Icon(

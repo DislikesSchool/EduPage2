@@ -639,11 +639,8 @@ class HomePageState extends State<HomePage> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          m["owner"]["firstname"] +
-                                              " " +
-                                              m["owner"]["lastname"] +
-                                              ": " +
-                                              m["text"],
+                                          '${m["owner"]["firstname"]?.trim()} ${m["owner"]["lastname"]?.trim()}: ${m["text"]}'
+                                              .replaceAll(RegExp(r'\s+'), ' '),
                                           softWrap: false,
                                           overflow: TextOverflow.ellipsis,
                                         ),
