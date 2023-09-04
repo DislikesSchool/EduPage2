@@ -15,13 +15,13 @@
   </p>
 </p>
 
-[![build-release-android](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml/badge.svg)](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/dislikesschool/edupage2) ![Downloads](https://img.shields.io/github/downloads/DislikesSchool/EduPage2/total) ![Contributors](https://img.shields.io/github/contributors/DislikesSchool/EduPage2?color=dark-green) ![Issues](https://img.shields.io/github/issues/DislikesSchool/EduPage2) ![License](https://img.shields.io/github/license/DislikesSchool/EduPage2) [![codecov](https://codecov.io/github/DislikesSchool/EduPage2/branch/master/graph/badge.svg?token=HKP9WFL0LN)](https://codecov.io/github/DislikesSchool/EduPage2) [![Discord](https://img.shields.io/discord/1143488418840584224)](https://discord.gg/xy5nqWa2kQ)
+[![build-release-android](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml/badge.svg)](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/dislikesschool/edupage2) ![Downloads](https://img.shields.io/github/downloads/DislikesSchool/EduPage2/total) ![Contributors](https://img.shields.io/github/contributors/DislikesSchool/EduPage2?color=dark-green) ![Issues](https://img.shields.io/github/issues/DislikesSchool/EduPage2) ![License](https://img.shields.io/github/license/DislikesSchool/EduPage2) [![codecov](https://codecov.io/github/DislikesSchool/EduPage2/branch/master/graph/badge.svg?token=HKP9WFL0LN)](https://codecov.io/github/DislikesSchool/EduPage2)
+[![Discord](https://discordapp.com/api/guilds/1143488418840584224/widget.png?style=banner2)](https://discord.gg/xy5nqWa2kQ)
 
 ## Table Of Contents
 
 - [Table Of Contents](#table-of-contents)
 - [About The Project](#about-the-project)
-- [Join Our Discord!](#join-our-discord)
 - [Built With](#built-with)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
@@ -43,10 +43,6 @@ And that's why we made EduPage2. So far, EduPage2 lacks a pretty big amount of f
 EduPage2 uses local caching on your device, and a caching server with our own privte software, which periodically updates data from EduPage, strips it of all useless data (which EduPage includes for some reason), and finally sends out to your device when requested.
 
 **IMPORTANT** EduPage2 is a cutom client for EduPage. We do not have any connection to EduPage.
-
-## Join Our Discord!
-
-[![Discord](https://discordapp.com/api/guilds/1143488418840584224/widget.png?style=banner2)](https://discord.gg/xy5nqWa2kQ)
 
 ## Built With
 
