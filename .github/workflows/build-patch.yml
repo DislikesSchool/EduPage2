@@ -76,6 +76,6 @@ jobs:
     - run: flutter pub get
     - run: flutter gen-l10n
     - name: 🚀 Shorebird Patch
-      run: shorebird patch android --force '--' --dart-define=BVS="Patch ${{ steps.previoustag.outputs.tag }}+${{ github.env.NUMBER_OF_COMMITS_SINCE_TAG }} ShoreBird"
+      run: shorebird patch android --force '--' --dart-define=BVS="Patch ${{ steps.previoustag.outputs.tag }}+${{ env.NUMBER_OF_COMMITS_SINCE_TAG }} ShoreBird"
       env:
         SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
