@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class MessagePage extends StatefulWidget {
@@ -104,7 +106,10 @@ class MessagePageState extends State<MessagePage> {
                       const SizedBox(
                         height: 30,
                       ),
-                      Text(unescape.convert(data["text"])),
+                      SelectableLinkify(
+                        text: unescape.convert(data["text"]),
+                        onOpen: _onOpen,
+                      ),
                       for (Map<String, dynamic> att in data["attachments"]!)
                         if (att["name"]!.endsWith(".jpg") ||
                             att["name"]!.endsWith(".png"))
@@ -205,5 +210,11 @@ class MessagePageState extends State<MessagePage> {
           : Text(AppLocalizations.of(context)!.loading),
       backgroundColor: Theme.of(context).colorScheme.background,
     );
+  }
+}
+
+Future<void> _onOpen(LinkableElement link) async {
+  if (!await launchUrl(Uri.parse(link.url))) {
+    throw Exception('Could not launch ${link.url}');
   }
 }
