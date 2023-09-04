@@ -31,7 +31,7 @@
 - [Contributing](#contributing)
   - [Creating A Pull Request](#creating-a-pull-request)
 - [License](#license)
-- [Authors](#authors)
+- [Contributors](#contributors)
 - [Acknowledgements](#acknowledgements)
 
 ## About The Project
@@ -54,6 +54,7 @@ This is a list of all the main tools, libraries and frameworks, that were used i
 - [Express.js](https://expressjs.com/)
 - [PlanetScale](https://planetscale.com/)
 - [Passport.js](https://www.passportjs.org/)
+- [Shorebird](https://shorebird.dev/)
 
 ## Getting Started
 
@@ -102,10 +103,12 @@ Contributions are what make the open source community such an amazing place to b
 
 Distributed under the MIT License. See [LICENSE](https://github.com/DislikesSchool/EduPage2/blob/master/LICENSE) for more information.
 
-## Authors
+## Contributors
 
-- **vyPal** - _A highschool student, who is bored_ - [vyPal](https://github.com/vyPal) - _Author of EduPage2_
-- **czmatejt9** - _Friend_ - [czmatejt9](https://github.com/czmatejt9) - _Helped fix bugs_
+- **[vyPal](https://github.com/vyPal)** - _Author of EduPage2_
+- **[WattMann](https://github.com/WattMann)** - _Created Edupage API in golang_
+- **[czmatejt9](https://github.com/czmatejt9)** - _Helped fix bugs_
+- **[SAMUELLL41](https://github.com/SAMUELLL41)** - _Slovak translation_
 
 ## Acknowledgements
 
