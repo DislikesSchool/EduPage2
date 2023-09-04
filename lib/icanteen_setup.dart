@@ -106,12 +106,11 @@ class ICanteenSetupScreenState extends State<ICanteenSetupScreen> {
                 keyboardType: TextInputType.visiblePassword,
               ),
               ElevatedButton(
-                onPressed: () async => {
+                onPressed: () => {
                   if (!hasLogin)
                     {
-                      await login(),
-                      Navigator.pop(context),
-                      widget.loadedCallback()
+                      login().then((value) =>
+                          {Navigator.pop(context), widget.loadedCallback()})
                     },
                 },
                 child: !hasLogin
