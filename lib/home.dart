@@ -727,6 +727,38 @@ class HomePageState extends State<HomePage> {
               ),
             ),
             const Divider(),
+            ListTile(
+              leading: const Icon(Icons.language),
+              title: const Text('Language'),
+              trailing: SizedBox(
+                height: 32,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: DropdownButton<Locale>(
+                    value: Localizations.localeOf(context),
+                    onChanged: (Locale? locale) {
+                      if (locale != null) {
+                        // Handle locale selection
+                      }
+                    },
+                    icon: const Icon(Icons.arrow_drop_down),
+                    underline: Container(),
+                    style: Theme.of(context).textTheme.titleMedium,
+                    items: AppLocalizations.supportedLocales
+                        .map((locale) => DropdownMenuItem<Locale>(
+                              value: locale,
+                              child: Text(locale.languageCode),
+                            ))
+                        .toList(),
+                  ),
+                ),
+              ),
+            ),
+            const Divider(),
             InkWell(
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
