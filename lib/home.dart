@@ -13,7 +13,7 @@ import 'package:package_info/package_info.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shorebird_code_push/shorebird_code_push_web.dart';
+import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
@@ -189,20 +189,14 @@ class HomePageState extends State<HomePage> {
     });
 
     if (isUpdateAvailable) {
-      _showUpdateAvailableBanner();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No update available'),
-        ),
-      );
+      _downloadUpdate();
     }
   }
 
   void _showDownloadingBanner() {
     ScaffoldMessenger.of(context).showMaterialBanner(
       const MaterialBanner(
-        content: Text('Downloading...'),
+        content: Text('Downloading patch...'),
         actions: [
           SizedBox(
             height: 14,
@@ -211,26 +205,6 @@ class HomePageState extends State<HomePage> {
               strokeWidth: 2,
             ),
           )
-        ],
-      ),
-    );
-  }
-
-  void _showUpdateAvailableBanner() {
-    ScaffoldMessenger.of(context).showMaterialBanner(
-      MaterialBanner(
-        content: const Text('Update available'),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-              await _downloadUpdate();
-
-              if (!mounted) return;
-              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-            },
-            child: const Text('Download'),
-          ),
         ],
       ),
     );
