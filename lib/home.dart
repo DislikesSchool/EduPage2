@@ -190,7 +190,7 @@ class HomePageState extends State<HomePage> {
     var msgs = await widget.sessionManager.get('messages');
     if (msgs != Null && msgs != null) {
       setState(() {
-        apidataMsg = msgs;
+        apidataMsg = msgs.values.toList();
       });
     }
 

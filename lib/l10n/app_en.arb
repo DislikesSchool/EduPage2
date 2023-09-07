@@ -25,6 +25,8 @@
   "loginPassword": "Password",
   "loginServer": "Server (e.g., school.edupage.org)",
   "loginLogin": "Login",
+  "loginCustomEndpointCheckbox": "Use custom endpoint",
+  "loginCustomEndpoint": "Enter custom endpoint URL",
   "today": "Today",
   "tomorrow": "Tomorrow",
   "monday": "Monday",

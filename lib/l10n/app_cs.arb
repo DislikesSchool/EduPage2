@@ -93,6 +93,8 @@
   "@loginLogin": {
     "description": "Login button"
   },
+  "loginCustomEndpointCheckbox": "Použít valstní endpoint",
+  "loginCustomEndpoint": "URL vlastního endpointu",
   "today": "Dnes",
   "tomorrow": "Zítra",
   "monday": "Pondělí",

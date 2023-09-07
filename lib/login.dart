@@ -16,6 +16,9 @@ class LoinPageState extends State<LoginPage> {
   String email = "";
   String password = "";
   String server = "";
+  bool _showServerField = false;
+  bool _useCustomEndpoint = false;
+  String _customEndpoint = '';
 
   @override
   void initState() {
@@ -31,6 +34,26 @@ class LoinPageState extends State<LoginPage> {
 
   Future<void> getPrefs() async {
     sharedPreferences = await SharedPreferences.getInstance();
+    String? sEmail = sharedPreferences.getString("email");
+    String? sPassword = sharedPreferences.getString("password");
+    String? sServer = sharedPreferences.getString("server");
+    String? sEndpoint = sharedPreferences.getString("customEndpoint");
+
+    if (sEmail != null) {
+      email = sEmail;
+    }
+    if (sPassword != null) {
+      password = sPassword;
+    }
+    if (sServer != null) {
+      server = sServer;
+      _showServerField = true;
+    }
+    if (sEndpoint != null) {
+      _customEndpoint = sEndpoint;
+      _useCustomEndpoint = true;
+    }
+    setState(() {});
   }
 
   @override
@@ -68,7 +91,27 @@ class LoinPageState extends State<LoginPage> {
                 obscureText: true,
                 keyboardType: TextInputType.visiblePassword,
               ),
-              if (widget.err != "")
+              Row(
+                children: [
+                  Checkbox(
+                    value: _useCustomEndpoint,
+                    onChanged: (value) {
+                      setState(() {
+                        _useCustomEndpoint = value!;
+                      });
+                    },
+                  ),
+                  Text(local!.loginCustomEndpointCheckbox),
+                ],
+              ),
+              if (_useCustomEndpoint)
+                TextField(
+                    decoration: InputDecoration(
+                      icon: const Icon(Icons.language),
+                      hintText: local!.loginCustomEndpoint,
+                    ),
+                    onChanged: (value) => {_customEndpoint = value}),
+              if (widget.err != "" || _showServerField)
                 TextField(
                   decoration: InputDecoration(
                     icon: const Icon(Icons.cloud_queue),
@@ -82,6 +125,8 @@ class LoinPageState extends State<LoginPage> {
                   sharedPreferences.setString("email", email),
                   sharedPreferences.setString("password", password),
                   sharedPreferences.setString("server", server),
+                  sharedPreferences.setString(
+                      "customEndpoint", _customEndpoint),
                   Navigator.pop(context),
                 },
                 child: Text(local!.loginLogin),

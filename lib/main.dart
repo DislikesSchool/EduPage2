@@ -123,7 +123,7 @@ class PageBaseState extends State<PageBase> {
     }
     if (msgs != Null && msgs != null) {
       setState(() {
-        apidataMsg = msgs;
+        apidataMsg = msgs.values.toList();
       });
     }
   }
