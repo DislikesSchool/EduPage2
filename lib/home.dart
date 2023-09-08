@@ -511,7 +511,8 @@ class HomePageState extends State<HomePage> {
                     final url = Uri.parse(
                         'https://github.com/DislikesSchool/EduPage2/releases/latest');
                     if (await canLaunchUrl(url)) {
-                      await launchUrl(url);
+                      await launchUrl(url,
+                          mode: LaunchMode.externalApplication);
                     } else {
                       throw 'Could not launch $url';
                     }
