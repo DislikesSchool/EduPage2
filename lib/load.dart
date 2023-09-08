@@ -31,7 +31,7 @@ class LoadingScreenState extends State<LoadingScreen> {
 
   Dio dio = Dio();
   double progress = 0.0;
-  String loaderText = "Načítání...";
+  String loaderText = "Loading...";
 
   String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
 
