@@ -15,14 +15,14 @@
   </p>
 </p>
 
-[![build-release-android](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml/badge.svg)](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/dislikesschool/edupage2) ![Downloads](https://img.shields.io/github/downloads/DislikesSchool/EduPage2/total) ![Contributors](https://img.shields.io/github/contributors/DislikesSchool/EduPage2?color=dark-green) ![Issues](https://img.shields.io/github/issues/DislikesSchool/EduPage2) ![License](https://img.shields.io/github/license/DislikesSchool/EduPage2) [![codecov](https://codecov.io/github/DislikesSchool/EduPage2/branch/master/graph/badge.svg?token=HKP9WFL0LN)](https://codecov.io/github/DislikesSchool/EduPage2) [![Discord](https://img.shields.io/discord/1143488418840584224)](https://discord.gg/xy5nqWa2kQ)
-
+[![build-release-android](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml/badge.svg)](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-release-apk.yml) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/dislikesschool/edupage2) ![Downloads](https://img.shields.io/github/downloads/DislikesSchool/EduPage2/total) ![Contributors](https://img.shields.io/github/contributors/DislikesSchool/EduPage2?color=dark-green) ![Issues](https://img.shields.io/github/issues/DislikesSchool/EduPage2) ![License](https://img.shields.io/github/license/DislikesSchool/EduPage2) [![codecov](https://codecov.io/github/DislikesSchool/EduPage2/branch/master/graph/badge.svg?token=HKP9WFL0LN)](https://codecov.io/github/DislikesSchool/EduPage2)
+[![Discord](https://discordapp.com/api/guilds/1143488418840584224/widget.png?style=banner2)](https://discord.gg/xy5nqWa2kQ)
 
 ## Table Of Contents
 
 - [Table Of Contents](#table-of-contents)
 - [About The Project](#about-the-project)
-- [Join Our Discord!](#join-our-discord)
+- [Disclaimer](#disclaimer)
 - [Built With](#built-with)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
@@ -32,7 +32,7 @@
 - [Contributing](#contributing)
   - [Creating A Pull Request](#creating-a-pull-request)
 - [License](#license)
-- [Authors](#authors)
+- [Contributors](#contributors)
 - [Acknowledgements](#acknowledgements)
 
 ## About The Project
@@ -43,10 +43,13 @@ And that's why we made EduPage2. So far, EduPage2 lacks a pretty big amount of f
 
 EduPage2 uses local caching on your device, and a caching server with our own privte software, which periodically updates data from EduPage, strips it of all useless data (which EduPage includes for some reason), and finally sends out to your device when requested.
 
-**IMPORTANT** EduPage2 is a cutom client for EduPage. We do not have any connection to EduPage.
+## Disclaimer
 
-## Join Our Discord!
-[![Discord](https://discordapp.com/api/guilds/1143488418840584224/widget.png?style=banner2)](https://discord.gg/xy5nqWa2kQ)
+**EduPage2** is an open-source project with contributions from multiple individuals and is not affiliated with or endorsed by the creators of EduPage. EduPage is a separate and (possibly) trademarked platform owned by asc Applied Software Consultants, s.r.o.
+
+Please note that while EduPage2 is designed to work as a drop-in replacement or alternative mobile client for EduPage, it is not officially supported by the EduPage team. Any issues or inquiries related to EduPage2 should be directed to the project's [GitHub Issues](https://github.com/DislikesSchool/EduPage2/issues) provided in this repository.
+
+This project is open source and distributed under the [GPL-3.0 license](https://choosealicense.com/licenses/gpl-3.0/), and all contributions are welcome from the community. However, use it responsibly and in compliance with the terms of use of the original EduPage platform.
 
 ## Built With
 
@@ -58,6 +61,7 @@ This is a list of all the main tools, libraries and frameworks, that were used i
 - [Express.js](https://expressjs.com/)
 - [PlanetScale](https://planetscale.com/)
 - [Passport.js](https://www.passportjs.org/)
+- [Shorebird](https://shorebird.dev/)
 
 ## Getting Started
 
@@ -106,10 +110,12 @@ Contributions are what make the open source community such an amazing place to b
 
 Distributed under the MIT License. See [LICENSE](https://github.com/DislikesSchool/EduPage2/blob/master/LICENSE) for more information.
 
-## Authors
+## Contributors
 
-- **vyPal** - _A highschool student, who is bored_ - [vyPal](https://github.com/vyPal) - _Author of EduPage2_
-- **czmatejt9** - _Friend_ - [czmatejt9](https://github.com/czmatejt9) - _Helped fix bugs_
+- **[vyPal](https://github.com/vyPal)** - _Author of EduPage2_
+- **[WattMann](https://github.com/WattMann)** - _Created Edupage API in golang_
+- **[czmatejt9](https://github.com/czmatejt9)** - _Helped fix bugs_
+- **[SAMUELLL41](https://github.com/SAMUELLL41)** - _Slovak translation_
 
 ## Acknowledgements
 

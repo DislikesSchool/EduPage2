@@ -64,6 +64,8 @@
   "homeUpdateDescription": "Prosím navštivte https://github.com/DislikesSchool/EduPage2/releases pro nejnovější verzi",
   "homeQuickstart": "Rychlý start",
   "homePreview": "Náhled",
+  "homePatchAvailable": "Instaluje se nový patch...",
+  "homePatchDownloaded": "Patch byl stažen, restartujte aplikaci pro instalaci",
   "homeworkTitle": "Domácí úkoly",
   "@homeworkTitle": {
     "description": "Title of homework page"
@@ -97,13 +99,6 @@
   "loginCustomEndpoint": "URL vlastního endpointu",
   "today": "Dnes",
   "tomorrow": "Zítra",
-  "monday": "Pondělí",
-  "tuesday": "Úterý",
-  "wednesday": "Středa",
-  "thursday": "Čtvrtek",
-  "friday": "Pátek",
-  "saturday": "Sobota",
-  "sunday": "Neděle",
   "loadCredentials": "Načítání přihlašovacích údajů",
   "loadLoggingIn": "Přihlašování...",
   "loadLoggedIn": "Přihlášeno",

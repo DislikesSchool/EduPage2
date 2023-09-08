@@ -6,6 +6,7 @@ import 'package:eduapge2/message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:html_unescape/html_unescape.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MessagesPage extends StatefulWidget {
@@ -113,6 +114,7 @@ class TimeTablePageState extends State<MessagesPage> {
   }
 
   Widget getMessages(var apidataMsg) {
+    HtmlUnescape unescape = HtmlUnescape();
     List<Widget> rows = <Widget>[];
     apidataMsg ??= [
       {
@@ -162,9 +164,8 @@ class TimeTablePageState extends State<MessagesPage> {
                 Row(
                   children: [
                     Text(
-                      msg["owner"]["firstname"] +
-                          " " +
-                          msg["owner"]["lastname"],
+                      '${msg["owner"]["firstname"]?.trim()} ${msg["owner"]["lastname"]?.trim()}'
+                          .replaceAll(RegExp(r'\s+'), ' '),
                       style: const TextStyle(fontSize: 18),
                     ),
                     const Icon(
@@ -173,7 +174,7 @@ class TimeTablePageState extends State<MessagesPage> {
                     ),
                     Expanded(
                       child: Text(
-                        msg["title"],
+                        unescape.convert(msg["title"]),
                         overflow: TextOverflow.fade,
                         maxLines: 5,
                         softWrap: false,
@@ -186,7 +187,7 @@ class TimeTablePageState extends State<MessagesPage> {
                   children: [
                     Expanded(
                       child: Text(
-                        msg["text"],
+                        unescape.convert(msg["text"]),
                         style: const TextStyle(fontSize: 12),
                         overflow: TextOverflow.fade,
                         maxLines: 5,
@@ -206,7 +207,7 @@ class TimeTablePageState extends State<MessagesPage> {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              r["owner"] + ": " + r["text"],
+                              r["owner"] + ": " + unescape.convert(r["text"]),
                               softWrap: false,
                               overflow: TextOverflow.ellipsis,
                             ),

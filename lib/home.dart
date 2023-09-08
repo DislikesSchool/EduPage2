@@ -11,8 +11,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info/package_info.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
@@ -136,6 +138,8 @@ LessonStatus getLessonStatus(List<dynamic> lessons, TimeOfDay currentTime) {
   }
 }
 
+final _shorebirdCodePush = ShorebirdCodePush();
+
 class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   late SharedPreferences sharedPreferences;
@@ -150,6 +154,7 @@ class HomePageState extends State<HomePage> {
   bool refresh = false;
   bool updateAvailable = false;
   bool quickstart = false;
+  bool _isCheckingForUpdate = false;
 
   late Map<String, dynamic> apidataTT;
   List<dynamic> apidataMsg = [];
@@ -164,6 +169,68 @@ class HomePageState extends State<HomePage> {
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
     fetchAndCompareBuildName();
     getData(); //fetching data
+    if (!_isCheckingForUpdate) _checkForUpdate(); // ik that it's not necessary
+  }
+
+  Future<void> _checkForUpdate() async {
+    setState(() {
+      _isCheckingForUpdate = true;
+    });
+
+    // Ask the Shorebird servers if there is a new patch available.
+    final isUpdateAvailable =
+        await _shorebirdCodePush.isNewPatchAvailableForDownload();
+
+    if (!mounted) return;
+
+    setState(() {
+      _isCheckingForUpdate = false;
+    });
+
+    if (isUpdateAvailable) {
+      _downloadUpdate();
+    }
+  }
+
+  void _showDownloadingBanner() {
+    ScaffoldMessenger.of(context).showMaterialBanner(
+      const MaterialBanner(
+        content: Text('Downloading patch...'),
+        actions: [
+          SizedBox(
+            height: 14,
+            width: 14,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  void _showRestartBanner() {
+    ScaffoldMessenger.of(context).showMaterialBanner(
+      const MaterialBanner(
+        content: Text('A new patch is ready!'),
+        actions: [
+          TextButton(
+            // Restart the app for the new patch to take effect.
+            onPressed: Restart.restartApp,
+            child: Text('Restart app'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _downloadUpdate() async {
+    _showDownloadingBanner();
+    await _shorebirdCodePush.downloadUpdateIfAvailable();
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+    _showRestartBanner();
   }
 
   @override
@@ -551,11 +618,8 @@ class HomePageState extends State<HomePage> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          m["owner"]["firstname"] +
-                                              " " +
-                                              m["owner"]["lastname"] +
-                                              ": " +
-                                              m["text"],
+                                          '${m["owner"]["firstname"]?.trim()} ${m["owner"]["lastname"]?.trim()}: ${m["text"]}'
+                                              .replaceAll(RegExp(r'\s+'), ' '),
                                           softWrap: false,
                                           overflow: TextOverflow.ellipsis,
                                         ),

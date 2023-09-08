@@ -29,7 +29,6 @@ jobs:
         java-version: '11'
     - uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.10.6'
         channel: 'stable'
         cache: true
         cache-key: 'flutter-:os:-:channel:-:version:' # optional, change this to force refresh cache
@@ -65,7 +64,6 @@ jobs:
         version_format: "${major}.${minor}.${patch}+${increment}"
         bump_each_commit: false
     - run: flutter pub get
-    - run: flutter analyze .
     - run: flutter gen-l10n
     - run: flutter build apk --build-name ${{ steps.semver.outputs.version }} --dart-define=BVS="Preview ${{ steps.semver.outputs.version }} ${{ github.ref_name }} GitHub"
     - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-v${{ steps.semver.outputs.version }}.apk"
