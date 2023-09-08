@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -67,6 +68,14 @@ class TimeTablePageState extends State<TimeTablePage> {
       loading = true; //make loading true to show progressindicator
     });
 
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    String? endpoint = sp.getString("customEndpoint");
+
+    if (endpoint != null && endpoint != "") {
+      baseUrl = endpoint;
+    }
+    setState(() {});
+
     apidataTT = await widget.sessionManager.get('timetable');
 
     List<TimeTableClass> ttClasses = <TimeTableClass>[];
@@ -92,13 +101,11 @@ class TimeTablePageState extends State<TimeTablePage> {
     refresh = false;
     setState(() {}); //refresh UI
 
-    SharedPreferences sp = await SharedPreferences.getInstance();
     if (sp.getBool('quickstart') ?? false) {
       String token = sp.getString("token")!;
-      String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
       Dio dio = Dio();
       Response response = await dio.get(
-        "$baseUrl/timetable/${getWeekDay().toString()}",
+        "$baseUrl/api/timetable?from=${getWeekDay().toIso8601String()}",
         options: buildCacheOptions(
           const Duration(days: 5),
           maxStale: const Duration(days: 14),
@@ -144,9 +151,10 @@ class TimeTablePageState extends State<TimeTablePage> {
     String token = sharedPreferences.getString("token")!;
 
     Response response = await dio.get(
-      "$baseUrl/timetable/${DateTime(date.year, date.month, date.day).toString()}",
+      "$baseUrl/api/timetable?to=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime(date.year, date.month, date.day))}&from=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime.now())}",
       options: buildCacheOptions(
         const Duration(days: 4),
+        forceRefresh: true,
         maxStale: const Duration(days: 14),
         options: Options(
           headers: {
@@ -157,15 +165,15 @@ class TimeTablePageState extends State<TimeTablePage> {
     );
 
     List<TimeTableClass> ttClasses = <TimeTableClass>[];
-    List<dynamic> lessons = jsonDecode(response.data)["lessons"];
-    for (Map<String, dynamic> ttLesson in lessons) {
+    Map<String, dynamic> lessons = response.data["Days"];
+    for (Map<String, dynamic> ttLesson in lessons.values.first) {
       ttClasses.add(
         TimeTableClass(
-          ttLesson["period"]["name"],
+          ttLesson["uniperiod"],
           ttLesson["subject"]["short"],
           ttLesson["teachers"][0]["short"],
-          ttLesson["period"]["startTime"],
-          ttLesson["period"]["endTime"],
+          ttLesson["starttime"],
+          ttLesson["endtime"],
           ttLesson["classrooms"].length > 0
               ? ttLesson["classrooms"][0]["short"]
               : "?",
@@ -175,7 +183,7 @@ class TimeTablePageState extends State<TimeTablePage> {
       );
     }
     TimeTableData t = TimeTableData(
-        DateTime.parse(jsonDecode(response.data)["date"]), ttClasses);
+        DateTime.parse(response.data["Days"].keys.first), ttClasses);
     timetables.add(t);
     return t;
   }

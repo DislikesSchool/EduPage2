@@ -70,7 +70,8 @@ class LoadingScreenState extends State<LoadingScreen> {
     server ??= "";
     try {
       Response resp = await dio.post("$baseUrl/login",
-          data: {"username": email, "password": password, "server": server});
+          data: {"username": email, "password": password, "server": server},
+          options: Options(contentType: Headers.formUrlEncodedContentType));
       return {"fail": false, "resp": resp};
     } catch (e) {
       return {"fail": true, "err": e};
@@ -351,7 +352,6 @@ class LoadingScreenState extends State<LoadingScreen> {
     progress = 0.7;
     loaderText = local!.loadDownloadTimetable;
     setState(() {});
-    print("Not implemented on server yet");
     sessionManager.set("timetable",
         jsonEncode({"date": DateTime.now().toString(), "lessons": []}));
     return loadMessages();

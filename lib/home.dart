@@ -9,6 +9,7 @@ import 'package:eduapge2/messages.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:intl/intl.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -89,9 +90,9 @@ LessonStatus getLessonStatus(List<dynamic> lessons, TimeOfDay currentTime) {
   final hasLesson = hasLessonsToday &&
       lessons.any((lesson) {
         final startTime = TimeOfDay.fromDateTime(
-            DateTimeExtension.parseTime(lesson['period']['startTime']));
+            DateTimeExtension.parseTime(lesson['starttime']));
         final endTime = TimeOfDay.fromDateTime(
-            DateTimeExtension.parseTime(lesson['period']['endTime']));
+            DateTimeExtension.parseTime(lesson['endtime']));
         return startTime < endTime &&
             startTime <= currentTime &&
             endTime > currentTime;
@@ -103,23 +104,21 @@ LessonStatus getLessonStatus(List<dynamic> lessons, TimeOfDay currentTime) {
     if (hasLesson) {
       final currentLesson = lessons.firstWhere((lesson) {
         final startTime = TimeOfDay.fromDateTime(
-            DateTimeExtension.parseTime(lesson['period']['startTime']));
+            DateTimeExtension.parseTime(lesson['starttime']));
         final endTime = TimeOfDay.fromDateTime(
-            DateTimeExtension.parseTime(lesson['period']['endTime']));
+            DateTimeExtension.parseTime(lesson['endtime']));
         return startTime < endTime &&
             startTime <= currentTime &&
             endTime > currentTime;
       });
-      nextLessonTime =
-          DateTimeExtension.parseTime(currentLesson['period']['endTime']);
+      nextLessonTime = DateTimeExtension.parseTime(currentLesson['endtime']);
     } else if (hasLessonsToday) {
       final nextLesson = lessons.firstWhere((lesson) {
         final startTime = TimeOfDay.fromDateTime(
-            DateTimeExtension.parseTime(lesson['period']['startTime']));
+            DateTimeExtension.parseTime(lesson['starttime']));
         return startTime > currentTime;
       });
-      nextLessonTime =
-          DateTimeExtension.parseTime(nextLesson['period']['startTime']);
+      nextLessonTime = DateTimeExtension.parseTime(nextLesson['starttime']);
     } else {
       nextLessonTime = DateTime.now();
     }
@@ -186,6 +185,11 @@ class HomePageState extends State<HomePage> {
       loading = true;
     });
     sharedPreferences = await SharedPreferences.getInstance();
+    String? endpoint = sharedPreferences.getString("customEndpoint");
+
+    if (endpoint != null && endpoint != "") {
+      baseUrl = endpoint;
+    }
     quickstart = sharedPreferences.getBool('quickstart') ?? false;
     var msgs = await widget.sessionManager.get('messages');
     if (msgs != Null && msgs != null) {
@@ -199,7 +203,7 @@ class HomePageState extends State<HomePage> {
     String token = sharedPreferences.getString("token")!;
 
     Response response = await dio.get(
-      "$baseUrl/timetable/${getWeekDay().toString()}",
+      "$baseUrl/api/timetable?from=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime.now())}",
       options: buildCacheOptions(
         Duration.zero,
         maxStale: const Duration(days: 7),
@@ -210,8 +214,9 @@ class HomePageState extends State<HomePage> {
         ),
       ),
     );
-    apidataTT = jsonDecode(response.data);
-    _lessonStatus = getLessonStatus(apidataTT["lessons"], TimeOfDay.now());
+    apidataTT = response.data;
+    _lessonStatus =
+        getLessonStatus(apidataTT["Days"].values.first, TimeOfDay.now());
     if (_lessonStatus.hasLessonsToday) {
       _startTimer();
     }
