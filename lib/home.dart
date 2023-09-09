@@ -19,9 +19,13 @@ import 'package:url_launcher/url_launcher.dart';
 class HomePage extends StatefulWidget {
   final SessionManager sessionManager;
   final Function reLogin;
+  final ValueChanged<int> onDestinationSelected;
 
   const HomePage(
-      {super.key, required this.sessionManager, required this.reLogin});
+      {super.key,
+      required this.sessionManager,
+      required this.reLogin,
+      required this.onDestinationSelected});
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -332,8 +336,17 @@ class HomePageState extends State<HomePage> {
     final buildName = packageInfo.version;
 
     try {
-      final response = await dio.get(
-          'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest');
+      final response = await dio
+          .get(
+              'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest')
+          .catchError((obj) {
+        return Response(
+          requestOptions: RequestOptions(
+              path:
+                  'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest'),
+          statusCode: 500,
+        );
+      });
       final responseData = response.data;
 
       // Extract the tag_name from the response JSON and remove the "v" prefix if present
@@ -499,27 +512,32 @@ class HomePageState extends State<HomePage> {
                               children: [
                                 for (Map<String, dynamic> lesson
                                     in apidataTT["lessons"])
-                                  Card(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            lesson["period"]["name"] + ".",
-                                            style:
-                                                const TextStyle(fontSize: 10),
-                                          ),
-                                          Text(
-                                            lesson["subject"]["short"],
-                                            style:
-                                                const TextStyle(fontSize: 20),
-                                          ),
-                                          Text(
-                                            lesson["classrooms"][0]["short"],
-                                            style:
-                                                const TextStyle(fontSize: 14),
-                                          ),
-                                        ],
+                                  GestureDetector(
+                                    onTap: () {
+                                      widget.onDestinationSelected(1);
+                                    },
+                                    child: Card(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              lesson["period"]["name"] + ".",
+                                              style:
+                                                  const TextStyle(fontSize: 10),
+                                            ),
+                                            Text(
+                                              lesson["subject"]["short"],
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                            Text(
+                                              lesson["classrooms"][0]["short"],
+                                              style:
+                                                  const TextStyle(fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),

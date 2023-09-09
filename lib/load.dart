@@ -109,7 +109,11 @@ class LoadingScreenState extends State<LoadingScreen> {
         progress = 0.5;
         loaderText = local!.loadLoggedIn;
         setState(() {});
-        sessionManager.set('user', response.data);
+        if (response.data.runtimeType == Map) {
+          sessionManager.set('user', jsonEncode(response.data));
+        } else {
+          sessionManager.set('user', response.data);
+        }
         return loadTimetable();
       } else {
         failedToken = token;
@@ -201,7 +205,11 @@ class LoadingScreenState extends State<LoadingScreen> {
             progress = 0.6;
             loaderText = local!.loadLoggedIn;
             setState(() {});
-            sessionManager.set('user', response.data);
+            if (response.data.runtimeType == Map) {
+              sessionManager.set('user', jsonEncode(response.data));
+            } else {
+              sessionManager.set('user', response.data);
+            }
             return loadTimetable();
           } else {
             runningInit = false;
