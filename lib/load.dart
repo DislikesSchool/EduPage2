@@ -127,6 +127,7 @@ class LoadingScreenState extends State<LoadingScreen> {
             });
         if (res != null) {
           if (res?.statusCode == 200) {
+            sessionManager.set('user', jsonEncode(res?.data));
             loaderText = local!.loadLoggedIn;
             progress = 0.4;
             setState(() {});
@@ -156,6 +157,7 @@ class LoadingScreenState extends State<LoadingScreen> {
           });
       if (res != null) {
         if (res?.statusCode == 200) {
+          sessionManager.set('user', jsonEncode(res?.data));
           loaderText = local!.loadLoggedIn;
           progress = 0.4;
           setState(() {});

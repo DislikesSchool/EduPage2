@@ -266,7 +266,7 @@ class HomePageState extends State<HomePage> {
     }
 
     Map<String, dynamic> user = await widget.sessionManager.get('user');
-    username = user["firstname"] + " " + user["lastname"];
+    username = user["name"];
     String token = sharedPreferences.getString("token")!;
 
     Response response = await dio.get(
@@ -295,7 +295,8 @@ class HomePageState extends State<HomePage> {
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() {
-        _lessonStatus = getLessonStatus(apidataTT["lessons"], TimeOfDay.now());
+        _lessonStatus =
+            getLessonStatus(apidataTT["Days"].values.first, TimeOfDay.now());
         if (!_lessonStatus.hasLessonsToday) {
           _timer?.cancel();
         }
@@ -461,7 +462,7 @@ class HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              if (apidataTT["lessons"].length > 0)
+              if (apidataTT["Days"]?.length > 0)
                 Container(
                   width: MediaQuery.of(context).size.width,
                   margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
@@ -477,14 +478,14 @@ class HomePageState extends State<HomePage> {
                               scrollDirection: Axis.horizontal,
                               children: [
                                 for (Map<String, dynamic> lesson
-                                    in apidataTT["lessons"])
+                                    in apidataTT["Days"].values.first)
                                   Card(
                                     child: Padding(
                                       padding: const EdgeInsets.all(10),
                                       child: Column(
                                         children: [
                                           Text(
-                                            lesson["period"]["name"] + ".",
+                                            lesson["uniperiod"] + ".",
                                             style:
                                                 const TextStyle(fontSize: 10),
                                           ),
