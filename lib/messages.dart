@@ -106,7 +106,8 @@ class TimeTablePageState extends State<MessagesPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    apidataMsg = await widget.sessionManager.get('messages');
+    Map<String, dynamic> msgs = await widget.sessionManager.get('messages');
+    apidataMsg = msgs.values.toList();
     messages = getMessages(apidataMsg);
 
     loading = false;
