@@ -434,8 +434,8 @@ class HomePageState extends State<HomePage> {
                               Icons.circle,
                               color: Color.fromARGB(
                                   255,
-                                  _lessonStatus.hasLesson ? 0 : 255,
                                   _lessonStatus.hasLesson ? 255 : 0,
+                                  _lessonStatus.hasLesson ? 0 : 255,
                                   0),
                               size: 8,
                             ),
