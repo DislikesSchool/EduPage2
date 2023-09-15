@@ -29,6 +29,8 @@ jobs:
               l10n.yaml
               lib
               android
+              test
+              integration_test
   build:
     runs-on: macos-latest
     needs: check_changes

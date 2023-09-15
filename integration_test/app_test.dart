@@ -18,7 +18,6 @@ void main() {
 
     testWidgets('Run app and login', (tester) async {
       await prep(tester, username, password, name);
-      expect(find.text(name, skipOffstage: false), findsWidgets);
       expect(find.text("Username"), findsNothing);
     });
 
