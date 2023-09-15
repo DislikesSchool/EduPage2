@@ -43,9 +43,10 @@ void main() {
   group('TimeOfDay', () {
     TimeOfDay time1 = const TimeOfDay(hour: 4, minute: 20);
     TimeOfDay time2 = const TimeOfDay(hour: 6, minute: 09);
+    TimeOfDay time3 = const TimeOfDay(hour: 6, minute: 05);
     test('is lesser', () => {expect(time1 < time2, true)});
     test('is lesser or equal', () => {expect(time1 <= time1, true)});
-    test('is greater', () => {expect(time2 > time1, true)});
+    test('is greater', () => {expect(time2 > time3, true)});
   });
 
   group('DateTime', () {
