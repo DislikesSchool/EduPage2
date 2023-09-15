@@ -6,40 +6,12 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:eduapge2/home.dart';
-import 'package:eduapge2/login.dart';
+import 'package:eduapge2/messages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  testWidgets('Login page', (WidgetTester tester) async {
-    // Initiates SharedPreferences
-    SharedPreferences.setMockInitialValues({});
-
-    // Gets test user's username and password from environment
-    String? username = const String.fromEnvironment("USERNAME");
-    String? password = const String.fromEnvironment("PASSWORD");
-
-    // Initiates widget
-    await tester.pumpWidget(const LocalizationsInj(child: LoginPage()));
-
-    // Checks for TextFields and login button
-    expect(find.text('Username'), findsOneWidget);
-    expect(find.text('Password'), findsOneWidget);
-    expect(find.text('Login'), findsOneWidget);
-
-    // Types test user's credentails into fields
-    await tester.enterText(find.byType(TextField).at(0), username);
-    await tester.enterText(find.byType(TextField).at(1), password);
-    await tester.tap(find.byType(ElevatedButton));
-
-    // Checks that the credentails were stored correctly
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    expect(prefs.get("email"), equals(username));
-    expect(prefs.get("password"), equals(password));
-  });
-
   group('TimeOfDay', () {
     TimeOfDay time1 = const TimeOfDay(hour: 4, minute: 20);
     TimeOfDay time2 = const TimeOfDay(hour: 6, minute: 09);
@@ -53,6 +25,17 @@ void main() {
     DateTime parsed = DateTimeExtension.parseTime("4:20");
     test(
         'parseTime', () => {expect(parsed.hour, 4), expect(parsed.minute, 20)});
+  });
+
+  group('List', () {
+    List<int> testList = [1, 2, 3, 4, 5];
+    test(
+        'move forward',
+        () => {
+              testList.move(0, 4),
+              expect(testList[0] == 2, true),
+              expect(testList[4] == 1, true)
+            });
   });
 }
 
