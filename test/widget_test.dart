@@ -36,6 +36,22 @@ void main() {
               expect(testList[0] == 2, true),
               expect(testList[4] == 1, true)
             });
+    test(
+        'move back',
+        () => {
+              testList.move(4, 0),
+              expect(testList[0] == 1, true),
+              expect(testList[4] == 5, true)
+            });
+    test(
+        'move multiple',
+        () => {
+              testList.move(1, 3),
+              testList.move(2, 4),
+              expect(testList[1] == 3, true),
+              expect(testList[3] == 5, true),
+              expect(testList[4] == 4, true),
+            });
   });
 }
 
