@@ -151,7 +151,7 @@ class TimeTablePageState extends State<TimeTablePage> {
     String token = sharedPreferences.getString("token")!;
 
     Response response = await dio.get(
-      "$baseUrl/api/timetable?to=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime(date.year, date.month, date.day))}&from=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime.now())}",
+      "$baseUrl/api/timetable?to=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime(date.year, date.month, date.day))}&from=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime(date.year, date.month, date.day))}",
       options: buildCacheOptions(
         const Duration(days: 4),
         forceRefresh: true,
@@ -166,7 +166,8 @@ class TimeTablePageState extends State<TimeTablePage> {
 
     List<TimeTableClass> ttClasses = <TimeTableClass>[];
     Map<String, dynamic> lessons = response.data["Days"];
-    for (Map<String, dynamic> ttLesson in lessons.values.first) {
+    for (Map<String, dynamic> ttLesson
+        in lessons.values.isEmpty ? [] : lessons.values.first) {
       ttClasses.add(
         TimeTableClass(
           ttLesson["uniperiod"],
@@ -185,7 +186,10 @@ class TimeTablePageState extends State<TimeTablePage> {
       );
     }
     TimeTableData t = TimeTableData(
-        DateTime.parse(response.data["Days"].keys.first), ttClasses);
+        DateTime.parse(response.data["Days"].keys.isEmpty
+            ? date.toString()
+            : response.data["Days"].keys.first),
+        ttClasses);
     timetables.add(t);
     return t;
   }
@@ -280,6 +284,24 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
   }
   for (TimeTableClass ttclass in tt.classes) {
     List<Widget> extrasRow = <Widget>[];
+    if (ttclass.data["teachers"] != null) {
+      List<dynamic> teachers = ttclass.data["teachers"];
+      String names = teachers.length == 1 ? "Teacher: " : "Teachers: ";
+      names += teachers[0]["firstname"] + " " + teachers[0]["lastname"];
+      for (Map<String, dynamic> teacher in teachers.skip(1)) {
+        names += ", ${teacher["firstname"]} ${teacher["lastname"]}";
+      }
+      extrasRow.add(
+        Expanded(
+          child: Text(
+            names,
+            overflow: TextOverflow.fade,
+            maxLines: 5,
+            softWrap: false,
+          ),
+        ),
+      );
+    }
     if (ttclass.data['curriculum'] != null) {
       extrasRow.add(
         Expanded(

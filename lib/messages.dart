@@ -125,7 +125,7 @@ class TimeTablePageState extends State<MessagesPage> {
       }
     ];
     List<dynamic> msgs =
-        apidataMsg.where((msg) => msg["type"] == "sprava").toList();
+        apidataMsg.where((msg) => msg["typ"] == "sprava").toList();
     List<dynamic> msgsWOR = List.from(msgs);
     List<Map<String, int>> bump = [];
     for (Map<String, dynamic> msg in msgs) {
@@ -141,13 +141,8 @@ class TimeTablePageState extends State<MessagesPage> {
       }
     }
     for (Map<String, dynamic> msg in msgsWOR) {
-      String attText = msg["attachments"].length < 5
-          ? msg["attachments"].length > 1
-              ? "y"
-              : "a"
-          : "";
       rows.add(Card(
-        color: msg["isSeen"] ? null : const Color.fromARGB(255, 124, 95, 0),
+        //color: msg["isSeen"] ? null : const Color.fromARGB(255, 124, 95, 0),
         child: InkWell(
           onTap: () {
             Navigator.push(
@@ -165,8 +160,7 @@ class TimeTablePageState extends State<MessagesPage> {
                 Row(
                   children: [
                     Text(
-                      '${msg["owner"]["firstname"]?.trim()} ${msg["owner"]["lastname"]?.trim()}'
-                          .replaceAll(RegExp(r'\s+'), ' '),
+                      msg["vlastnik_meno"].replaceAll(RegExp(r'\s+'), ' '),
                       style: const TextStyle(fontSize: 18),
                     ),
                     const Icon(
@@ -175,7 +169,7 @@ class TimeTablePageState extends State<MessagesPage> {
                     ),
                     Expanded(
                       child: Text(
-                        unescape.convert(msg["title"]),
+                        unescape.convert(msg["user_meno"]),
                         overflow: TextOverflow.fade,
                         maxLines: 5,
                         softWrap: false,
@@ -197,6 +191,7 @@ class TimeTablePageState extends State<MessagesPage> {
                     )
                   ],
                 ),
+                /*
                 for (Map<String, dynamic> r in msg["replies"])
                   Row(
                     children: [
@@ -217,7 +212,8 @@ class TimeTablePageState extends State<MessagesPage> {
                       ),
                     ],
                   ),
-                if (msg["attachments"].length > 0)
+                  */
+                if (msg["data"]["Value"]["attachements"].length > 0)
                   Padding(
                     padding: const EdgeInsets.only(top: 5),
                     child: Row(
@@ -227,8 +223,11 @@ class TimeTablePageState extends State<MessagesPage> {
                           Icons.attach_file_rounded,
                           size: 18,
                         ),
-                        Text(msg["attachments"].length.toString()),
-                        Text(" Přípon$attText"),
+                        Text(msg["data"]["Value"]["attachements"]
+                            .length
+                            .toString()),
+                        const Text(
+                            ""), //TODO Setup localization for attachments
                       ],
                     ),
                   ),

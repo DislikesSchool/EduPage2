@@ -282,8 +282,11 @@ class HomePageState extends State<HomePage> {
       ),
     );
     apidataTT = response.data;
-    _lessonStatus =
-        getLessonStatus(apidataTT["Days"].values.first, TimeOfDay.now());
+    _lessonStatus = getLessonStatus(
+        apidataTT["Days"].values.length == 0
+            ? []
+            : apidataTT["Days"].values.first,
+        TimeOfDay.now());
     if (_lessonStatus.hasLessonsToday) {
       _startTimer();
     }
@@ -681,7 +684,7 @@ class HomePageState extends State<HomePage> {
               splashColor: Colors.transparent,
               child: Badge(
                 label: Text(local.homePreview),
-                alignment: AlignmentDirectional.topEnd,
+                alignment: Alignment.topLeft,
                 child: ListTile(
                   leading: const Icon(Icons.bolt_rounded),
                   title: Text(local.homeQuickstart),
