@@ -261,7 +261,14 @@ class HomePageState extends State<HomePage> {
       });
     }
 
-    Map<String, dynamic> user = await widget.sessionManager.get('user');
+    Map<String, dynamic>? user = await widget.sessionManager.get('user');
+    if (user == null) {
+      apidataTT = {};
+      setState(() {
+        loading = false;
+      });
+      return;
+    }
     username = user["firstname"] + " " + user["lastname"];
     String token = sharedPreferences.getString("token")!;
 
