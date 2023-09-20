@@ -126,7 +126,7 @@ class PageBaseState extends State<PageBase> {
       minimumFetchInterval: const Duration(hours: 1),
     ));
     await remoteConfig.setDefaults(const {
-      "baseUrl": "https://lobster-app-z6jfk.ondigitalocean.app",
+      "baseUrl": "https://lobster-app-z6jfk.ondigitalocean.app/api",
     });
     await remoteConfig.fetchAndActivate();
     baseUrl = remoteConfig.getString("baseUrl");
