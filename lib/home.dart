@@ -498,29 +498,30 @@ class HomePageState extends State<HomePage> {
                                       widget.onDestinationSelected(1);
                                     },
                                     child: Card(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            lesson["period"]["name"] + ".",
-                                            style:
-                                                const TextStyle(fontSize: 10),
-                                          ),
-                                          Text(
-                                            lesson["subject"]["short"],
-                                            style:
-                                                const TextStyle(fontSize: 20),
-                                          ),
-                                          Text(
-                                            lesson["classrooms"].length > 0
-                                                ? lesson["classrooms"][0]
-                                                    ["short"]
-                                                : "?",
-                                            style:
-                                                const TextStyle(fontSize: 14),
-                                          ),
-                                        ],
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              lesson["period"]["name"] + ".",
+                                              style:
+                                                  const TextStyle(fontSize: 10),
+                                            ),
+                                            Text(
+                                              lesson["subject"]["short"],
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                            Text(
+                                              lesson["classrooms"].length > 0
+                                                  ? lesson["classrooms"][0]
+                                                      ["short"]
+                                                  : "?",
+                                              style:
+                                                  const TextStyle(fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
