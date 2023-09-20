@@ -496,7 +496,10 @@ class HomePageState extends State<HomePage> {
                                                 const TextStyle(fontSize: 20),
                                           ),
                                           Text(
-                                            lesson["classrooms"][0]["short"],
+                                            lesson["classrooms"].length > 0
+                                                ? lesson["classrooms"][0]
+                                                    ["short"]
+                                                : "?",
                                             style:
                                                 const TextStyle(fontSize: 14),
                                           ),
