@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:eduapge2/message.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -64,7 +65,7 @@ class TimeTablePageState extends State<MessagesPage> {
     SharedPreferences sp = await SharedPreferences.getInstance();
     if (sp.getBool('quickstart') ?? false) {
       String token = sp.getString("token")!;
-      String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
+      String baseUrl = FirebaseRemoteConfig.instance.getString("baseUrl");
       Dio dio = Dio();
       Response response = await dio.get(
         "$baseUrl/messages",

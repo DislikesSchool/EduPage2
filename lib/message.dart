@@ -1,3 +1,4 @@
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
@@ -24,7 +25,7 @@ class MessagePage extends StatefulWidget {
 class MessagePageState extends State<MessagePage> {
   late SessionManager sessionManager;
   late SharedPreferences sharedPreferences;
-  String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
+  String baseUrl = FirebaseRemoteConfig.instance.getString("baseUrl");
   bool loading = true;
   Dio dio = Dio();
 
@@ -214,7 +215,8 @@ class MessagePageState extends State<MessagePage> {
 }
 
 Future<void> _onOpen(LinkableElement link) async {
-  if (!await launchUrl(Uri.parse(link.url))) {
+  if (!await launchUrl(Uri.parse(link.url),
+      mode: LaunchMode.externalApplication)) {
     throw Exception('Could not launch ${link.url}');
   }
 }
