@@ -443,8 +443,8 @@ class HomePageState extends State<HomePage> {
                               Icons.circle,
                               color: Color.fromARGB(
                                   255,
-                                  _lessonStatus.hasLesson ? 0 : 255,
                                   _lessonStatus.hasLesson ? 255 : 0,
+                                  _lessonStatus.hasLesson ? 0 : 255,
                                   0),
                               size: 8,
                             ),
@@ -520,7 +520,8 @@ class HomePageState extends State<HomePage> {
                     final url = Uri.parse(
                         'https://github.com/DislikesSchool/EduPage2/releases/latest');
                     if (await canLaunchUrl(url)) {
-                      await launchUrl(url);
+                      await launchUrl(url,
+                          mode: LaunchMode.externalApplication);
                     } else {
                       throw 'Could not launch $url';
                     }

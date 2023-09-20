@@ -273,6 +273,7 @@ class TimeTableClass {
 Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
     AppLocalizations? local, bool userInteracted, BuildContext context) {
   List<TableRow> rows = <TableRow>[];
+  /*
   if (daydiff == 0 && tt.classes.isNotEmpty) {
     String endTime = tt.classes.last.endTime;
     DateTime now = DateTime.now();
@@ -282,6 +283,7 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
       modifyDayDiff(1);
     }
   }
+  */
   for (TimeTableClass ttclass in tt.classes) {
     List<Widget> extrasRow = <Widget>[];
     if (ttclass.data["teachers"] != null) {
