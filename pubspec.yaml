@@ -3,7 +3,7 @@ description: A custom mobile client for EduPage, focusing on design and speed im
 publish_to: none
 version: 1.7.8
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: ">=2.19.0 <3.0.0"
 dependencies:
   flutter:
     sdk: flutter
@@ -29,6 +29,8 @@ dependencies:
   shorebird_code_push: ^1.1.0
   restart_app: ^1.2.1
   flutter_linkify: ^6.0.0
+  dynamic_color: ^1.4.0
+  firebase_remote_config: ^4.2.6
 dependency_overrides:
   flutter_pdfview: 1.2.9
 dev_dependencies:

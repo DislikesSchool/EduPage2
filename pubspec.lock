@@ -13,10 +13,10 @@ packages:
     dependency: transitive
     description:
       name: _flutterfire_internals
-      sha256: "1a5e13736d59235ce0139621b4bbe29bc89839e202409081bc667eb3cd20674c"
+      sha256: "2d8e8e123ca3675625917f535fcc0d3a50092eef44334168f9b18adc050d4c6e"
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.5"
+    version: "1.3.6"
   analyzer:
     dependency: transitive
     description:
@@ -177,6 +177,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.0"
+  dynamic_color:
+    dependency: "direct main"
+    description:
+      name: dynamic_color
+      sha256: de4798a7069121aee12d5895315680258415de9b00e717723a1bd73d58f0126d
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.6.6"
   fake_async:
     dependency: transitive
     description:
@@ -229,10 +237,10 @@ packages:
     dependency: "direct main"
     description:
       name: firebase_core
-      sha256: c78132175edda4bc532a71e01a32964e4b4fcf53de7853a422d96dac3725f389
+      sha256: "675c209c94a1817649137cbd113fc4c9ae85e48d03dd578629abbec6d8a4d93d"
       url: "https://pub.dev"
     source: hosted
-    version: "2.15.1"
+    version: "2.16.0"
   firebase_core_platform_interface:
     dependency: transitive
     description:
@@ -245,10 +253,10 @@ packages:
     dependency: transitive
     description:
       name: firebase_core_web
-      sha256: "4cf4d2161530332ddc3c562f19823fb897ff37a9a774090d28df99f47370e973"
+      sha256: e8c408923cd3a25bd342c576a114f2126769cd1a57106a4edeaa67ea4a84e962
       url: "https://pub.dev"
     source: hosted
-    version: "2.7.0"
+    version: "2.8.0"
   firebase_performance:
     dependency: "direct main"
     description:
@@ -273,6 +281,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.4+5"
+  firebase_remote_config:
+    dependency: "direct main"
+    description:
+      name: firebase_remote_config
+      sha256: "945fbf4afe6a5eb5fe1bebe9e310c019d2896e15b9dc579914a2be1c832a7030"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.6"
+  firebase_remote_config_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_remote_config_platform_interface
+      sha256: "9d424edcbfb6ff43f5829c67d22cf834083fc7636dee07b4c3e04936818814f9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.6"
+  firebase_remote_config_web:
+    dependency: transitive
+    description:
+      name: firebase_remote_config_web
+      sha256: b4bb823426ef65c7af3e7829c1d8babc167951bec11712ac4ac7d884ad57ab3c
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.6"
   flutter:
     dependency: "direct main"
     description: flutter
