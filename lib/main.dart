@@ -103,9 +103,7 @@ class PageBaseState extends State<PageBase> {
   void initState() {
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
-    //getData(); //fetching data
     getMsgs();
-    //Timer.periodic(const Duration(seconds: 2), (Timer t) => {getData()});
     super.initState();
   }
 
