@@ -29,6 +29,7 @@ dependencies:
   shorebird_code_push: ^1.1.0
   restart_app: ^1.2.1
   flutter_linkify: ^6.0.0
+  dynamic_color: ^1.4.0
   firebase_remote_config: ^4.2.6
 dependency_overrides:
   flutter_pdfview: 1.2.9
