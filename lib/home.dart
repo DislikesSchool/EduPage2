@@ -6,6 +6,7 @@ import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:eduapge2/icanteen_setup.dart';
 import 'package:eduapge2/message.dart';
 import 'package:eduapge2/messages.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
@@ -144,7 +145,7 @@ final _shorebirdCodePush = ShorebirdCodePush();
 class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   late SharedPreferences sharedPreferences;
-  String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
+  String baseUrl = FirebaseRemoteConfig.instance.getString("baseUrl");
   late Response response;
   Dio dio = Dio();
 
@@ -306,8 +307,16 @@ class HomePageState extends State<HomePage> {
     final buildName = packageInfo.version;
 
     try {
-      final response = await dio.get(
-          'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest');
+      final response = await dio
+          .get(
+              'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest')
+          .catchError((r) {
+        return Response(
+            requestOptions: RequestOptions(path: r.path), statusCode: 500);
+      });
+      if (response.statusCode == 500) {
+        return;
+      }
       final responseData = response.data;
 
       // Extract the tag_name from the response JSON and remove the "v" prefix if present
