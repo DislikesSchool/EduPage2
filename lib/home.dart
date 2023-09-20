@@ -697,53 +697,29 @@ class HomePageState extends State<HomePage> {
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
               child: ListTile(
-                leading: const Icon(Icons.lunch_dining_rounded),
-                title: Text(local!.homeSetupICanteen),
+                leading: const Icon(Icons.bolt_rounded),
+                title: Text(local!.homeQuickstart),
+                trailing: Transform.scale(
+                  scale: 0.75,
+                  child: Switch(
+                    value: quickstart,
+                    onChanged: (bool value) {
+                      sharedPreferences.setBool('quickstart', value);
+                      setState(() {
+                        quickstart = value;
+                      });
+                    },
+                  ),
+                ),
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ICanteenSetupScreen(
-                        sessionManager: widget.sessionManager,
-                        loadedCallback: () {
-                          widget.reLogin();
-                        },
-                      ),
-                    ),
-                  );
+                  sharedPreferences.setBool('quickstart', !quickstart);
+                  setState(() {
+                    quickstart = !quickstart;
+                  });
                 },
               ),
             ),
-            InkWell(
-              highlightColor: Colors.transparent,
-              splashColor: Colors.transparent,
-              child: Badge(
-                label: Text(local.homePreview),
-                alignment: AlignmentDirectional.topEnd,
-                child: ListTile(
-                  leading: const Icon(Icons.bolt_rounded),
-                  title: Text(local.homeQuickstart),
-                  trailing: Transform.scale(
-                    scale: 0.75,
-                    child: Switch(
-                      value: quickstart,
-                      onChanged: (bool value) {
-                        sharedPreferences.setBool('quickstart', value);
-                        setState(() {
-                          quickstart = value;
-                        });
-                      },
-                    ),
-                  ),
-                  onTap: () {
-                    sharedPreferences.setBool('quickstart', !quickstart);
-                    setState(() {
-                      quickstart = !quickstart;
-                    });
-                  },
-                ),
-              ),
-            ),
+            /*
             const Divider(),
             ListTile(
               leading: const Icon(Icons.language),
@@ -775,8 +751,29 @@ class HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-            ),
+            ),*/
             const Divider(),
+            InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: ListTile(
+                leading: const Icon(Icons.lunch_dining_rounded),
+                title: Text(local.homeSetupICanteen),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ICanteenSetupScreen(
+                        sessionManager: widget.sessionManager,
+                        loadedCallback: () {
+                          widget.reLogin();
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
             InkWell(
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
@@ -788,6 +785,23 @@ class HomePageState extends State<HomePage> {
                   sharedPreferences.remove('password');
                   sharedPreferences.remove('token');
                   widget.reLogin();
+                },
+              ),
+            ),
+            const Divider(),
+            InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: ListTile(
+                leading: const Icon(Icons.discord),
+                title: const Text("EduPage2 Discord"),
+                onTap: () async {
+                  final url = Uri.parse('https://discord.gg/xy5nqWa2kQ');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  } else {
+                    throw 'Could not launch $url';
+                  }
                 },
               ),
             ),
