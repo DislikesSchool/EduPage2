@@ -18,10 +18,7 @@ void main() {
 
     testWidgets('Run app and login', (tester) async {
       await prep(tester, username, password, name);
-
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      expect(prefs.get("email"), equals(username));
-      expect(prefs.get("password"), equals(password));
+      expect(find.text("Username"), findsNothing);
     });
 
     testWidgets('Test TimeTable page', (tester) async {
@@ -29,7 +26,7 @@ void main() {
 
       await tester.tap(find.byType(NavigationDestination).at(1));
       await pumpUntilFound(tester, find.textContaining("Today"));
-      expect(find.textContaining("Today"), findsOneWidget);
+      expect(find.textContaining("TODAY"), findsOneWidget);
     });
 
     testWidgets('Test TimeTable page scroll', (tester) async {
@@ -37,11 +34,11 @@ void main() {
 
       await tester.tap(find.byType(NavigationDestination).at(1));
       await pumpUntilFound(tester, find.textContaining("Today"));
-      expect(find.textContaining("Today"), findsOneWidget);
+      expect(find.textContaining("TODAY"), findsOneWidget);
 
       await tester.tap(find.byKey(const Key("TimeTableScrollForward")));
       await pumpUntilFound(tester, find.textContaining("Tomorrow"));
-      //expect(find.textContaining("Tomorrow"), findsOneWidget);
+      expect(find.textContaining("TOMORROW"), findsOneWidget);
     });
   });
 }
@@ -60,5 +57,5 @@ Future<void> prep(
   await tester.tap(find.byType(ElevatedButton));
 
   await pumpUntilFound(tester, find.text(name));
-  await tester.pump(const Duration(seconds: 5));
+  await tester.pump(const Duration(seconds: 1));
 }

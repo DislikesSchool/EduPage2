@@ -13,7 +13,7 @@ import 'package:package_info/package_info.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shorebird_code_push/shorebird_code_push_web.dart';
+import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
@@ -193,20 +193,14 @@ class HomePageState extends State<HomePage> {
     });
 
     if (isUpdateAvailable) {
-      _showUpdateAvailableBanner();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No update available'),
-        ),
-      );
+      _downloadUpdate();
     }
   }
 
   void _showDownloadingBanner() {
     ScaffoldMessenger.of(context).showMaterialBanner(
       const MaterialBanner(
-        content: Text('Downloading...'),
+        content: Text('Downloading patch...'),
         actions: [
           SizedBox(
             height: 14,
@@ -215,26 +209,6 @@ class HomePageState extends State<HomePage> {
               strokeWidth: 2,
             ),
           )
-        ],
-      ),
-    );
-  }
-
-  void _showUpdateAvailableBanner() {
-    ScaffoldMessenger.of(context).showMaterialBanner(
-      MaterialBanner(
-        content: const Text('Update available'),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-              await _downloadUpdate();
-
-              if (!mounted) return;
-              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-            },
-            child: const Text('Download'),
-          ),
         ],
       ),
     );
@@ -291,7 +265,14 @@ class HomePageState extends State<HomePage> {
       });
     }
 
-    Map<String, dynamic> user = await widget.sessionManager.get('user');
+    Map<String, dynamic>? user = await widget.sessionManager.get('user');
+    if (user == null) {
+      apidataTT = {};
+      setState(() {
+        loading = false;
+      });
+      return;
+    }
     username = user["firstname"] + " " + user["lastname"];
     String token = sharedPreferences.getString("token")!;
 
@@ -473,8 +454,8 @@ class HomePageState extends State<HomePage> {
                               Icons.circle,
                               color: Color.fromARGB(
                                   255,
-                                  _lessonStatus.hasLesson ? 0 : 255,
                                   _lessonStatus.hasLesson ? 255 : 0,
+                                  _lessonStatus.hasLesson ? 0 : 255,
                                   0),
                               size: 8,
                             ),
@@ -517,27 +498,29 @@ class HomePageState extends State<HomePage> {
                                       widget.onDestinationSelected(1);
                                     },
                                     child: Card(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              lesson["period"]["name"] + ".",
-                                              style:
-                                                  const TextStyle(fontSize: 10),
-                                            ),
-                                            Text(
-                                              lesson["subject"]["short"],
-                                              style:
-                                                  const TextStyle(fontSize: 20),
-                                            ),
-                                            Text(
-                                              lesson["classrooms"][0]["short"],
-                                              style:
-                                                  const TextStyle(fontSize: 14),
-                                            ),
-                                          ],
-                                        ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            lesson["period"]["name"] + ".",
+                                            style:
+                                                const TextStyle(fontSize: 10),
+                                          ),
+                                          Text(
+                                            lesson["subject"]["short"],
+                                            style:
+                                                const TextStyle(fontSize: 20),
+                                          ),
+                                          Text(
+                                            lesson["classrooms"].length > 0
+                                                ? lesson["classrooms"][0]
+                                                    ["short"]
+                                                : "?",
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -555,7 +538,8 @@ class HomePageState extends State<HomePage> {
                     final url = Uri.parse(
                         'https://github.com/DislikesSchool/EduPage2/releases/latest');
                     if (await canLaunchUrl(url)) {
-                      await launchUrl(url);
+                      await launchUrl(url,
+                          mode: LaunchMode.externalApplication);
                     } else {
                       throw 'Could not launch $url';
                     }
