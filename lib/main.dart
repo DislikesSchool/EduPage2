@@ -6,6 +6,7 @@ import 'package:eduapge2/load.dart';
 import 'package:eduapge2/messages.dart';
 import 'package:eduapge2/timetable.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
@@ -103,9 +104,7 @@ class PageBaseState extends State<PageBase> {
   void initState() {
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
-    //getData(); //fetching data
     getMsgs();
-    //Timer.periodic(const Duration(seconds: 2), (Timer t) => {getData()});
     super.initState();
   }
 
@@ -115,7 +114,21 @@ class PageBaseState extends State<PageBase> {
     super.setState(fn);
   }
 
+  initRemoteConfig() async {
+    final remoteConfig = FirebaseRemoteConfig.instance;
+    await remoteConfig.setConfigSettings(RemoteConfigSettings(
+      fetchTimeout: const Duration(minutes: 1),
+      minimumFetchInterval: const Duration(hours: 1),
+    ));
+    await remoteConfig.setDefaults(const {
+      "baseUrl": "https://lobster-app-z6jfk.ondigitalocean.app",
+    });
+    await remoteConfig.fetchAndActivate();
+    baseUrl = remoteConfig.getString("baseUrl");
+  }
+
   getMsgs() async {
+    await initRemoteConfig();
     var msgs = await sessionManager.get('messages');
     var ic = await sessionManager.get('iCanteenEnabled');
     if (ic == true) {
