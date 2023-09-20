@@ -113,7 +113,6 @@ class PageBaseState extends State<PageBase> {
     super.setState(fn);
   }
 
-
   void _onDestinationSelected(int index) {
     setState(() {
       _selectedIndex = index;
@@ -131,7 +130,6 @@ class PageBaseState extends State<PageBase> {
     });
     await remoteConfig.fetchAndActivate();
     baseUrl = remoteConfig.getString("baseUrl");
-
   }
 
   getMsgs() async {
