@@ -113,6 +113,12 @@ class PageBaseState extends State<PageBase> {
     super.setState(fn);
   }
 
+  void _onDestinationSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   initRemoteConfig() async {
     final remoteConfig = FirebaseRemoteConfig.instance;
     await remoteConfig.setConfigSettings(RemoteConfigSettings(
@@ -165,12 +171,14 @@ class PageBaseState extends State<PageBase> {
               index: _selectedIndex,
               children: <Widget>[
                 HomePage(
-                    sessionManager: sessionManager,
-                    reLogin: () {
-                      setState(() {
-                        loaded = false;
-                      });
-                    }),
+                  sessionManager: sessionManager,
+                  reLogin: () {
+                    setState(() {
+                      loaded = false;
+                    });
+                  },
+                  onDestinationSelected: _onDestinationSelected,
+                ),
                 TimeTablePage(
                   sessionManager: sessionManager,
                 ),

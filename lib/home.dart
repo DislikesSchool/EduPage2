@@ -20,9 +20,13 @@ import 'package:url_launcher/url_launcher.dart';
 class HomePage extends StatefulWidget {
   final SessionManager sessionManager;
   final Function reLogin;
+  final ValueChanged<int> onDestinationSelected;
 
   const HomePage(
-      {super.key, required this.sessionManager, required this.reLogin});
+      {super.key,
+      required this.sessionManager,
+      required this.reLogin,
+      required this.onDestinationSelected});
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -317,9 +321,13 @@ class HomePageState extends State<HomePage> {
       final response = await dio
           .get(
               'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest')
-          .catchError((r) {
+          .catchError((obj) {
         return Response(
-            requestOptions: RequestOptions(path: r.path), statusCode: 500);
+          requestOptions: RequestOptions(
+              path:
+                  'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest'),
+          statusCode: 500,
+        );
       });
       if (response.statusCode == 500) {
         return;
@@ -489,30 +497,35 @@ class HomePageState extends State<HomePage> {
                               children: [
                                 for (Map<String, dynamic> lesson
                                     in apidataTT["lessons"])
-                                  Card(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            lesson["period"]["name"] + ".",
-                                            style:
-                                                const TextStyle(fontSize: 10),
-                                          ),
-                                          Text(
-                                            lesson["subject"]["short"],
-                                            style:
-                                                const TextStyle(fontSize: 20),
-                                          ),
-                                          Text(
-                                            lesson["classrooms"].length > 0
-                                                ? lesson["classrooms"][0]
-                                                    ["short"]
-                                                : "?",
-                                            style:
-                                                const TextStyle(fontSize: 14),
-                                          ),
-                                        ],
+                                  GestureDetector(
+                                    onTap: () {
+                                      widget.onDestinationSelected(1);
+                                    },
+                                    child: Card(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              lesson["period"]["name"] + ".",
+                                              style:
+                                                  const TextStyle(fontSize: 10),
+                                            ),
+                                            Text(
+                                              lesson["subject"]["short"],
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                            Text(
+                                              lesson["classrooms"].length > 0
+                                                  ? lesson["classrooms"][0]
+                                                      ["short"]
+                                                  : "?",
+                                              style:
+                                                  const TextStyle(fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -673,8 +686,68 @@ class HomePageState extends State<HomePage> {
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
               child: ListTile(
+                leading: const Icon(Icons.bolt_rounded),
+                title: Text(local!.homeQuickstart),
+                trailing: Transform.scale(
+                  scale: 0.75,
+                  child: Switch(
+                    value: quickstart,
+                    onChanged: (bool value) {
+                      sharedPreferences.setBool('quickstart', value);
+                      setState(() {
+                        quickstart = value;
+                      });
+                    },
+                  ),
+                ),
+                onTap: () {
+                  sharedPreferences.setBool('quickstart', !quickstart);
+                  setState(() {
+                    quickstart = !quickstart;
+                  });
+                },
+              ),
+            ),
+            /*
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.language),
+              title: const Text('Language'),
+              trailing: SizedBox(
+                height: 32,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: DropdownButton<Locale>(
+                    value: Localizations.localeOf(context),
+                    onChanged: (Locale? locale) {
+                      if (locale != null) {
+                        // Handle locale selection
+                      }
+                    },
+                    icon: const Icon(Icons.arrow_drop_down),
+                    underline: Container(),
+                    style: Theme.of(context).textTheme.titleMedium,
+                    items: AppLocalizations.supportedLocales
+                        .map((locale) => DropdownMenuItem<Locale>(
+                              value: locale,
+                              child: Text(locale.languageCode),
+                            ))
+                        .toList(),
+                  ),
+                ),
+              ),
+            ),*/
+            const Divider(),
+            InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: ListTile(
                 leading: const Icon(Icons.lunch_dining_rounded),
-                title: Text(local!.homeSetupICanteen),
+                title: Text(local.homeSetupICanteen),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -693,37 +766,6 @@ class HomePageState extends State<HomePage> {
             InkWell(
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
-              child: Badge(
-                label: Text(local.homePreview),
-                alignment: AlignmentDirectional.topEnd,
-                child: ListTile(
-                  leading: const Icon(Icons.bolt_rounded),
-                  title: Text(local.homeQuickstart),
-                  trailing: Transform.scale(
-                    scale: 0.75,
-                    child: Switch(
-                      value: quickstart,
-                      onChanged: (bool value) {
-                        sharedPreferences.setBool('quickstart', value);
-                        setState(() {
-                          quickstart = value;
-                        });
-                      },
-                    ),
-                  ),
-                  onTap: () {
-                    sharedPreferences.setBool('quickstart', !quickstart);
-                    setState(() {
-                      quickstart = !quickstart;
-                    });
-                  },
-                ),
-              ),
-            ),
-            const Divider(),
-            InkWell(
-              highlightColor: Colors.transparent,
-              splashColor: Colors.transparent,
               child: ListTile(
                 leading: const Icon(Icons.logout),
                 title: Text(local.homeLogout),
@@ -732,6 +774,23 @@ class HomePageState extends State<HomePage> {
                   sharedPreferences.remove('password');
                   sharedPreferences.remove('token');
                   widget.reLogin();
+                },
+              ),
+            ),
+            const Divider(),
+            InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: ListTile(
+                leading: const Icon(Icons.discord),
+                title: const Text("EduPage2 Discord"),
+                onTap: () async {
+                  final url = Uri.parse('https://discord.gg/xy5nqWa2kQ');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  } else {
+                    throw 'Could not launch $url';
+                  }
                 },
               ),
             ),
