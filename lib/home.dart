@@ -13,7 +13,6 @@ import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
@@ -143,10 +142,17 @@ LessonStatus getLessonStatus(List<dynamic> lessons, TimeOfDay currentTime) {
   }
 }
 
+void postDiscordTestingWebhook(Dio dio, String msg) async {
+  await dio.post(
+      "https://discord.com/api/webhooks/1155074944741412895/MYC_MKKKDKlfH8-e2xjj19WmIhmHzHCZzKVl8v_As2ttlCi9Bpjkp15nN3zeDAzv3hID",
+      data: {"content": msg});
+}
+
 class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   late SharedPreferences sharedPreferences;
   String baseUrl = FirebaseRemoteConfig.instance.getString("baseUrl");
+  String testUrl = FirebaseRemoteConfig.instance.getString("testUrl");
   late Response response;
   Dio dio = Dio();
 
@@ -170,7 +176,17 @@ class HomePageState extends State<HomePage> {
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
     fetchAndCompareBuildName();
+    testConnectionToNewAPI();
     getData(); //fetching data
+  }
+
+  void testConnectionToNewAPI() async {
+    Response res = await dio.post("$testUrl/test");
+    if (res.statusCode == 200 && res.data[""]) {
+      postDiscordTestingWebhook(dio, "Success on [POST] /test");
+    } else {
+      postDiscordTestingWebhook(dio, "Fail on [POST] /test");
+    }
   }
 
   @override
