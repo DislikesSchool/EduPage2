@@ -143,8 +143,6 @@ LessonStatus getLessonStatus(List<dynamic> lessons, TimeOfDay currentTime) {
   }
 }
 
-final _shorebirdCodePush = ShorebirdCodePush();
-
 class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   late SharedPreferences sharedPreferences;
