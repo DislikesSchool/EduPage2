@@ -386,7 +386,8 @@ class HomePageState extends State<HomePage> {
             }
           }
           if (canOrder && !hasOrdered) {
-            orderLunchesFor = DateTime.parse(li["day"]);
+            DateTime parsed = DateTime.parse(li["day"]);
+            orderLunchesFor = DateTime(parsed.year, parsed.month, parsed.day);
             break;
           }
         }
