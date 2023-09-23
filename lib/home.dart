@@ -182,7 +182,7 @@ class HomePageState extends State<HomePage> {
 
   void testConnectionToNewAPI() async {
     Response res = await dio.post("$testUrl/test");
-    if (res.statusCode == 200 && res.data[""]) {
+    if (res.statusCode == 200 && res.data["message"] == "test") {
       postDiscordTestingWebhook(dio, "Success on [POST] /test");
     } else {
       postDiscordTestingWebhook(dio, "Fail on [POST] /test");
