@@ -193,6 +193,7 @@ class PageBaseState extends State<PageBase> {
     ));
     await remoteConfig.setDefaults(const {
       "baseUrl": "https://lobster-app-z6jfk.ondigitalocean.app/api",
+      "testUrl": "https://edupage2server-1-c5607538.deta.app/"
     });
     await remoteConfig.fetchAndActivate();
     baseUrl = remoteConfig.getString("baseUrl");
