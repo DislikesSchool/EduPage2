@@ -54,6 +54,10 @@ class LoadingScreenState extends State<LoadingScreen> {
     if (startedInit) return;
     startedInit = true;
     sharedPreferences = await SharedPreferences.getInstance();
+    String? endpoint = sharedPreferences.getString("customEndpoint");
+    if (endpoint != null && endpoint != "") {
+      baseUrl = endpoint;
+    }
     quickstart = sharedPreferences.getBool('quickstart') ?? false;
     progress = 0.1;
     loaderText = local!.loadCredentials;
@@ -91,11 +95,6 @@ class LoadingScreenState extends State<LoadingScreen> {
     String? email = sharedPreferences.getString("email");
     String? password = sharedPreferences.getString("password");
     String? server = sharedPreferences.getString("server");
-    String? endpoint = sharedPreferences.getString("customEndpoint");
-
-    if (endpoint != null && endpoint != "") {
-      baseUrl = endpoint;
-    }
 
     if (token != null && token != "") {
       loaderText = local!.loadVerify;
