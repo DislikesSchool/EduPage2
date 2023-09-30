@@ -6,23 +6,26 @@ import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:eduapge2/icanteen_setup.dart';
 import 'package:eduapge2/message.dart';
 import 'package:eduapge2/messages.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info/package_info.dart';
-import 'package:restart_app/restart_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   final SessionManager sessionManager;
   final Function reLogin;
+  final ValueChanged<int> onDestinationSelected;
 
   const HomePage(
-      {super.key, required this.sessionManager, required this.reLogin});
+      {super.key,
+      required this.sessionManager,
+      required this.reLogin,
+      required this.onDestinationSelected});
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -138,12 +141,17 @@ LessonStatus getLessonStatus(List<dynamic> lessons, TimeOfDay currentTime) {
   }
 }
 
-final _shorebirdCodePush = ShorebirdCodePush();
+void postDiscordTestingWebhook(Dio dio, String msg) async {
+  await dio.post(
+      "https://discord.com/api/webhooks/1155074944741412895/MYC_MKKKDKlfH8-e2xjj19WmIhmHzHCZzKVl8v_As2ttlCi9Bpjkp15nN3zeDAzv3hID",
+      data: {"content": msg});
+}
 
 class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   late SharedPreferences sharedPreferences;
-  String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
+  String baseUrl = FirebaseRemoteConfig.instance.getString("baseUrl");
+  String testUrl = FirebaseRemoteConfig.instance.getString("testUrl");
   late Response response;
   Dio dio = Dio();
 
@@ -154,7 +162,6 @@ class HomePageState extends State<HomePage> {
   bool refresh = false;
   bool updateAvailable = false;
   bool quickstart = false;
-  bool _isCheckingForUpdate = false;
 
   late Map<String, dynamic> apidataTT;
   List<dynamic> apidataMsg = [];
@@ -168,69 +175,17 @@ class HomePageState extends State<HomePage> {
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
     fetchAndCompareBuildName();
+    testConnectionToNewAPI();
     getData(); //fetching data
-    if (!_isCheckingForUpdate) _checkForUpdate(); // ik that it's not necessary
   }
 
-  Future<void> _checkForUpdate() async {
-    setState(() {
-      _isCheckingForUpdate = true;
-    });
-
-    // Ask the Shorebird servers if there is a new patch available.
-    final isUpdateAvailable =
-        await _shorebirdCodePush.isNewPatchAvailableForDownload();
-
-    if (!mounted) return;
-
-    setState(() {
-      _isCheckingForUpdate = false;
-    });
-
-    if (isUpdateAvailable) {
-      _downloadUpdate();
+  void testConnectionToNewAPI() async {
+    Response res = await dio.post("$testUrl/test");
+    if (res.statusCode == 200 && res.data["message"] == "test") {
+      postDiscordTestingWebhook(dio, "Success on [POST] /test");
+    } else {
+      postDiscordTestingWebhook(dio, "Fail on [POST] /test");
     }
-  }
-
-  void _showDownloadingBanner() {
-    ScaffoldMessenger.of(context).showMaterialBanner(
-      const MaterialBanner(
-        content: Text('Downloading patch...'),
-        actions: [
-          SizedBox(
-            height: 14,
-            width: 14,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  void _showRestartBanner() {
-    ScaffoldMessenger.of(context).showMaterialBanner(
-      const MaterialBanner(
-        content: Text('A new patch is ready!'),
-        actions: [
-          TextButton(
-            // Restart the app for the new patch to take effect.
-            onPressed: Restart.restartApp,
-            child: Text('Restart app'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _downloadUpdate() async {
-    _showDownloadingBanner();
-    await _shorebirdCodePush.downloadUpdateIfAvailable();
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-    _showRestartBanner();
   }
 
   @override
@@ -315,8 +270,20 @@ class HomePageState extends State<HomePage> {
     final buildName = packageInfo.version;
 
     try {
-      final response = await dio.get(
-          'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest');
+      final response = await dio
+          .get(
+              'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest')
+          .catchError((obj) {
+        return Response(
+          requestOptions: RequestOptions(
+              path:
+                  'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest'),
+          statusCode: 500,
+        );
+      });
+      if (response.statusCode == 500) {
+        return;
+      }
       final responseData = response.data;
 
       // Extract the tag_name from the response JSON and remove the "v" prefix if present
@@ -371,7 +338,8 @@ class HomePageState extends State<HomePage> {
             }
           }
           if (canOrder && !hasOrdered) {
-            orderLunchesFor = DateTime.parse(li["day"]);
+            DateTime parsed = DateTime.parse(li["day"]);
+            orderLunchesFor = DateTime(parsed.year, parsed.month, parsed.day);
             break;
           }
         }
@@ -482,27 +450,32 @@ class HomePageState extends State<HomePage> {
                               children: [
                                 for (Map<String, dynamic> lesson
                                     in apidataTT["Days"].values.first)
-                                  Card(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            lesson["uniperiod"] + ".",
-                                            style:
-                                                const TextStyle(fontSize: 10),
-                                          ),
-                                          Text(
-                                            lesson["subject"]["short"],
-                                            style:
-                                                const TextStyle(fontSize: 20),
-                                          ),
-                                          Text(
-                                            lesson["classrooms"][0]["short"],
-                                            style:
-                                                const TextStyle(fontSize: 14),
-                                          ),
-                                        ],
+                                  GestureDetector(
+                                    onTap: () {
+                                      widget.onDestinationSelected(1);
+                                    },
+                                    child: Card(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              lesson["uniperiod"] + ".",
+                                              style:
+                                                  const TextStyle(fontSize: 10),
+                                            ),
+                                            Text(
+                                              lesson["subject"]["short"],
+                                              style:
+                                                  const TextStyle(fontSize: 20),
+                                            ),
+                                            Text(
+                                              lesson["classrooms"][0]["short"],
+                                              style:
+                                                  const TextStyle(fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -663,8 +636,68 @@ class HomePageState extends State<HomePage> {
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
               child: ListTile(
+                leading: const Icon(Icons.bolt_rounded),
+                title: Text(local!.homeQuickstart),
+                trailing: Transform.scale(
+                  scale: 0.75,
+                  child: Switch(
+                    value: quickstart,
+                    onChanged: (bool value) {
+                      sharedPreferences.setBool('quickstart', value);
+                      setState(() {
+                        quickstart = value;
+                      });
+                    },
+                  ),
+                ),
+                onTap: () {
+                  sharedPreferences.setBool('quickstart', !quickstart);
+                  setState(() {
+                    quickstart = !quickstart;
+                  });
+                },
+              ),
+            ),
+            /*
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.language),
+              title: const Text('Language'),
+              trailing: SizedBox(
+                height: 32,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: DropdownButton<Locale>(
+                    value: Localizations.localeOf(context),
+                    onChanged: (Locale? locale) {
+                      if (locale != null) {
+                        // Handle locale selection
+                      }
+                    },
+                    icon: const Icon(Icons.arrow_drop_down),
+                    underline: Container(),
+                    style: Theme.of(context).textTheme.titleMedium,
+                    items: AppLocalizations.supportedLocales
+                        .map((locale) => DropdownMenuItem<Locale>(
+                              value: locale,
+                              child: Text(locale.languageCode),
+                            ))
+                        .toList(),
+                  ),
+                ),
+              ),
+            ),*/
+            const Divider(),
+            InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: ListTile(
                 leading: const Icon(Icons.lunch_dining_rounded),
-                title: Text(local!.homeSetupICanteen),
+                title: Text(local.homeSetupICanteen),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -722,6 +755,23 @@ class HomePageState extends State<HomePage> {
                   sharedPreferences.remove('password');
                   sharedPreferences.remove('token');
                   widget.reLogin();
+                },
+              ),
+            ),
+            const Divider(),
+            InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: ListTile(
+                leading: const Icon(Icons.discord),
+                title: const Text("EduPage2 Discord"),
+                onTap: () async {
+                  final url = Uri.parse('https://discord.gg/xy5nqWa2kQ');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  } else {
+                    throw 'Could not launch $url';
+                  }
                 },
               ),
             ),

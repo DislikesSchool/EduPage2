@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
@@ -18,7 +19,7 @@ class TimeTablePage extends StatefulWidget {
 }
 
 class TimeTablePageState extends State<TimeTablePage> {
-  String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
+  String baseUrl = FirebaseRemoteConfig.instance.getString("baseUrl");
 
   TimeTableData tt = TimeTableData(DateTime.now(), <TimeTableClass>[
     TimeTableClass("2", "ZAE", "STJI", "8:55", "9:40", "U32", 0, {}),

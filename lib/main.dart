@@ -1,15 +1,19 @@
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:eduapge2/homework.dart';
 import 'package:eduapge2/icanteen.dart';
 import 'package:eduapge2/load.dart';
 import 'package:eduapge2/messages.dart';
 import 'package:eduapge2/timetable.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:restart_app/restart_app.dart';
+import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'home.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -39,6 +43,11 @@ class MyApp extends StatelessWidget {
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   static FirebaseAnalyticsObserver observer =
       FirebaseAnalyticsObserver(analytics: analytics);
+  static final _defaultLightColorScheme =
+      ColorScheme.fromSwatch(primarySwatch: Colors.blue);
+
+  static final _defaultDarkColorScheme = ColorScheme.fromSwatch(
+      primarySwatch: Colors.blue, brightness: Brightness.dark);
 
   // This widget is the root of your application.
   @override
@@ -47,31 +56,24 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    return MaterialApp(
-      title: 'EduPage2',
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      navigatorObservers: [SentryNavigatorObserver(), observer],
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.green,
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        useMaterial3: true,
-      ),
-      themeMode: ThemeMode.dark,
-      home: const PageBase(),
-    );
+    return DynamicColorBuilder(builder: (lightColorScheme, darkColorScheme) {
+      return MaterialApp(
+        title: 'EduPage2',
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        navigatorObservers: [SentryNavigatorObserver(), observer],
+        theme: ThemeData(
+          colorScheme: lightColorScheme ?? _defaultLightColorScheme,
+          useMaterial3: true,
+        ),
+        darkTheme: ThemeData(
+          colorScheme: darkColorScheme ?? _defaultDarkColorScheme,
+          useMaterial3: true,
+        ),
+        themeMode: ThemeMode.dark,
+        home: const PageBase(),
+      );
+    });
   }
 }
 
@@ -96,6 +98,8 @@ class PageBaseState extends State<PageBase> {
   List<dynamic> apidataMsg = [];
   bool refresh = true;
   bool iCanteenEnabled = false;
+  bool _isCheckingForUpdate = false;
+  final ShorebirdCodePush _shorebirdCodePush = ShorebirdCodePush();
 
   SessionManager sessionManager = SessionManager();
 
@@ -103,9 +107,8 @@ class PageBaseState extends State<PageBase> {
   void initState() {
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
-    //getData(); //fetching data
     getMsgs();
-    //Timer.periodic(const Duration(seconds: 2), (Timer t) => {getData()});
+    if (!_isCheckingForUpdate) _checkForUpdate(); // ik that it's not necessary
     super.initState();
   }
 
@@ -115,7 +118,89 @@ class PageBaseState extends State<PageBase> {
     super.setState(fn);
   }
 
+  void _onDestinationSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  Future<void> _checkForUpdate() async {
+    setState(() {
+      _isCheckingForUpdate = true;
+    });
+
+    // Ask the Shorebird servers if there is a new patch available.
+    final isUpdateAvailable =
+        await _shorebirdCodePush.isNewPatchAvailableForDownload();
+
+    if (!mounted) return;
+
+    setState(() {
+      _isCheckingForUpdate = false;
+    });
+
+    if (isUpdateAvailable) {
+      _downloadUpdate();
+    }
+  }
+
+  void _showDownloadingBanner() {
+    ScaffoldMessenger.of(context).showMaterialBanner(
+      const MaterialBanner(
+        content: Text('Downloading patch...'),
+        actions: [
+          SizedBox(
+            height: 14,
+            width: 14,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  void _showRestartBanner() {
+    ScaffoldMessenger.of(context).showMaterialBanner(
+      const MaterialBanner(
+        content: Text('A new patch is ready!'),
+        actions: [
+          TextButton(
+            // Restart the app for the new patch to take effect.
+            onPressed: Restart.restartApp,
+            child: Text('Restart app'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _downloadUpdate() async {
+    _showDownloadingBanner();
+    await _shorebirdCodePush.downloadUpdateIfAvailable();
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+    _showRestartBanner();
+  }
+
+  initRemoteConfig() async {
+    final remoteConfig = FirebaseRemoteConfig.instance;
+    await remoteConfig.setConfigSettings(RemoteConfigSettings(
+      fetchTimeout: const Duration(minutes: 1),
+      minimumFetchInterval: const Duration(hours: 1),
+    ));
+    await remoteConfig.setDefaults(const {
+      "baseUrl": "https://lobster-app-z6jfk.ondigitalocean.app/api",
+      "testUrl": "https://edupage2server-1-c5607538.deta.app/"
+    });
+    await remoteConfig.fetchAndActivate();
+    baseUrl = remoteConfig.getString("baseUrl");
+  }
+
   getMsgs() async {
+    await initRemoteConfig();
     var msgs = await sessionManager.get('messages');
     var ic = await sessionManager.get('iCanteenEnabled');
     if (ic == true) {
@@ -153,12 +238,14 @@ class PageBaseState extends State<PageBase> {
               index: _selectedIndex,
               children: <Widget>[
                 HomePage(
-                    sessionManager: sessionManager,
-                    reLogin: () {
-                      setState(() {
-                        loaded = false;
-                      });
-                    }),
+                  sessionManager: sessionManager,
+                  reLogin: () {
+                    setState(() {
+                      loaded = false;
+                    });
+                  },
+                  onDestinationSelected: _onDestinationSelected,
+                ),
                 TimeTablePage(
                   sessionManager: sessionManager,
                 ),
