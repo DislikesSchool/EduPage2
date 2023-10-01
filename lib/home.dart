@@ -536,7 +536,7 @@ class HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-              if (lunch != -1 && apidataTT["lessons"].length > 0)
+              if (lunch != -1 && apidataTT["Days"].values.first.length > 0)
                 Container(
                   width: MediaQuery.of(context).size.width,
                   margin: const EdgeInsets.only(left: 20, right: 20, top: 10),

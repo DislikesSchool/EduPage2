@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:eduapge2/login.dart';
-import 'package:firebase_performance/firebase_performance.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
@@ -35,7 +34,7 @@ class LoadingScreenState extends State<LoadingScreen> {
   double progress = 0.0;
   String loaderText = "Loading...";
 
-  String baseUrl = FirebaseRemoteConfig.instance.getString("baseUrl");
+  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
 
   late AppLocalizations? local;
 
@@ -187,174 +186,6 @@ class LoadingScreenState extends State<LoadingScreen> {
         .then((value) => init());
   }
 
-/*
-  Future<void> loadUser() async {
-    if (sharedPreferences.getBool("ice") == true) {
-      sessionManager.set("iCanteenEnabled", true);
-    }
-    String? failedToken;
-    if (sharedPreferences.getString("token") != null) {
-      String? token = sharedPreferences.getString("token");
-      progress = 0.2;
-      loaderText = local!.loadLoggingIn;
-      setState(() {});
-      Response response = await dio
-          .get(
-        "$baseUrl/login",
-        options: buildCacheOptions(
-          const Duration(days: 5),
-          maxStale: const Duration(days: 14),
-          forceRefresh: !quickstart,
-          options: Options(
-            headers: {
-              "Authorization": "Bearer $token",
-            },
-          ),
-        ),
-      )
-          .catchError((obj) {
-        sharedPreferences.remove("token");
-        failedToken = token;
-        return Response(
-          requestOptions: RequestOptions(path: "$baseUrl/login"),
-          statusCode: 500,
-        );
-      });
-
-      if (response.statusCode == 200) {
-        if (response.data.runtimeType == String) {
-          if (jsonDecode(response.data)["icanteen"] == true) {
-            await sessionManager.set('iCanteenEnabled', true);
-          }
-        } else {
-          if (response.data["icanteen"] == true) {
-            await sessionManager.set('iCanteenEnabled', true);
-          }
-        }
-        OneSignal.shared.setExternalUserId(token!);
-        progress = 0.5;
-        loaderText = local!.loadLoggedIn;
-        setState(() {});
-        if (response.data.runtimeType == Map) {
-          sessionManager.set('user', jsonEncode(response.data));
-        } else {
-          sessionManager.set('user', response.data);
-        }
-        return loadTimetable();
-      } else {
-        failedToken = token;
-      }
-    } else if (sharedPreferences.getString("email") != null &&
-        sharedPreferences.getString("password") != null) {
-      String? email = sharedPreferences.getString("email");
-      String? password = sharedPreferences.getString("password");
-
-      progress = 0.3;
-      loaderText = local!.loadAccessToken;
-      setState(() {});
-
-      Response response = await dio
-          .post(
-        "$baseUrl/token",
-        data: {
-          "email": email,
-          "password": password,
-        },
-        options: buildCacheOptions(
-          const Duration(days: 5),
-          forceRefresh: !quickstart,
-        ),
-      )
-          .catchError((obj) {
-        return Response(
-          requestOptions: RequestOptions(path: "$baseUrl/token"),
-          statusCode: 500,
-        );
-      });
-
-      if (response.statusCode == 500) {
-        sharedPreferences.remove("email");
-        sharedPreferences.remove("password");
-        runningInit = false;
-        // ignore: use_build_context_synchronously
-        Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const LoginPage()))
-            .then((value) => init());
-      } else {
-        if (response.data["token"] == failedToken) {
-          sharedPreferences.remove("email");
-          sharedPreferences.remove("password");
-          runningInit = false;
-          // ignore: use_build_context_synchronously
-          Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()))
-              .then((value) => init());
-        } else {
-          sessionManager.set("token", response.data["token"]);
-          loaderText = local!.loadVerify;
-          setState(() {});
-          String token = response.data["token"];
-          response = await dio
-              .get(
-            "$baseUrl/login",
-            options: buildCacheOptions(
-              const Duration(days: 5),
-              maxStale: const Duration(days: 14),
-              forceRefresh: !quickstart,
-              options: Options(
-                headers: {
-                  "Authorization": "Bearer ${response.data["token"]}",
-                },
-              ),
-            ),
-          )
-              .catchError((obj) {
-            sharedPreferences.remove("token");
-            failedToken = response.data["token"];
-            return Response(
-              requestOptions: RequestOptions(path: "$baseUrl/login"),
-              statusCode: 500,
-            );
-          });
-
-          if (response.statusCode == 200) {
-            if (response.data.runtimeType == String) {
-              if (jsonDecode(response.data)["icanteen"] == true) {
-                await sessionManager.set('iCanteenEnabled', true);
-              }
-            } else {
-              if (response.data["icanteen"] == true) {
-                await sessionManager.set('iCanteenEnabled', true);
-              }
-            }
-            OneSignal.shared.setExternalUserId(token);
-            progress = 0.6;
-            loaderText = local!.loadLoggedIn;
-            setState(() {});
-            if (response.data.runtimeType == Map) {
-              sessionManager.set('user', jsonEncode(response.data));
-            } else {
-              sessionManager.set('user', response.data);
-            }
-            return loadTimetable();
-          } else {
-            runningInit = false;
-            // ignore: use_build_context_synchronously
-            Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()))
-                .then((value) => init());
-          }
-        }
-      }
-    } else {
-      runningInit = false;
-      Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const LoginPage()))
-          .then((value) => init());
-    }
-  }
-*/
-
   DateTime getWeekDay() {
     DateTime now = DateTime.now();
     if (now.weekday > 5) {
@@ -367,26 +198,13 @@ class LoadingScreenState extends State<LoadingScreen> {
     progress = 0.7;
     loaderText = local!.loadDownloadTimetable;
     setState(() {});
-    sessionManager.set("timetable",
-        jsonEncode({"date": DateTime.now().toString(), "lessons": []}));
-    return loadMessages();
-  }
-
-  /*
-  Future<void> loadTimetable() async {
-    progress = 0.7;
-    loaderText = local!.loadDownloadTimetable;
-    setState(() {});
-    final metric = FirebasePerformance.instance.newHttpMetric(
-        "$baseUrl/timetable/${getWeekDay().toString()}", HttpMethod.Get);
     String token = sharedPreferences.getString("token")!;
-    metric.start();
     Response response = await dio.get(
-      "$baseUrl/timetable/${getWeekDay().toString()}",
+      "$baseUrl/api/timetable?from=${getWeekDay().toIso8601String()}",
       options: buildCacheOptions(
         const Duration(days: 5),
         maxStale: const Duration(days: 14),
-        forceRefresh: !quickstart,
+        forceRefresh: true,
         options: Options(
           headers: {
             "Authorization": "Bearer $token",
@@ -394,12 +212,9 @@ class LoadingScreenState extends State<LoadingScreen> {
         ),
       ),
     );
-    metric.stop();
-
-    sessionManager.set("timetable", response.data);
+    sessionManager.set("timetable", jsonEncode(response.data));
     return loadMessages();
   }
-  */
 
   Future<void> loadMessages() async {
     progress = 0.9;
@@ -425,39 +240,6 @@ class LoadingScreenState extends State<LoadingScreen> {
     setState(() {});
     widget.loadedCallback();
   }
-
-  /*
-  Future<void> loadMessages() async {
-    progress = 0.9;
-    loaderText = local!.loadDownloadMessages;
-    setState(() {});
-    final metric = FirebasePerformance.instance
-        .newHttpMetric("$baseUrl/messages", HttpMethod.Get);
-
-    String token = sharedPreferences.getString("token")!;
-    metric.start();
-    Response response = await dio.get(
-      "$baseUrl/messages",
-      options: buildCacheOptions(
-        const Duration(days: 5),
-        maxStale: const Duration(days: 14),
-        forceRefresh: !quickstart,
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
-          },
-        ),
-      ),
-    );
-    metric.stop();
-    sessionManager.set("messages", jsonEncode(response.data));
-
-    progress = 1.0;
-    loaderText = local!.loadDone;
-    setState(() {});
-    widget.loadedCallback();
-  }
-  */
 
   @override
   Widget build(BuildContext context) {

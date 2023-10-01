@@ -196,7 +196,7 @@ class PageBaseState extends State<PageBase> {
       "testUrl": "https://edupage2server-1-c5607538.deta.app/"
     });
     await remoteConfig.fetchAndActivate();
-    baseUrl = remoteConfig.getString("baseUrl");
+    baseUrl = remoteConfig.getString("testUrl");
   }
 
   getMsgs() async {

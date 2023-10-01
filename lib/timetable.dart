@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -80,66 +78,39 @@ class TimeTablePageState extends State<TimeTablePage> {
     apidataTT = await widget.sessionManager.get('timetable');
 
     List<TimeTableClass> ttClasses = <TimeTableClass>[];
-    List<dynamic> lessons = apidataTT["lessons"];
-    for (Map<String, dynamic> ttLesson in lessons) {
+    Map<String, dynamic> lessons = response.data["Days"];
+    for (Map<String, dynamic> ttLesson
+        in lessons.values.isEmpty ? [] : lessons.values.first) {
       ttClasses.add(
         TimeTableClass(
-          ttLesson["period"]["name"],
+          ttLesson["uniperiod"],
           ttLesson["subject"]["short"],
-          ttLesson["teachers"][0]["short"],
-          ttLesson["period"]["startTime"],
-          ttLesson["period"]["endTime"],
-          ttLesson["classrooms"][0]["short"],
+          ttLesson["teachers"].length > 0
+              ? ttLesson["teachers"][0]["short"]
+              : "?",
+          ttLesson["starttime"],
+          ttLesson["endtime"],
+          ttLesson["classrooms"].length > 0
+              ? ttLesson["classrooms"][0]["short"]
+              : "?",
           0,
           ttLesson,
         ),
       );
     }
-    tt = TimeTableData(DateTime.parse(apidataTT["date"]), ttClasses);
-    timetables.add(tt);
+    TimeTableData t = TimeTableData(
+        DateTime.parse(response.data["Days"].keys.isEmpty
+            ? DateTime.now().toString()
+            : response.data["Days"].keys.first),
+        ttClasses);
+    timetables.add(t);
 
     loading = false;
     refresh = false;
     setState(() {}); //refresh UI
 
     if (sp.getBool('quickstart') ?? false) {
-      String token = sp.getString("token")!;
-      Dio dio = Dio();
-      Response response = await dio.get(
-        "$baseUrl/api/timetable?from=${getWeekDay().toIso8601String()}",
-        options: buildCacheOptions(
-          const Duration(days: 5),
-          maxStale: const Duration(days: 14),
-          forceRefresh: true,
-          options: Options(
-            headers: {
-              "Authorization": "Bearer $token",
-            },
-          ),
-        ),
-      );
-      widget.sessionManager.set("timetable", jsonEncode(response.data));
-
-      List<TimeTableClass> ttClasses = <TimeTableClass>[];
-      List<dynamic> lessons = jsonDecode(response.data)["lessons"];
-      for (Map<String, dynamic> ttLesson in lessons) {
-        ttClasses.add(
-          TimeTableClass(
-            ttLesson["period"]["name"],
-            ttLesson["subject"]["short"],
-            ttLesson["teachers"][0]["short"],
-            ttLesson["period"]["startTime"],
-            ttLesson["period"]["endTime"],
-            ttLesson["classrooms"][0]["short"],
-            0,
-            ttLesson,
-          ),
-        );
-      }
-      tt = TimeTableData(DateTime.parse(apidataTT["date"]), ttClasses);
-      timetables.clear();
-      timetables.add(tt);
-
+      await loadTt(DateTime.now());
       setState(() {});
     }
   }
