@@ -142,12 +142,6 @@ LessonStatus getLessonStatus(List<dynamic> lessons, TimeOfDay currentTime) {
   }
 }
 
-void postDiscordTestingWebhook(Dio dio, String msg) async {
-  await dio.post(
-      "https://discord.com/api/webhooks/1155074944741412895/MYC_MKKKDKlfH8-e2xjj19WmIhmHzHCZzKVl8v_As2ttlCi9Bpjkp15nN3zeDAzv3hID",
-      data: {"content": msg});
-}
-
 class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   late SharedPreferences sharedPreferences;
@@ -176,17 +170,7 @@ class HomePageState extends State<HomePage> {
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
     fetchAndCompareBuildName();
-    testConnectionToNewAPI();
     getData(); //fetching data
-  }
-
-  void testConnectionToNewAPI() async {
-    Response res = await dio.post("$testUrl/test");
-    if (res.statusCode == 200 && res.data["message"] == "test") {
-      postDiscordTestingWebhook(dio, "Success on [POST] /test");
-    } else {
-      postDiscordTestingWebhook(dio, "Fail on [POST] /test");
-    }
   }
 
   @override
