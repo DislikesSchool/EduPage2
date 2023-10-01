@@ -150,7 +150,7 @@ void postDiscordTestingWebhook(Dio dio, String msg) async {
 class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   late SharedPreferences sharedPreferences;
-  String baseUrl = FirebaseRemoteConfig.instance.getString("baseUrl");
+  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
   String testUrl = FirebaseRemoteConfig.instance.getString("testUrl");
   late Response response;
   Dio dio = Dio();
