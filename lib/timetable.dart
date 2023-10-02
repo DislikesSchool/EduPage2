@@ -164,7 +164,7 @@ class TimeTablePageState extends State<TimeTablePage> {
     timetables.add(t);
     return t;
   }
-
+/*
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -208,6 +208,62 @@ class TimeTablePageState extends State<TimeTablePage> {
               userInteracted,
               context),
         ],
+      ),
+      backgroundColor: Theme.of(context).colorScheme.background,
+    );
+  }
+  */
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 0,
+      ),
+      body: PageView.builder(
+        itemCount: 15,
+        controller: PageController(initialPage: 7),
+        onPageChanged: (index) {
+          setState(() {
+            daydiff = index - 7;
+          });
+        },
+        itemBuilder: (context, index) {
+          return getTimeTable(
+              timetables.firstWhere(
+                (element) => isSameDay(
+                  element.date,
+                  DateTime.now().add(
+                    Duration(days: daydiff),
+                  ),
+                ),
+                orElse: () => tt,
+              ),
+              daydiff,
+              (diff) => {
+                    setState(
+                      () {
+                        daydiff = daydiff + diff;
+                        userInteracted = true;
+                      },
+                    ),
+                    loadTt(
+                      DateTime.now().add(
+                        Duration(days: daydiff),
+                      ),
+                    ).then(
+                      (value) => {
+                        tt = value,
+                        setState(
+                          () {},
+                        ),
+                      },
+                    ),
+                  },
+              AppLocalizations.of(context),
+              true,
+              context);
+        },
       ),
       backgroundColor: Theme.of(context).colorScheme.background,
     );
