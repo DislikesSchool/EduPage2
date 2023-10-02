@@ -151,7 +151,7 @@ class TimeTablePageState extends State<MessagesPage> {
                 MaterialPageRoute(
                     builder: (BuildContext buildContext) => MessagePage(
                         sessionManager: widget.sessionManager,
-                        id: int.parse(msg["id"]))));
+                        id: int.parse(msg["timelineid"]))));
           },
           child: Padding(
             padding: const EdgeInsets.all(10),
