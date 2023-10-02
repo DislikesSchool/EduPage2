@@ -20,13 +20,12 @@ class TimeTablePageState extends State<TimeTablePage> {
   String baseUrl = FirebaseRemoteConfig.instance.getString("baseUrl");
 
   TimeTableData tt = TimeTableData(DateTime.now(), <TimeTableClass>[
-    TimeTableClass("2", "ZAE", "STJI", "8:55", "9:40", "U32", 0, {}),
-    TimeTableClass("3", "ANJ", "MAOL", "10:00", "10:45", "U02", 0, {}),
-    TimeTableClass("4", "CJL", "GAMA", "10:55", "11:40", "U60", 0, {}),
-    TimeTableClass("5", "MAT", "VAPE", "11:50", "12:35", "U60", 1, {})
+    TimeTableClass("1", "THIS", "Yeah", "8:55", "9:40", "U32", 0, {}),
+    TimeTableClass("2", "IS", "I don't", "10:00", "10:45", "U02", 0, {}),
+    TimeTableClass("3", "NOT", "Know", "10:55", "11:40", "U60", 0, {}),
+    TimeTableClass("4", "WORKING", "Why", "11:50", "12:35", "U60", 1, {})
   ]);
 
-  late Response response;
   Dio dio = Dio();
 
   bool error = false; //for error status
@@ -78,7 +77,7 @@ class TimeTablePageState extends State<TimeTablePage> {
     apidataTT = await widget.sessionManager.get('timetable');
 
     List<TimeTableClass> ttClasses = <TimeTableClass>[];
-    Map<String, dynamic> lessons = response.data["Days"];
+    Map<String, dynamic> lessons = apidataTT["Days"];
     for (Map<String, dynamic> ttLesson
         in lessons.values.isEmpty ? [] : lessons.values.first) {
       ttClasses.add(
@@ -99,9 +98,9 @@ class TimeTablePageState extends State<TimeTablePage> {
       );
     }
     TimeTableData t = TimeTableData(
-        DateTime.parse(response.data["Days"].keys.isEmpty
+        DateTime.parse(apidataTT["Days"].keys.isEmpty
             ? DateTime.now().toString()
-            : response.data["Days"].keys.first),
+            : apidataTT["Days"].keys.first),
         ttClasses);
     timetables.add(t);
 
