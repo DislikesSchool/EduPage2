@@ -23,7 +23,7 @@ class ICanteenSetupScreenState extends State<ICanteenSetupScreen> {
 
   Dio dio = Dio();
 
-  String baseUrl = FirebaseRemoteConfig.instance.getString("baseUrl");
+  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
 
   AppLocalizations? local;
 

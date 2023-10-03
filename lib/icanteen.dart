@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,7 +28,7 @@ class ICanteenPageState extends State<ICanteenPage> {
 
   Dio dio = Dio();
 
-  String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
+  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
   bool loading = true;
 
   List<Widget> lunches = [];

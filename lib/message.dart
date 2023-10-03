@@ -25,7 +25,7 @@ class MessagePage extends StatefulWidget {
 class MessagePageState extends State<MessagePage> {
   late SessionManager sessionManager;
   late SharedPreferences sharedPreferences;
-  String baseUrl = FirebaseRemoteConfig.instance.getString("baseUrl");
+  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
   bool loading = true;
   Dio dio = Dio();
 

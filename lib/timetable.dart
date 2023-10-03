@@ -17,7 +17,7 @@ class TimeTablePage extends StatefulWidget {
 }
 
 class TimeTablePageState extends State<TimeTablePage> {
-  String baseUrl = FirebaseRemoteConfig.instance.getString("baseUrl");
+  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
 
   TimeTableData tt = TimeTableData(DateTime.now(), <TimeTableClass>[
     TimeTableClass("1", "THIS", "Yeah", "8:55", "9:40", "U32", 0, {}),

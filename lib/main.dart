@@ -86,7 +86,7 @@ class PageBase extends StatefulWidget {
 
 class PageBaseState extends State<PageBase> {
   int _selectedIndex = 0;
-  String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app";
+  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
   late Response response;
   Dio dio = Dio();
 

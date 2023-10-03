@@ -66,7 +66,7 @@ class TimeTablePageState extends State<MessagesPage> {
     SharedPreferences sp = await SharedPreferences.getInstance();
     if (sp.getBool('quickstart') ?? false) {
       String token = sp.getString("token")!;
-      String baseUrl = FirebaseRemoteConfig.instance.getString("baseUrl");
+      String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
       Dio dio = Dio();
       Response response = await dio.get(
         "$baseUrl/messages",
