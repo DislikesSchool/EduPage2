@@ -25,6 +25,16 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  final remoteConfig = FirebaseRemoteConfig.instance;
+  await remoteConfig.setConfigSettings(RemoteConfigSettings(
+    fetchTimeout: const Duration(minutes: 1),
+    minimumFetchInterval: const Duration(hours: 1),
+  ));
+  await remoteConfig.setDefaults(const {
+    "baseUrl": "https://lobster-app-z6jfk.ondigitalocean.app/api",
+    "testUrl": "https://edupage2server-1-c5607538.deta.app/"
+  });
+  await remoteConfig.fetchAndActivate();
   await SentryFlutter.init(
     (options) {
       options.dsn =
@@ -185,22 +195,7 @@ class PageBaseState extends State<PageBase> {
     _showRestartBanner();
   }
 
-  initRemoteConfig() async {
-    final remoteConfig = FirebaseRemoteConfig.instance;
-    await remoteConfig.setConfigSettings(RemoteConfigSettings(
-      fetchTimeout: const Duration(minutes: 1),
-      minimumFetchInterval: const Duration(hours: 1),
-    ));
-    await remoteConfig.setDefaults(const {
-      "baseUrl": "https://lobster-app-z6jfk.ondigitalocean.app/api",
-      "testUrl": "https://edupage2server-1-c5607538.deta.app/"
-    });
-    await remoteConfig.fetchAndActivate();
-    baseUrl = remoteConfig.getString("testUrl");
-  }
-
   getMsgs() async {
-    await initRemoteConfig();
     var msgs = await sessionManager.get('messages');
     var ic = await sessionManager.get('iCanteenEnabled');
     if (ic == true) {
