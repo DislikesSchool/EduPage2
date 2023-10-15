@@ -10,6 +10,6 @@ import 'package:eduapge2/login.dart';
 import 'package:eduapge2/main.dart';
 import 'package:eduapge2/message.dart';
 import 'package:eduapge2/messages.dart';
-import 'package:eduapge2/old_timetable.dart';
+import 'package:eduapge2/timetable.dart';
 
 void main() {}
