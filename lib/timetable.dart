@@ -227,6 +227,18 @@ class TimeTablePageState extends State<TimeTablePage> {
           setState(() {
             daydiff = index - 7;
           });
+          loadTt(
+            DateTime.now().add(
+              Duration(days: daydiff),
+            ),
+          ).then(
+            (value) => {
+              tt = value,
+              setState(
+                () {},
+              ),
+            },
+          );
         },
         itemBuilder: (context, index) {
           return getTimeTable(
