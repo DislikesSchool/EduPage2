@@ -616,32 +616,6 @@ class HomePageState extends State<HomePage> {
             const Padding(
               padding: EdgeInsets.only(top: 15),
             ),
-            InkWell(
-              highlightColor: Colors.transparent,
-              splashColor: Colors.transparent,
-              child: ListTile(
-                leading: const Icon(Icons.bolt_rounded),
-                title: Text(local!.homeQuickstart),
-                trailing: Transform.scale(
-                  scale: 0.75,
-                  child: Switch(
-                    value: quickstart,
-                    onChanged: (bool value) {
-                      sharedPreferences.setBool('quickstart', value);
-                      setState(() {
-                        quickstart = value;
-                      });
-                    },
-                  ),
-                ),
-                onTap: () {
-                  sharedPreferences.setBool('quickstart', !quickstart);
-                  setState(() {
-                    quickstart = !quickstart;
-                  });
-                },
-              ),
-            ),
             /*
             const Divider(),
             ListTile(
@@ -675,13 +649,12 @@ class HomePageState extends State<HomePage> {
                 ),
               ),
             ),*/
-            const Divider(),
             InkWell(
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
               child: ListTile(
                 leading: const Icon(Icons.lunch_dining_rounded),
-                title: Text(local.homeSetupICanteen),
+                title: Text(local!.homeSetupICanteen),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -700,31 +673,27 @@ class HomePageState extends State<HomePage> {
             InkWell(
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
-              child: Badge(
-                label: Text(local.homePreview),
-                alignment: Alignment.topLeft,
-                child: ListTile(
-                  leading: const Icon(Icons.bolt_rounded),
-                  title: Text(local.homeQuickstart),
-                  trailing: Transform.scale(
-                    scale: 0.75,
-                    child: Switch(
-                      value: quickstart,
-                      onChanged: (bool value) {
-                        sharedPreferences.setBool('quickstart', value);
-                        setState(() {
-                          quickstart = value;
-                        });
-                      },
-                    ),
+              child: ListTile(
+                leading: const Icon(Icons.bolt_rounded),
+                title: Text(local.homeQuickstart),
+                trailing: Transform.scale(
+                  scale: 0.75,
+                  child: Switch(
+                    value: quickstart,
+                    onChanged: (bool value) {
+                      sharedPreferences.setBool('quickstart', value);
+                      setState(() {
+                        quickstart = value;
+                      });
+                    },
                   ),
-                  onTap: () {
-                    sharedPreferences.setBool('quickstart', !quickstart);
-                    setState(() {
-                      quickstart = !quickstart;
-                    });
-                  },
                 ),
+                onTap: () {
+                  sharedPreferences.setBool('quickstart', !quickstart);
+                  setState(() {
+                    quickstart = !quickstart;
+                  });
+                },
               ),
             ),
             const Divider(),
