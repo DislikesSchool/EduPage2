@@ -117,7 +117,6 @@ class PageBaseState extends State<PageBase> {
   void initState() {
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
-    getMsgs();
     if (!_isCheckingForUpdate) _checkForUpdate(); // ik that it's not necessary
     super.initState();
   }
