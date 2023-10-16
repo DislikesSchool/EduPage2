@@ -27,7 +27,6 @@ class LoadingScreenState extends State<LoadingScreen> {
   late SessionManager sessionManager;
   late SharedPreferences sharedPreferences;
 
-  bool runningInit = false;
   bool startedInit = false;
 
   Dio dio = Dio();
@@ -179,13 +178,14 @@ class LoadingScreenState extends State<LoadingScreen> {
     }
   }
 
-  void gotoLogin([String? err]) {
-    setState(() {
-      runningInit = false;
-    });
+  void gotoLogin([String? err]) async {
     Navigator.push(context,
             MaterialPageRoute(builder: (context) => LoginPage(err: err ?? "")))
-        .then((value) => init());
+        .then((value) => {
+              setState(() {
+                startedInit = false;
+              })
+            });
   }
 
   DateTime getWeekDay() {
