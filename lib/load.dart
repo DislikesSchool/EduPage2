@@ -202,9 +202,9 @@ class LoadingScreenState extends State<LoadingScreen> {
     setState(() {});
     String token = sharedPreferences.getString("token")!;
     Response response = await dio.get(
-      "$baseUrl/api/timetable?from=${getWeekDay().toIso8601String()}",
+      "$baseUrl/api/timetable/recent",
       options: buildCacheOptions(
-        const Duration(days: 5),
+        const Duration(days: 3),
         maxStale: const Duration(days: 14),
         forceRefresh: true,
         options: Options(
