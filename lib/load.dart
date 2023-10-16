@@ -180,7 +180,9 @@ class LoadingScreenState extends State<LoadingScreen> {
   }
 
   void gotoLogin([String? err]) {
-    runningInit = false;
+    setState(() {
+      runningInit = false;
+    });
     Navigator.push(context,
             MaterialPageRoute(builder: (context) => LoginPage(err: err ?? "")))
         .then((value) => init());
@@ -213,6 +215,19 @@ class LoadingScreenState extends State<LoadingScreen> {
       ),
     );
     sessionManager.set("timetable", jsonEncode(response.data));
+    response = await dio.get(
+      "$baseUrl/api/periods",
+      options: buildCacheOptions(
+        const Duration(days: 30),
+        forceRefresh: true,
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      ),
+    );
+    sessionManager.set("periods", jsonEncode(response.data.values.toList()));
     return loadMessages();
   }
 

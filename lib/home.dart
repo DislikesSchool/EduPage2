@@ -73,6 +73,11 @@ extension TimeOfDayExtension on TimeOfDay {
       return false;
     }
   }
+
+  static TimeOfDay fromString(String timeString) {
+    List<String> split = timeString.split(':');
+    return TimeOfDay(hour: int.parse(split[0]), minute: int.parse(split[1]));
+  }
 }
 
 extension DateTimeExtension on DateTime {

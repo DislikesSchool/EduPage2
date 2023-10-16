@@ -1,3 +1,4 @@
+import 'package:eduapge2/home.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -24,6 +25,9 @@ class TimeTablePageState extends State<TimeTablePage> {
     TimeTableClass("2", "IS", "I don't", "10:00", "10:45", "U02", 0, {}),
     TimeTableClass("3", "NOT", "Know", "10:55", "11:40", "U60", 0, {}),
     TimeTableClass("4", "WORKING", "Why", "11:50", "12:35", "U60", 1, {})
+  ], [
+    TimeTablePeriod("1", const TimeOfDay(hour: 8, minute: 0),
+        const TimeOfDay(hour: 8, minute: 55), "1", "1")
   ]);
 
   Dio dio = Dio();
@@ -32,6 +36,7 @@ class TimeTablePageState extends State<TimeTablePage> {
   bool loading = false; //for data featching status
   String errmsg = ""; //to assing any error message from API/runtime
   late Map<String, dynamic> apidataTT;
+  List<TimeTablePeriod> periods = [];
   bool refresh = false;
   bool userInteracted = false;
 
@@ -75,6 +80,16 @@ class TimeTablePageState extends State<TimeTablePage> {
     setState(() {});
 
     apidataTT = await widget.sessionManager.get('timetable');
+    List<dynamic> periodData = await widget.sessionManager.get('periods');
+
+    for (Map<String, dynamic> period in periodData) {
+      periods.add(TimeTablePeriod(
+          period["id"],
+          TimeOfDayExtension.fromString(period["starttime"]),
+          TimeOfDayExtension.fromString(period["endtime"]),
+          period["name"],
+          period["short"]));
+    }
 
     List<TimeTableClass> ttClasses = <TimeTableClass>[];
     Map<String, dynamic> lessons = apidataTT["Days"];
@@ -101,7 +116,8 @@ class TimeTablePageState extends State<TimeTablePage> {
         DateTime.parse(apidataTT["Days"].keys.isEmpty
             ? DateTime.now().toString()
             : apidataTT["Days"].keys.first),
-        ttClasses);
+        ttClasses,
+        periods);
     timetables.add(t);
 
     loading = false;
@@ -160,7 +176,8 @@ class TimeTablePageState extends State<TimeTablePage> {
         DateTime.parse(response.data["Days"].keys.isEmpty
             ? date.toString()
             : response.data["Days"].keys.first),
-        ttClasses);
+        ttClasses,
+        periods);
     timetables.add(t);
     return t;
   }
@@ -289,10 +306,21 @@ bool isSameDay(DateTime day1, DateTime day2) {
 }
 
 class TimeTableData {
-  TimeTableData(this.date, this.classes);
+  TimeTableData(this.date, this.classes, this.periods);
 
   final DateTime date;
   final List<TimeTableClass> classes;
+  final List<TimeTablePeriod> periods;
+}
+
+class TimeTablePeriod {
+  final String id;
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
+  final String name;
+  final String short;
+
+  TimeTablePeriod(this.id, this.startTime, this.endTime, this.name, this.short);
 }
 
 class TimeTableClass {
