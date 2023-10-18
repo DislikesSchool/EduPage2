@@ -236,20 +236,20 @@ class TimeTablePageState extends State<TimeTablePage> {
         toolbarHeight: 0,
       ),
       body: PageView.builder(
-        controller: PageController(initialPage: 0),
+        controller: PageController(initialPage: 500),
         itemBuilder: (context, index) {
           return getTimeTable(
               timetables.firstWhere(
                 (element) => isSameDay(
                   element.date,
                   DateTime.now().add(
-                    Duration(days: daydiff + index),
+                    Duration(days: daydiff + index - 500),
                   ),
                 ),
                 orElse: () {
                   loadTt(
                     DateTime.now().add(
-                      Duration(days: daydiff + index),
+                      Duration(days: daydiff + index - 500),
                     ),
                   ).then(
                     (value) => {
@@ -272,7 +272,7 @@ class TimeTablePageState extends State<TimeTablePage> {
                     ),
                     loadTt(
                       DateTime.now().add(
-                        Duration(days: daydiff + index),
+                        Duration(days: daydiff + index - 500),
                       ),
                     ).then(
                       (value) => {
@@ -317,6 +317,9 @@ TimeTableData processTimeTable(TimeTableData tt) {
       }
     }
   }
+
+  classes.sort(
+      (a, b) => int.parse(a.startPeriod).compareTo(int.parse(b.startPeriod)));
 
   List<TimeTableClass> newClasses = [];
 
