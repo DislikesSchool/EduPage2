@@ -235,59 +235,61 @@ class TimeTablePageState extends State<TimeTablePage> {
       appBar: AppBar(
         toolbarHeight: 0,
       ),
-      body: PageView.builder(
-        controller: PageController(initialPage: 500),
-        itemBuilder: (context, index) {
-          return getTimeTable(
-              timetables.firstWhere(
-                (element) => isSameDay(
-                  element.date,
-                  DateTime.now().add(
-                    Duration(days: daydiff + index - 500),
-                  ),
-                ),
-                orElse: () {
-                  loadTt(
-                    DateTime.now().add(
-                      Duration(days: daydiff + index - 500),
-                    ),
-                  ).then(
-                    (value) => {
-                      tt = value,
-                      setState(
-                        () {},
-                      ),
-                    },
-                  );
-                  return tt;
-                },
-              ),
-              daydiff,
-              (diff) => {
-                    setState(
-                      () {
-                        daydiff = daydiff + diff;
-                        userInteracted = true;
-                      },
-                    ),
-                    loadTt(
-                      DateTime.now().add(
-                        Duration(days: daydiff + index - 500),
-                      ),
-                    ).then(
-                      (value) => {
-                        tt = value,
-                        setState(
-                          () {},
+      body: loading
+          ? const CircularProgressIndicator()
+          : PageView.builder(
+              controller: PageController(initialPage: 500),
+              itemBuilder: (context, index) {
+                return getTimeTable(
+                    timetables.firstWhere(
+                      (element) => isSameDay(
+                        element.date,
+                        DateTime.now().add(
+                          Duration(days: daydiff + index - 500),
                         ),
+                      ),
+                      orElse: () {
+                        loadTt(
+                          DateTime.now().add(
+                            Duration(days: daydiff + index - 500),
+                          ),
+                        ).then(
+                          (value) => {
+                            tt = value,
+                            setState(
+                              () {},
+                            ),
+                          },
+                        );
+                        return tt;
                       },
                     ),
-                  },
-              AppLocalizations.of(context),
-              true,
-              context);
-        },
-      ),
+                    daydiff,
+                    (diff) => {
+                          setState(
+                            () {
+                              daydiff = daydiff + diff;
+                              userInteracted = true;
+                            },
+                          ),
+                          loadTt(
+                            DateTime.now().add(
+                              Duration(days: daydiff + index - 500),
+                            ),
+                          ).then(
+                            (value) => {
+                              tt = value,
+                              setState(
+                                () {},
+                              ),
+                            },
+                          ),
+                        },
+                    AppLocalizations.of(context),
+                    true,
+                    context);
+              },
+            ),
       backgroundColor: Theme.of(context).colorScheme.background,
     );
   }
@@ -306,8 +308,14 @@ TimeTableData processTimeTable(TimeTableData tt) {
   // Match class end times to period end times
   for (int i = 0; i < classes.length; i++) {
     TimeTableClass currentClass = classes[i];
-    TimeTablePeriod currentPeriod =
-        periods.firstWhere((period) => period.id == currentClass.endPeriod);
+    TimeTablePeriod currentPeriod = periods.firstWhere(
+        (period) => period.id == currentClass.endPeriod,
+        orElse: () => TimeTablePeriod(
+            currentClass.startPeriod,
+            currentClass.startPeriod,
+            currentClass.endPeriod,
+            currentClass.startPeriod,
+            currentClass.startPeriod));
     if (currentClass.endTime != currentPeriod.endTime) {
       int nextPeriodIndex = periods
           .indexWhere((period) => period.endTime == currentClass.endTime);
@@ -352,7 +360,6 @@ TimeTableData processTimeTable(TimeTableData tt) {
     }
   }
 
-  // Combine existing and empty classes and sort by startPeriod
   classes.addAll(newClasses);
   classes.sort(
       (a, b) => int.parse(a.startPeriod).compareTo(int.parse(b.startPeriod)));
@@ -462,10 +469,17 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
       );
     }
     List<Widget> cRows = [];
-    for (int i = int.parse(ttclass.startPeriod);
-        i <= int.parse(ttclass.endPeriod);
-        i++) {
-      TimeTablePeriod period = tt.periods.firstWhere((e) => e.short == "$i");
+    int? sp = int.tryParse(ttclass.startPeriod);
+    int? ep = int.tryParse(ttclass.endPeriod);
+    if (sp == null || ep == null) continue;
+    for (int i = sp; i <= ep; i++) {
+      TimeTablePeriod period = tt.periods.firstWhere((e) => e.short == "$i",
+          orElse: () => TimeTablePeriod(
+              ttclass.startPeriod,
+              ttclass.startPeriod,
+              ttclass.endPeriod,
+              ttclass.startPeriod,
+              ttclass.startPeriod));
       cRows.add(
         Row(
           children: [
