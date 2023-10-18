@@ -53,7 +53,7 @@ class MessagePageState extends State<MessagePage> {
     sharedPreferences = await SharedPreferences.getInstance();
     String token = sharedPreferences.getString("token")!;
     Response response = await dio.get(
-      "$baseUrl/message/${widget.id}",
+      "$baseUrl/api/timelineitem/${widget.id}",
       options: buildCacheOptions(
         const Duration(days: 5),
         forceRefresh: true,
@@ -68,6 +68,10 @@ class MessagePageState extends State<MessagePage> {
     HtmlUnescape unescape = HtmlUnescape();
 
     Map<String, dynamic> data = response.data;
+    Iterable<dynamic> attachments = [];
+    if (data["data"]["Value"]["attachements"] is Map<String, dynamic>) {
+      attachments = data["data"]["Value"]["attachements"].entries;
+    }
     messages = Stack(
       children: [
         Padding(
@@ -85,16 +89,14 @@ class MessagePageState extends State<MessagePage> {
                         child: Row(
                           children: [
                             Text(
-                              data["owner"]["firstname"] +
-                                  " " +
-                                  data["owner"]["lastname"],
+                              data["vlastnik_meno"],
                               style: const TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             const Icon(Icons.arrow_right_rounded, size: 18),
                             Expanded(
                               child: Text(
-                                unescape.convert(data["title"]),
+                                unescape.convert(data["user_meno"]),
                                 overflow: TextOverflow.fade,
                                 maxLines: 5,
                                 softWrap: true,
@@ -111,18 +113,19 @@ class MessagePageState extends State<MessagePage> {
                         text: unescape.convert(data["text"]),
                         onOpen: _onOpen,
                       ),
-                      for (Map<String, dynamic> att in data["attachments"]!)
-                        if (att["name"]!.endsWith(".jpg") ||
-                            att["name"]!.endsWith(".png"))
-                          Image.network(att["src"]!)
-                        else if (att["name"]!.endsWith(".pdf"))
+                      for (MapEntry<String, dynamic> att in attachments)
+                        if (att.value.endsWith(".jpg") ||
+                            att.value.endsWith(".png"))
+                          Image.network(
+                              "https://${data["origin_server"]}${att.key}")
+                        else if (att.value.endsWith(".pdf"))
                           const PDF(
                             enableSwipe: true,
                             swipeHorizontal: true,
                             autoSpacing: false,
                             pageFling: false,
                           ).cachedFromUrl(
-                            att["src"],
+                            "https://${data["origin_server"]}${att.key}",
                             placeholder: (progress) =>
                                 Center(child: Text('$progress %')),
                             errorWidget: (error) =>
@@ -134,13 +137,14 @@ class MessagePageState extends State<MessagePage> {
                             height: 500,
                             child: WebViewWidget(
                                 controller: WebViewController()
-                                  ..loadRequest(Uri.parse(att["src"]!))),
+                                  ..loadRequest(Uri.parse(
+                                      "https://${data["origin_server"]}${att.key}"))),
                           ),
                     ],
                   ),
                 ),
               ),
-              for (Map<String, dynamic> r in data["replies"])
+              for (Map<String, dynamic> r in data["replies"] ?? [])
                 Row(
                   children: [
                     const SizedBox(width: 20),
