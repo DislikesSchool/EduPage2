@@ -114,5 +114,14 @@
   "iCanteenSetupServer": "Adresa URL",
   "iCanteenSetupEmail": "Přihlašovací jméno",
   "iCanteenSetupPassword": "Heslo",
-  "messagesLoadingAttachment": "Načítání pdf souboru..."
+  "messagesLoadingAttachment": "Načítání pdf souboru...",
+  "messagesAttachments": "{count, plural, =1{1 Přípona} few{{count} Přípony} other{{count} Přípon}}",
+  "@messagesAttachments": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  }
 }
