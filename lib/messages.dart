@@ -36,6 +36,7 @@ extension MoveElement<T> on List<T> {
 class TimeTablePageState extends State<MessagesPage> {
   bool loading = true;
   late List<dynamic> apidataMsg;
+  AppLocalizations? loc;
 
   late Widget messages;
 
@@ -89,6 +90,7 @@ class TimeTablePageState extends State<MessagesPage> {
 
   @override
   Widget build(BuildContext context) {
+    loc ??= AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
@@ -127,14 +129,18 @@ class TimeTablePageState extends State<MessagesPage> {
     ];
     List<dynamic> msgs =
         apidataMsg.where((msg) => msg["typ"] == "sprava").toList();
+    msgs.sort((a, b) => DateTime.parse(b["cas_pridania"])
+        .compareTo(DateTime.parse(a["cas_pridania"])));
     List<dynamic> msgsWOR = List.from(msgs);
     List<Map<String, int>> bump = [];
     for (Map<String, dynamic> msg in msgs) {
-      if (msg["replyOf"] != null) {
+      if (msg["reakcia_na"] != null && msg["reakcia_na"] != "") {
         if (!bump.any((element) =>
-            element["id"]!.compareTo(int.parse(msg["replyOf"])) == 0)) {
-          bump.add(
-              {"id": int.parse(msg["replyOf"]), "index": msgsWOR.indexOf(msg)});
+            element["ineid"]!.compareTo(int.parse(msg["reakcia_na"])) == 0)) {
+          bump.add({
+            "ineid": int.parse(msg["reakcia_na"]),
+            "index": msgsWOR.indexOf(msg)
+          });
           msgsWOR.remove(msg);
         } else {
           msgsWOR.remove(msg);
@@ -192,29 +198,34 @@ class TimeTablePageState extends State<MessagesPage> {
                     )
                   ],
                 ),
-                /*
-                for (Map<String, dynamic> r in msg["replies"])
-                  Row(
-                    children: [
-                      const SizedBox(width: 10),
-                      const Icon(Icons.subdirectory_arrow_right_rounded),
-                      Expanded(
-                        child: Card(
-                          elevation: 10,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              r["owner"] + ": " + unescape.convert(r["text"]),
-                              softWrap: false,
-                              overflow: TextOverflow.ellipsis,
+                if (msg["reakcia_na"] != null && msg["reakcia_na"] != "")
+                  for (Map<String, dynamic> r in msgs
+                      .where((element) =>
+                          element["reakcia_na"] == msg["ineid"].toString())
+                      .toList())
+                    Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        const Icon(Icons.subdirectory_arrow_right_rounded),
+                        Expanded(
+                          child: Card(
+                            elevation: 10,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                r["vlastnik_meno"] +
+                                    ": " +
+                                    unescape.convert(r["text"]),
+                                softWrap: false,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  */
-                if (msg["data"]["Value"].containsKey("attachements"))
+                      ],
+                    ),
+                if (msg["data"]["Value"].containsKey("attachements") &&
+                    msg["data"]["Value"]["attachements"].length > 0)
                   Padding(
                     padding: const EdgeInsets.only(top: 5),
                     child: Row(
@@ -224,11 +235,9 @@ class TimeTablePageState extends State<MessagesPage> {
                           Icons.attach_file_rounded,
                           size: 18,
                         ),
-                        Text(msg["data"]["Value"]["attachements"]
-                            .length
-                            .toString()),
-                        const Text(
-                            ""), //TODO Setup localization for attachments
+                        Text(loc?.messagesAttachments(
+                                msg["data"]["Value"]["attachements"].length) ??
+                            ""),
                       ],
                     ),
                   ),
@@ -239,10 +248,13 @@ class TimeTablePageState extends State<MessagesPage> {
       ));
     }
     for (Map<String, int> b in bump) {
-      rows.move(
-          msgsWOR.indexOf(msgsWOR
-              .firstWhere((element) => int.parse(element["id"]) == b["id"])),
-          b["index"]!);
+      Map<String, dynamic> toBump = msgs.firstWhere(
+          (element) => element["timelineid"] == b["ineid"].toString(),
+          orElse: () {
+        return {"fail": true};
+      });
+      if (toBump["fail"] ?? false) continue;
+      rows.move(msgsWOR.indexOf(toBump), b["index"]!);
     }
     return Card(
       elevation: 5,
