@@ -117,6 +117,46 @@ class TimeTablePageState extends State<MessagesPage> {
     setState(() {}); //refresh UI
   }
 
+  Future<void> _fetchMessages() async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    String token = sp.getString("token")!;
+    String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
+    Dio dio = Dio();
+    DateTime oldestTimestamp = DateTime.now();
+    for (var message in apidataMsg.toList()) {
+      DateTime timestamp = DateTime.parse(message["cas_pridania"]);
+      if (timestamp.isBefore(oldestTimestamp)) {
+        oldestTimestamp = timestamp;
+      }
+    }
+
+    // Calculate from and to dates
+    DateTime from = oldestTimestamp.subtract(const Duration(days: 7));
+    DateTime to = oldestTimestamp;
+
+    // Add query parameters for from and to dates
+    Response response = await dio.get(
+      "$baseUrl/api/timeline",
+      queryParameters: {
+        "from": from.toIso8601String(),
+        "to": to.toIso8601String(),
+      },
+      options: buildCacheOptions(
+        const Duration(days: 5),
+        maxStale: const Duration(days: 14),
+        forceRefresh: true,
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      ),
+    );
+    widget.sessionManager.set("messages", jsonEncode(response.data));
+    messages = getMessages(response.data);
+    setState(() {});
+  }
+
   Widget getMessages(var apidataMsg) {
     HtmlUnescape unescape = HtmlUnescape();
     List<Widget> rows = <Widget>[];
@@ -272,8 +312,11 @@ class TimeTablePageState extends State<MessagesPage> {
                 padding: const EdgeInsets.only(top: 40),
                 child: RefreshIndicator(
                   onRefresh: _pullRefresh,
-                  child: ListView(
-                    children: rows,
+                  child: ListView.builder(
+                    itemCount: rows.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return rows[index];
+                    },
                   ),
                 )),
           ],
