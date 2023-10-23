@@ -179,55 +179,6 @@ class TimeTablePageState extends State<TimeTablePage> {
     timetables.add(t);
     return t;
   }
-/*
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 0,
-      ),
-      body: Stack(
-        children: <Widget>[
-          getTimeTable(
-              timetables.firstWhere(
-                (element) => isSameDay(
-                  element.date,
-                  DateTime.now().add(
-                    Duration(days: daydiff),
-                  ),
-                ),
-                orElse: () => tt,
-              ),
-              daydiff,
-              (diff) => {
-                    setState(
-                      () {
-                        daydiff = daydiff + diff;
-                        userInteracted = true;
-                      },
-                    ),
-                    loadTt(
-                      DateTime.now().add(
-                        Duration(days: daydiff),
-                      ),
-                    ).then(
-                      (value) => {
-                        tt = value,
-                        setState(
-                          () {},
-                        ),
-                      },
-                    ),
-                  },
-              AppLocalizations.of(context),
-              userInteracted,
-              context),
-        ],
-      ),
-      backgroundColor: Theme.of(context).colorScheme.background,
-    );
-  }
-  */
 
   @override
   Widget build(BuildContext context) {
@@ -411,17 +362,7 @@ class TimeTableClass {
 Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
     AppLocalizations? local, bool userInteracted, BuildContext context) {
   List<TableRow> rows = <TableRow>[];
-  /*
-  if (daydiff == 0 && tt.classes.isNotEmpty) {
-    String endTime = tt.classes.last.endTime;
-    DateTime now = DateTime.now();
-    DateTime end = DateTime(now.year, now.month, now.day,
-        int.parse(endTime.split(':')[0]), int.parse(endTime.split(':')[1]));
-    if (end.compareTo(now) < 0 && !userInteracted) {
-      modifyDayDiff(1);
-    }
-  }
-  */
+
   for (TimeTableClass ttclass in tt.classes) {
     List<Widget> extrasRow = <Widget>[];
     if (ttclass.data["teachers"] != null &&
