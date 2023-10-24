@@ -273,6 +273,7 @@ class PageBaseState extends State<PageBase> {
                     label: AppLocalizations.of(context)!.mainICanteen,
                     selectedIcon: const Icon(Icons.lunch_dining_outlined),
                   ),
+                /*
                 NavigationDestination(
                   icon: Badge(
                     label: Text(apidataMsg
@@ -291,6 +292,12 @@ class PageBaseState extends State<PageBase> {
                         .toString()),
                     child: const Icon(Icons.mail_outline),
                   ),
+                ),
+                */
+                NavigationDestination(
+                  icon: const Icon(Icons.mail),
+                  label: AppLocalizations.of(context)!.mainMessages,
+                  selectedIcon: const Icon(Icons.mail_outline),
                 ),
                 NavigationDestination(
                   icon: const Icon(Icons.home_work),
