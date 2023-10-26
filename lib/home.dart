@@ -6,6 +6,7 @@ import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:eduapge2/icanteen_setup.dart';
 import 'package:eduapge2/message.dart';
 import 'package:eduapge2/messages.dart';
+import 'package:eduapge2/timetable.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -167,6 +168,7 @@ class HomePageState extends State<HomePage> {
   late String username;
   late LessonStatus _lessonStatus;
   Timer? _timer;
+  late TimeTableData t;
 
   @override
   void initState() {
@@ -214,7 +216,7 @@ class HomePageState extends State<HomePage> {
     String token = sharedPreferences.getString("token")!;
 
     Response response = await dio.get(
-      "$baseUrl/api/timetable?from=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime.now())}",
+      "$baseUrl/api/timetable?from=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime.now())}&to=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime.now())}",
       options: buildCacheOptions(
         Duration.zero,
         maxStale: const Duration(days: 7),
@@ -226,6 +228,44 @@ class HomePageState extends State<HomePage> {
       ),
     );
     apidataTT = response.data;
+
+    List<TimeTablePeriod> periods = [];
+    List<dynamic> periodData = await widget.sessionManager.get('periods');
+
+    for (Map<String, dynamic> period in periodData) {
+      periods.add(TimeTablePeriod(period["id"], period["starttime"],
+          period["endtime"], period["name"], period["short"]));
+    }
+
+    List<TimeTableClass> ttClasses = <TimeTableClass>[];
+    Map<String, dynamic> classes = apidataTT["Days"];
+    for (List<dynamic> ttClass in classes.values) {
+      ttClasses = [];
+      for (Map<String, dynamic> ttLesson in ttClass) {
+        if (ttLesson["studentids"] != null) {
+          ttClasses.add(
+            TimeTableClass(
+              ttLesson["uniperiod"],
+              ttLesson["uniperiod"],
+              ttLesson["subject"]["short"],
+              ttLesson["teachers"].length > 0
+                  ? ttLesson["teachers"][0]["short"]
+                  : "?",
+              ttLesson["starttime"],
+              ttLesson["endtime"],
+              ttLesson["classrooms"].length > 0
+                  ? ttLesson["classrooms"][0]["short"]
+                  : "?",
+              0,
+              ttLesson,
+            ),
+          );
+        }
+      }
+      t = processTimeTable(TimeTableData(
+          DateTime.parse(ttClass.first["date"]), ttClasses, periods));
+    }
+
     _lessonStatus = getLessonStatus(
         apidataTT["Days"].values.length == 0
             ? []
@@ -433,12 +473,11 @@ class HomePageState extends State<HomePage> {
                         Card(
                           elevation: 5,
                           child: SizedBox(
-                            height: 100,
+                            height: 110,
                             child: ListView(
                               scrollDirection: Axis.horizontal,
                               children: [
-                                for (Map<String, dynamic> lesson
-                                    in apidataTT["Days"].values.first)
+                                for (TimeTableClass ttclass in t.classes)
                                   GestureDetector(
                                     onTap: () {
                                       widget.onDestinationSelected(1);
@@ -447,24 +486,44 @@ class HomePageState extends State<HomePage> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(10),
                                         child: Column(
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Text(
-                                              lesson["uniperiod"] + ".",
-                                              style:
-                                                  const TextStyle(fontSize: 10),
+                                            Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                for (int i = int.tryParse(
+                                                            ttclass
+                                                                .startPeriod) ??
+                                                        0;
+                                                    i <=
+                                                        (int.tryParse(ttclass
+                                                                .endPeriod) ??
+                                                            0);
+                                                    i++)
+                                                  Text(
+                                                    "$i${i != int.tryParse(ttclass.endPeriod) ? " - " : ""}",
+                                                    style: const TextStyle(
+                                                        fontSize: 10,
+                                                        color: Colors.grey),
+                                                  ),
+                                              ],
                                             ),
                                             Text(
-                                              lesson["subject"]["short"],
+                                              ttclass.subject,
                                               style:
-                                                  const TextStyle(fontSize: 20),
+                                                  const TextStyle(fontSize: 22),
                                             ),
                                             Text(
-                                              lesson["classrooms"].length > 0
-                                                  ? lesson["classrooms"][0]
-                                                      ["short"]
-                                                  : "?",
+                                              ttclass.classRoom,
                                               style:
                                                   const TextStyle(fontSize: 14),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              "${ttclass.startTime} - ${ttclass.endTime}",
+                                              style: const TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.grey),
                                             ),
                                           ],
                                         ),
