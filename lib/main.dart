@@ -32,7 +32,7 @@ Future<void> main() async {
   ));
   await remoteConfig.setDefaults(const {
     "baseUrl": "https://lobster-app-z6jfk.ondigitalocean.app/api",
-    "testUrl": "https://edupage2server-1-c5607538.deta.app/"
+    "testUrl": "https://edupage2-server.onrender.com/"
   });
   await remoteConfig.fetchAndActivate();
   await SentryFlutter.init(
