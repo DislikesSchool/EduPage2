@@ -279,6 +279,7 @@ TimeTableData processTimeTable(TimeTableData tt) {
 
   classes.sort(
       (a, b) => int.parse(a.startPeriod).compareTo(int.parse(b.startPeriod)));
+  periods.sort((a, b) => a.startTime.compareTo(b.startTime));
 
   List<TimeTableClass> newClasses = [];
 
