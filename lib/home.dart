@@ -375,7 +375,7 @@ class HomePageState extends State<HomePage> {
       }
     }
     List<dynamic> msgs =
-        apidataMsg.where((msg) => msg["type"] == "sprava").toList();
+        apidataMsg.where((msg) => msg["typ"] == "sprava").toList();
     List<dynamic> msgsWOR = List.from(msgs);
     List<Map<String, int>> bump = [];
     for (Map<String, dynamic> msg in msgs) {
@@ -647,7 +647,7 @@ class HomePageState extends State<HomePage> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          '${m["owner"]["firstname"]?.trim()} ${m["owner"]["lastname"]?.trim()}: ${m["text"]}'
+                                          '${m["vlastnik_meno"]?.trim()}: ${m["text"]}'
                                               .replaceAll(RegExp(r'\s+'), ' '),
                                           softWrap: false,
                                           overflow: TextOverflow.ellipsis,
@@ -664,7 +664,7 @@ class HomePageState extends State<HomePage> {
                                         builder: (context) => MessagePage(
                                             sessionManager:
                                                 widget.sessionManager,
-                                            id: int.parse(m["id"]))));
+                                            id: int.parse(m["timelineid"]))));
                               },
                             ),
                         ],
