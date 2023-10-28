@@ -188,6 +188,10 @@ class TimeTablePageState extends State<MessagesPage> {
       }
     }
     for (Map<String, dynamic> msg in msgsWOR) {
+      bool isImportantMessage = false;
+      if (msg["data"]["Value"]["messageContent"] != null) {
+        isImportantMessage = true;
+      }
       rows.add(Card(
         //color: msg["isSeen"] ? null : Theme.of(context).colorScheme.tertiaryContainer,
         child: InkWell(
@@ -206,6 +210,12 @@ class TimeTablePageState extends State<MessagesPage> {
               children: [
                 Row(
                   children: [
+                    if (isImportantMessage)
+                      const Text(
+                        "!  ",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
                     Text(
                       msg["vlastnik_meno"].replaceAll(RegExp(r'\s+'), ' '),
                       style: const TextStyle(fontSize: 18),

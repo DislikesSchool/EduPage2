@@ -9,7 +9,6 @@ import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class MessagePage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -68,6 +67,10 @@ class MessagePageState extends State<MessagePage> {
     HtmlUnescape unescape = HtmlUnescape();
 
     Map<String, dynamic> data = response.data;
+    bool isImportantMessage = false;
+    if (data["data"]["Value"]["messageContent"] != null) {
+      isImportantMessage = true;
+    }
     Iterable<dynamic> attachments = [];
     if (data["data"]["Value"]["attachements"] is Map<String, dynamic>) {
       attachments = data["data"]["Value"]["attachements"].entries;
@@ -110,35 +113,136 @@ class MessagePageState extends State<MessagePage> {
                         height: 30,
                       ),
                       SelectableLinkify(
-                        text: unescape.convert(data["text"]),
+                        text: unescape.convert(isImportantMessage
+                            ? data["data"]["Value"]["messageContent"]
+                            : data["text"]),
                         onOpen: _onOpen,
                       ),
                       for (MapEntry<String, dynamic> att in attachments)
                         if (att.value.endsWith(".jpg") ||
-                            att.value.endsWith(".png"))
-                          Image.network(
-                              "https://${data["origin_server"]}${att.key}")
+                            att.value.endsWith(".png") ||
+                            att.value.endsWith(".jpeg") ||
+                            att.value.endsWith(".gif"))
+                          Card(
+                            child: Column(
+                              children: [
+                                Image.network(
+                                    "https://${data["origin_server"]}${att.key}"),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        unescape.convert(att.value),
+                                        overflow: TextOverflow.fade,
+                                        maxLines: 5,
+                                        softWrap: true,
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.download_rounded),
+                                      onPressed: () async {
+                                        await dio.download(
+                                          "https://${data["origin_server"]}${att.key}",
+                                          "/storage/emulated/0/Download/${att.value}",
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )
                         else if (att.value.endsWith(".pdf"))
-                          const PDF(
-                            enableSwipe: true,
-                            swipeHorizontal: true,
-                            autoSpacing: false,
-                            pageFling: false,
-                          ).cachedFromUrl(
-                            "https://${data["origin_server"]}${att.key}",
-                            placeholder: (progress) =>
-                                Center(child: Text('$progress %')),
-                            errorWidget: (error) =>
-                                Center(child: Text(error.toString())),
+                          Card(
+                            elevation: 5,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      unescape.convert(att.value),
+                                      overflow: TextOverflow.fade,
+                                      maxLines: 5,
+                                      softWrap: true,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.download_rounded),
+                                    onPressed: () async {
+                                      await dio.download(
+                                        "https://${data["origin_server"]}${att.key}",
+                                        "/storage/emulated/0/Download/${att.value}",
+                                      );
+                                    },
+                                  ),
+                                  // IconButton to open a new page with the pdf
+                                  IconButton(
+                                    icon: const Icon(Icons.open_in_new_rounded),
+                                    onPressed: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Scaffold(
+                                            appBar: AppBar(
+                                              title: Text(
+                                                unescape.convert(att.value),
+                                              ),
+                                            ),
+                                            body: const PDF(
+                                              enableSwipe: true,
+                                              swipeHorizontal: true,
+                                              autoSpacing: false,
+                                              pageFling: false,
+                                            ).cachedFromUrl(
+                                              "https://${data["origin_server"]}${att.key}",
+                                              placeholder: (progress) => Center(
+                                                  child: Text('$progress %')),
+                                              errorWidget: (error) => Center(
+                                                  child:
+                                                      Text(error.toString())),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
                           )
                         else
-                          SizedBox(
-                            width: width,
-                            height: 500,
-                            child: WebViewWidget(
-                                controller: WebViewController()
-                                  ..loadRequest(Uri.parse(
-                                      "https://${data["origin_server"]}${att.key}"))),
+                          Card(
+                            elevation: 5,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      unescape.convert(att.value),
+                                      overflow: TextOverflow.fade,
+                                      maxLines: 5,
+                                      softWrap: true,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.download_rounded),
+                                    onPressed: () async {
+                                      await dio.download(
+                                        "https://${data["origin_server"]}${att.key}",
+                                        "/storage/emulated/0/Download/${att.value}",
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                     ],
                   ),
