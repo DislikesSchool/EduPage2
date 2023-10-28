@@ -124,40 +124,45 @@ class MessagePageState extends State<MessagePage> {
                             att.value.endsWith(".jpeg") ||
                             att.value.endsWith(".gif"))
                           Card(
-                            child: Column(
-                              children: [
-                                Image.network(
-                                    "https://${data["origin_server"]}${att.key}"),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        unescape.convert(att.value),
-                                        overflow: TextOverflow.fade,
-                                        maxLines: 5,
-                                        softWrap: true,
-                                        style: const TextStyle(fontSize: 14),
+                            elevation: 5,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15, top: 15),
+                              child: Column(
+                                children: [
+                                  Image.network(
+                                      "https://${data["origin_server"]}${att.key}"),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          unescape.convert(att.value),
+                                          overflow: TextOverflow.fade,
+                                          maxLines: 5,
+                                          softWrap: true,
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
                                       ),
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.download_rounded),
-                                      onPressed: () async {
-                                        await dio.download(
-                                          "https://${data["origin_server"]}${att.key}",
-                                          "/storage/emulated/0/Download/${att.value}",
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                      IconButton(
+                                        icon:
+                                            const Icon(Icons.download_rounded),
+                                        onPressed: () async {
+                                          await dio.download(
+                                            "https://${data["origin_server"]}${att.key}",
+                                            "/storage/emulated/0/Download/${att.value}",
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           )
                         else if (att.value.endsWith(".pdf"))
                           Card(
                             elevation: 5,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
+                              padding: const EdgeInsets.only(left: 15),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -218,7 +223,7 @@ class MessagePageState extends State<MessagePage> {
                           Card(
                             elevation: 5,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
+                              padding: const EdgeInsets.only(left: 15),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
