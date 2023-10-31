@@ -80,7 +80,6 @@ class HomeworkPageState extends State<HomeworkPage> {
       }
     ];
     for (Map<String, dynamic> msg in apidataMsg) {
-      print(msg);
       String textAsTitle = "This isn't supposed to happen...";
       if (msg.keys.contains("name") && msg["name"] != null) {
         textAsTitle = msg["name"];
