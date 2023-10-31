@@ -36,20 +36,9 @@ class ICanteenSetupScreenState extends State<ICanteenSetupScreen> {
     setState(() {
       hasLogin = true;
     });
-    String? token = sharedPreferences.getString("token");
-    await dio.post(
-      "$baseUrl/set_icanteen",
-      data: {
-        'email': email,
-        'password': password,
-        'server': server,
-      },
-      options: Options(
-        headers: {
-          "Authorization": "Bearer $token",
-        },
-      ),
-    );
+    sharedPreferences.setString("ic_server", server);
+    sharedPreferences.setString("ic_email", email);
+    sharedPreferences.setString("ic_password", password);
     sharedPreferences.setBool("ice", true);
   }
 

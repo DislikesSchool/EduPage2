@@ -54,24 +54,19 @@ class ICanteenPageState extends State<ICanteenPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    String token = sharedPreferences.getString("token")!;
-
     Response response = await dio
-        .get(
-      "$baseUrl/lunches",
-      options: buildCacheOptions(
-        const Duration(days: 0),
-        forceRefresh: true,
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
-          },
-        ),
-      ),
+        .post(
+      "$baseUrl/icanteen",
+      data: {
+        "username": sharedPreferences.getString("ic_email"),
+        "password": sharedPreferences.getString("ic_password"),
+        "server": sharedPreferences.getString("ic_server"),
+      },
+      options: Options(contentType: Headers.formUrlEncodedContentType),
     )
         .catchError((obj) {
       return Response(
-        requestOptions: RequestOptions(path: "$baseUrl/lunches"),
+        requestOptions: RequestOptions(path: "$baseUrl/icanteen"),
         statusCode: 500,
       );
     });

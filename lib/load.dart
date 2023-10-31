@@ -59,6 +59,9 @@ class LoadingScreenState extends State<LoadingScreen> {
       baseUrl = endpoint;
     }
     quickstart = sharedPreferences.getBool('quickstart') ?? false;
+    if (sharedPreferences.getBool("ice") == true) {
+      sessionManager.set("iCanteenEnabled", true);
+    }
     progress = 0.1;
     loaderText = local!.loadCredentials;
     dio.interceptors
