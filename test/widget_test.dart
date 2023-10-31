@@ -21,7 +21,7 @@ void main() {
     String? password = const String.fromEnvironment("PASSWORD");
 
     // Initiates widget
-    await tester.pumpWidget(const LocalizationsInj(child: LoginPage()));
+    await tester.pumpWidget(const LocalizationsInj(child: LoginPage(err: "")));
 
     // Checks for TextFields and login button
     expect(find.text('Username'), findsOneWidget);

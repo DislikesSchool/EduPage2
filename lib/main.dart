@@ -25,6 +25,16 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  final remoteConfig = FirebaseRemoteConfig.instance;
+  await remoteConfig.setConfigSettings(RemoteConfigSettings(
+    fetchTimeout: const Duration(minutes: 1),
+    minimumFetchInterval: const Duration(hours: 1),
+  ));
+  await remoteConfig.setDefaults(const {
+    "baseUrl": "https://lobster-app-z6jfk.ondigitalocean.app/api",
+    "testUrl": "https://edupage2-server.onrender.com"
+  });
+  await remoteConfig.fetchAndActivate();
   await SentryFlutter.init(
     (options) {
       options.dsn =
@@ -86,7 +96,7 @@ class PageBase extends StatefulWidget {
 
 class PageBaseState extends State<PageBase> {
   int _selectedIndex = 0;
-  String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app";
+  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
   late Response response;
   Dio dio = Dio();
 
@@ -107,7 +117,6 @@ class PageBaseState extends State<PageBase> {
   void initState() {
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
-    getMsgs();
     if (!_isCheckingForUpdate) _checkForUpdate(); // ik that it's not necessary
     super.initState();
   }
@@ -185,22 +194,7 @@ class PageBaseState extends State<PageBase> {
     _showRestartBanner();
   }
 
-  initRemoteConfig() async {
-    final remoteConfig = FirebaseRemoteConfig.instance;
-    await remoteConfig.setConfigSettings(RemoteConfigSettings(
-      fetchTimeout: const Duration(minutes: 1),
-      minimumFetchInterval: const Duration(hours: 1),
-    ));
-    await remoteConfig.setDefaults(const {
-      "baseUrl": "https://lobster-app-z6jfk.ondigitalocean.app/api",
-      "testUrl": "https://edupage2server-1-c5607538.deta.app/"
-    });
-    await remoteConfig.fetchAndActivate();
-    baseUrl = remoteConfig.getString("baseUrl");
-  }
-
   getMsgs() async {
-    await initRemoteConfig();
     var msgs = await sessionManager.get('messages');
     var ic = await sessionManager.get('iCanteenEnabled');
     if (ic == true) {
@@ -208,7 +202,7 @@ class PageBaseState extends State<PageBase> {
     }
     if (msgs != Null && msgs != null) {
       setState(() {
-        apidataMsg = msgs;
+        apidataMsg = msgs.values.toList();
       });
     }
   }
@@ -279,6 +273,7 @@ class PageBaseState extends State<PageBase> {
                     label: AppLocalizations.of(context)!.mainICanteen,
                     selectedIcon: const Icon(Icons.lunch_dining_outlined),
                   ),
+                /*
                 NavigationDestination(
                   icon: Badge(
                     label: Text(apidataMsg
@@ -297,6 +292,12 @@ class PageBaseState extends State<PageBase> {
                         .toString()),
                     child: const Icon(Icons.mail_outline),
                   ),
+                ),
+                */
+                NavigationDestination(
+                  icon: const Icon(Icons.mail),
+                  label: AppLocalizations.of(context)!.mainMessages,
+                  selectedIcon: const Icon(Icons.mail_outline),
                 ),
                 NavigationDestination(
                   icon: const Icon(Icons.home_work),

@@ -26,6 +26,7 @@ dependencies:
   flutter_cached_pdfview: ^0.4.1
   package_info: ^2.0.2
   url_launcher: ^6.1.12
+  jwt_decoder: ^2.0.1
   shorebird_code_push: ^1.1.0
   restart_app: ^1.2.1
   flutter_linkify: ^6.0.0
