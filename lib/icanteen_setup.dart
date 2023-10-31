@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,7 +23,7 @@ class ICanteenSetupScreenState extends State<ICanteenSetupScreen> {
 
   Dio dio = Dio();
 
-  String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
+  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
 
   AppLocalizations? local;
 
@@ -35,20 +36,9 @@ class ICanteenSetupScreenState extends State<ICanteenSetupScreen> {
     setState(() {
       hasLogin = true;
     });
-    String? token = sharedPreferences.getString("token");
-    await dio.post(
-      "$baseUrl/set_icanteen",
-      data: {
-        'email': email,
-        'password': password,
-        'server': server,
-      },
-      options: Options(
-        headers: {
-          "Authorization": "Bearer $token",
-        },
-      ),
-    );
+    sharedPreferences.setString("ic_server", server);
+    sharedPreferences.setString("ic_email", email);
+    sharedPreferences.setString("ic_password", password);
     sharedPreferences.setBool("ice", true);
   }
 

@@ -1,14 +1,15 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:eduapge2/login.dart';
-import 'package:firebase_performance/firebase_performance.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class LoadingScreen extends StatefulWidget {
   final Function loadedCallback;
@@ -26,14 +27,13 @@ class LoadingScreenState extends State<LoadingScreen> {
   late SessionManager sessionManager;
   late SharedPreferences sharedPreferences;
 
-  bool runningInit = false;
   bool startedInit = false;
 
   Dio dio = Dio();
   double progress = 0.0;
   String loaderText = "Loading...";
 
-  String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
+  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
 
   late AppLocalizations? local;
 
@@ -51,9 +51,17 @@ class LoadingScreenState extends State<LoadingScreen> {
   }
 
   Future<void> init() async {
+    if (startedInit) return;
     startedInit = true;
     sharedPreferences = await SharedPreferences.getInstance();
+    String? endpoint = sharedPreferences.getString("customEndpoint");
+    if (endpoint != null && endpoint != "") {
+      baseUrl = endpoint;
+    }
     quickstart = sharedPreferences.getBool('quickstart') ?? false;
+    if (sharedPreferences.getBool("ice") == true) {
+      sessionManager.set("iCanteenEnabled", true);
+    }
     progress = 0.1;
     loaderText = local!.loadCredentials;
     dio.interceptors
@@ -62,162 +70,125 @@ class LoadingScreenState extends State<LoadingScreen> {
     loadUser();
   }
 
-  Future<void> loadUser() async {
-    if (sharedPreferences.getBool("ice") == true) {
-      sessionManager.set("iCanteenEnabled", true);
+  Future<Map<String, dynamic>> login(
+      String email, String password, String? server) async {
+    server ??= "";
+    try {
+      Response resp = await dio.post("$baseUrl/login",
+          data: {"username": email, "password": password, "server": server},
+          options: Options(contentType: Headers.formUrlEncodedContentType));
+      return {"fail": false, "resp": resp};
+    } catch (e) {
+      return {"fail": true, "err": e};
     }
-    String? failedToken;
-    if (sharedPreferences.getString("token") != null) {
-      String? token = sharedPreferences.getString("token");
-      progress = 0.2;
-      loaderText = local!.loadLoggingIn;
-      setState(() {});
-      Response response = await dio
-          .get(
-        "$baseUrl/login",
-        options: buildCacheOptions(
-          const Duration(days: 5),
-          maxStale: const Duration(days: 14),
-          forceRefresh: !quickstart,
-          options: Options(
-            headers: {
-              "Authorization": "Bearer $token",
-            },
-          ),
-        ),
-      )
-          .catchError((obj) {
-        sharedPreferences.remove("token");
-        failedToken = token;
-        return Response(
-          requestOptions: RequestOptions(path: "$baseUrl/login"),
-          statusCode: 500,
-        );
-      });
+  }
 
-      if (response.statusCode == 200) {
-        if (response.data.runtimeType == String) {
-          if (jsonDecode(response.data)["icanteen"] == true) {
-            await sessionManager.set('iCanteenEnabled', true);
-          }
-        } else {
-          if (response.data["icanteen"] == true) {
-            await sessionManager.set('iCanteenEnabled', true);
+  Future<Map<String, dynamic>> validate(String token) async {
+    try {
+      Response resp = await dio.get("$baseUrl/validate-token",
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+      return {"faul": false, "resp": resp};
+    } catch (e) {
+      return {"fail": true, "err": e};
+    }
+  }
+
+  Future<void> loadUser() async {
+    String? token = sharedPreferences.getString("token");
+    String? email = sharedPreferences.getString("email");
+    String? password = sharedPreferences.getString("password");
+    String? server = sharedPreferences.getString("server");
+
+    if (token != null && token != "") {
+      loaderText = local!.loadVerify;
+      progress = 0.3;
+      setState(() {});
+      bool isExpired;
+      try {
+        isExpired = JwtDecoder.isExpired(token);
+      } catch (e) {
+        isExpired = true;
+      }
+      if (isExpired) {
+        sharedPreferences.remove("token");
+        startedInit = false;
+        init();
+      } else {
+        Response? res;
+        await validate(token).then((resp) => {
+              if (resp["fail"] == true)
+                {
+                  sharedPreferences.remove("token"),
+                  startedInit = false,
+                  init(),
+                }
+              else
+                {
+                  res = resp["resp"],
+                }
+            });
+        if (res != null) {
+          if (res?.statusCode == 200) {
+            sessionManager.set('user', jsonEncode(res?.data));
+            loaderText = local!.loadLoggedIn;
+            progress = 0.4;
+            setState(() {});
+            return loadTimeTable();
+          } else if (res?.statusCode == 401) {
+            sharedPreferences.remove("token");
+            startedInit = false;
+            init();
           }
         }
-        OneSignal.shared.setExternalUserId(token!);
-        progress = 0.5;
-        loaderText = local!.loadLoggedIn;
-        setState(() {});
-        sessionManager.set('user', response.data);
-        return loadTimetable();
-      } else {
-        failedToken = token;
       }
-    } else if (sharedPreferences.getString("email") != null &&
-        sharedPreferences.getString("password") != null) {
-      String? email = sharedPreferences.getString("email");
-      String? password = sharedPreferences.getString("password");
-
-      progress = 0.3;
-      loaderText = local!.loadAccessToken;
+    } else if (email != null && password != null) {
+      loaderText = local!.loadLoggingIn;
+      progress = 0.2;
       setState(() {});
-
-      Response response = await dio
-          .post(
-        "$baseUrl/token",
-        data: {
-          "email": email,
-          "password": password,
-        },
-        options: buildCacheOptions(
-          const Duration(days: 5),
-          forceRefresh: !quickstart,
-        ),
-      )
-          .catchError((obj) {
-        return Response(
-          requestOptions: RequestOptions(path: "$baseUrl/token"),
-          statusCode: 500,
-        );
-      });
-
-      if (response.statusCode == 500) {
-        sharedPreferences.remove("email");
-        sharedPreferences.remove("password");
-        runningInit = false;
-        // ignore: use_build_context_synchronously
-        Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const LoginPage()))
-            .then((value) => init());
-      } else {
-        if (response.data["token"] == failedToken) {
-          sharedPreferences.remove("email");
-          sharedPreferences.remove("password");
-          runningInit = false;
-          // ignore: use_build_context_synchronously
-          Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()))
-              .then((value) => init());
-        } else {
-          sessionManager.set("token", response.data["token"]);
-          loaderText = local!.loadVerify;
-          setState(() {});
-          String token = response.data["token"];
-          response = await dio
-              .get(
-            "$baseUrl/login",
-            options: buildCacheOptions(
-              const Duration(days: 5),
-              maxStale: const Duration(days: 14),
-              forceRefresh: !quickstart,
-              options: Options(
-                headers: {
-                  "Authorization": "Bearer ${response.data["token"]}",
-                },
-              ),
-            ),
-          )
-              .catchError((obj) {
-            sharedPreferences.remove("token");
-            failedToken = response.data["token"];
-            return Response(
-              requestOptions: RequestOptions(path: "$baseUrl/login"),
-              statusCode: 500,
-            );
+      Response? res;
+      await login(email, password, server).then((resp) => {
+            if (resp["fail"] == true)
+              {
+                sharedPreferences.remove("password"),
+                gotoLogin(),
+              }
+            else
+              {
+                res = resp["resp"],
+              }
           });
-
-          if (response.statusCode == 200) {
-            if (response.data.runtimeType == String) {
-              if (jsonDecode(response.data)["icanteen"] == true) {
-                await sessionManager.set('iCanteenEnabled', true);
-              }
-            } else {
-              if (response.data["icanteen"] == true) {
-                await sessionManager.set('iCanteenEnabled', true);
-              }
-            }
-            OneSignal.shared.setExternalUserId(token);
-            progress = 0.6;
-            loaderText = local!.loadLoggedIn;
-            setState(() {});
-            sessionManager.set('user', response.data);
-            return loadTimetable();
-          } else {
-            runningInit = false;
-            // ignore: use_build_context_synchronously
-            Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()))
-                .then((value) => init());
-          }
+      if (res != null) {
+        if (res?.statusCode == 200) {
+          sessionManager.set('user', jsonEncode(res?.data));
+          loaderText = local!.loadLoggedIn;
+          progress = 0.4;
+          setState(() {});
+          sharedPreferences.setString("token", res?.data["token"]);
+          return loadTimeTable();
+        } else if (res?.statusCode == 400) {
+          sharedPreferences.remove("email");
+          sharedPreferences.remove("passowrd");
+          gotoLogin(res?.data["error"]);
+        } else if (res?.statusCode == 401) {
+          sharedPreferences.remove("password");
+          gotoLogin(res?.data["error"]);
+        } else if (res?.statusCode == 500) {
+          gotoLogin(res?.data["error"]);
         }
       }
     } else {
-      runningInit = false;
-      Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const LoginPage()))
-          .then((value) => init());
+      gotoLogin();
     }
+  }
+
+  void gotoLogin([String? err]) async {
+    Navigator.push(context,
+            MaterialPageRoute(builder: (context) => LoginPage(err: err ?? "")))
+        .then((value) => {
+              setState(() {
+                startedInit = false;
+              })
+            });
   }
 
   DateTime getWeekDay() {
@@ -228,20 +199,17 @@ class LoadingScreenState extends State<LoadingScreen> {
     return DateTime(now.year, now.month, now.day);
   }
 
-  Future<void> loadTimetable() async {
+  Future<void> loadTimeTable() async {
     progress = 0.7;
     loaderText = local!.loadDownloadTimetable;
     setState(() {});
-    final metric = FirebasePerformance.instance.newHttpMetric(
-        "$baseUrl/timetable/${getWeekDay().toString()}", HttpMethod.Get);
     String token = sharedPreferences.getString("token")!;
-    metric.start();
     Response response = await dio.get(
-      "$baseUrl/timetable/${getWeekDay().toString()}",
+      "$baseUrl/api/timetable/recent",
       options: buildCacheOptions(
-        const Duration(days: 5),
+        const Duration(days: 3),
         maxStale: const Duration(days: 14),
-        forceRefresh: !quickstart,
+        forceRefresh: true,
         options: Options(
           headers: {
             "Authorization": "Bearer $token",
@@ -249,9 +217,20 @@ class LoadingScreenState extends State<LoadingScreen> {
         ),
       ),
     );
-    metric.stop();
-
-    sessionManager.set("timetable", response.data);
+    sessionManager.set("timetable", jsonEncode(response.data));
+    response = await dio.get(
+      "$baseUrl/api/periods",
+      options: buildCacheOptions(
+        const Duration(days: 30),
+        forceRefresh: true,
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      ),
+    );
+    sessionManager.set("periods", jsonEncode(response.data.values.toList()));
     return loadMessages();
   }
 
@@ -259,13 +238,9 @@ class LoadingScreenState extends State<LoadingScreen> {
     progress = 0.9;
     loaderText = local!.loadDownloadMessages;
     setState(() {});
-    final metric = FirebasePerformance.instance
-        .newHttpMetric("$baseUrl/messages", HttpMethod.Get);
-
     String token = sharedPreferences.getString("token")!;
-    metric.start();
     Response response = await dio.get(
-      "$baseUrl/messages",
+      "$baseUrl/api/timeline/recent",
       options: buildCacheOptions(
         const Duration(days: 5),
         maxStale: const Duration(days: 14),
@@ -277,9 +252,8 @@ class LoadingScreenState extends State<LoadingScreen> {
         ),
       ),
     );
-    metric.stop();
-    sessionManager.set("messages", jsonEncode(response.data));
-
+    sessionManager.set("messages", jsonEncode(response.data["Items"]));
+    sessionManager.set("homework", jsonEncode(response.data["Homeworks"]));
     progress = 1.0;
     loaderText = local!.loadDone;
     setState(() {});

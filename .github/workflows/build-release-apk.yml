@@ -60,16 +60,17 @@ jobs:
       with:
         valueFile: 'pubspec.yaml'
         propertyPath: 'version'
-        value: "${{ steps.semvers.outputs.patch }}"
+        value: "${{ steps.semvers.outputs.minor }}"
         commitChange: true
         branch: 'build-release'
         labels: 'bump'
-        message: 'Bump version to ${{ steps.semvers.outputs.patch }}'
-        description: 'Automatic version bump to ${{ steps.semvers.outputs.patch }} for release build'
+        createPR: true
+        message: 'Bump version to ${{ steps.semvers.outputs.minor }} [no ci]'
+        description: 'Automatic version bump to ${{ steps.semvers.outputs.minor }} for release build'
     - run: flutter pub get
     - run: flutter gen-l10n
     - name: 🚀 Shorebird Release
-      run: shorebird release android --force --artifact apk '--' --dart-define=BVS="Release ${{ steps.semvers.outputs.v_patch }} ShoreBird"
+      run: shorebird release android --force --artifact apk '--' --dart-define=BVS="Release ${{ steps.semvers.outputs.v_minor }} ShoreBird"
       env:
         SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
     - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semvers.outputs.v_minor }}.apk"
