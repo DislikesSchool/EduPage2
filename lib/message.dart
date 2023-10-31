@@ -68,11 +68,13 @@ class MessagePageState extends State<MessagePage> {
 
     Map<String, dynamic> data = response.data;
     bool isImportantMessage = false;
-    if (data["data"]["Value"]["messageContent"] != null) {
+    if (data["data"]["Value"] != null &&
+        data["data"]["Value"]["messageContent"] != null) {
       isImportantMessage = true;
     }
     Iterable<dynamic> attachments = [];
-    if (data["data"]["Value"]["attachements"] is Map<String, dynamic>) {
+    if (data["data"]["Value"] != null &&
+        data["data"]["Value"]["attachements"] is Map<String, dynamic>) {
       attachments = data["data"]["Value"]["attachements"].entries;
     }
     messages = Stack(

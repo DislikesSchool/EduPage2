@@ -37,8 +37,11 @@ class TimeTablePageState extends State<MessagesPage> {
   bool loading = true;
   late List<dynamic> apidataMsg;
   AppLocalizations? loc;
+  bool _isFetching = false;
 
   late Widget messages;
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -52,11 +55,26 @@ class TimeTablePageState extends State<MessagesPage> {
     super.setState(fn);
   }
 
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   getData() async {
     setState(() {
       loading = true; //make loading true to show progressindicator
     });
 
+    _scrollController.addListener(() async {
+      if (!_isFetching &&
+          _scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 200) {
+        _isFetching = true;
+        await _fetchMessages();
+        _isFetching = false;
+      }
+    });
     Map<String, dynamic> msgs = await widget.sessionManager.get('messages');
     apidataMsg = msgs.values.toList();
     messages = getMessages(apidataMsg);
@@ -70,7 +88,7 @@ class TimeTablePageState extends State<MessagesPage> {
       String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
       Dio dio = Dio();
       Response response = await dio.get(
-        "$baseUrl/messages",
+        "$baseUrl/api/timeline/recent",
         options: buildCacheOptions(
           const Duration(days: 5),
           maxStale: const Duration(days: 14),
@@ -82,8 +100,8 @@ class TimeTablePageState extends State<MessagesPage> {
           ),
         ),
       );
-      widget.sessionManager.set("messages", jsonEncode(response.data));
-      messages = getMessages(response.data);
+      widget.sessionManager.set("messages", jsonEncode(response.data["Items"]));
+      messages = getMessages(response.data["Items"].values.toList());
       setState(() {});
     }
   }
@@ -131,7 +149,7 @@ class TimeTablePageState extends State<MessagesPage> {
     }
 
     // Calculate from and to dates
-    DateTime from = oldestTimestamp.subtract(const Duration(days: 7));
+    DateTime from = oldestTimestamp.subtract(const Duration(days: 14));
     DateTime to = oldestTimestamp;
 
     // Add query parameters for from and to dates
@@ -152,8 +170,8 @@ class TimeTablePageState extends State<MessagesPage> {
         ),
       ),
     );
-    widget.sessionManager.set("messages", jsonEncode(response.data));
-    messages = getMessages(response.data);
+    widget.sessionManager.set("messages", jsonEncode(response.data["Items"]));
+    messages = getMessages(response.data["Items"].values.toList());
     setState(() {});
   }
 
@@ -323,6 +341,7 @@ class TimeTablePageState extends State<MessagesPage> {
                 child: RefreshIndicator(
                   onRefresh: _pullRefresh,
                   child: ListView.builder(
+                    controller: _scrollController,
                     itemCount: rows.length,
                     itemBuilder: (BuildContext context, int index) {
                       return rows[index];
