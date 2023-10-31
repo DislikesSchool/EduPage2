@@ -34,7 +34,7 @@ class HomeworkPageState extends State<HomeworkPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    Map<String, dynamic> msgs = await widget.sessionManager.get('messages');
+    Map<String, dynamic> msgs = await widget.sessionManager.get('homework');
     apidataMsg = msgs.values.toList();
     messages = getMessages(apidataMsg);
 
@@ -62,7 +62,8 @@ class HomeworkPageState extends State<HomeworkPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    apidataMsg = await widget.sessionManager.get('messages');
+    Map<String, dynamic> msgs = await widget.sessionManager.get('homework');
+    apidataMsg = msgs.values.toList();
     messages = getMessages(apidataMsg);
 
     loading = false;
@@ -78,18 +79,15 @@ class HomeworkPageState extends State<HomeworkPage> {
         "text": "Nebude to trvat dlouho",
       }
     ];
-    apidataMsg = apidataMsg
-        .where((msg) =>
-            msg["type"] == "testpridelenie" || msg["type"] == "homework")
-        .toList();
     for (Map<String, dynamic> msg in apidataMsg) {
+      print(msg);
       String textAsTitle = "This isn't supposed to happen...";
-      if (msg.keys.contains("text") && msg["text"] != null) {
-        textAsTitle = msg["text"];
+      if (msg.keys.contains("name") && msg["name"] != null) {
+        textAsTitle = msg["name"];
       } else if (msg.keys.contains("assignment") && msg["assignment"] != null) {
         textAsTitle = msg["assignment"]["title"];
       } else {
-        break;
+        continue;
       }
       rows.add(Card(
         child: Padding(
@@ -99,13 +97,11 @@ class HomeworkPageState extends State<HomeworkPage> {
               children: [
                 Row(
                   children: [
-                    Text(msg["owner"]["firstname"] +
-                        " " +
-                        msg["owner"]["lastname"]),
+                    Text(msg["autor_meno"]),
                     const Icon(Icons.arrow_right_rounded),
                     Expanded(
                       child: Text(
-                        msg["title"],
+                        msg["predmet_meno"],
                         overflow: TextOverflow.fade,
                         maxLines: 5,
                         softWrap: false,
@@ -118,7 +114,7 @@ class HomeworkPageState extends State<HomeworkPage> {
                     Expanded(
                       child: Text(
                         textAsTitle,
-                        style: const TextStyle(fontSize: 10),
+                        style: const TextStyle(fontSize: 12),
                         overflow: TextOverflow.fade,
                         maxLines: 5,
                         softWrap: false,

@@ -55,7 +55,7 @@ class MessagePageState extends State<MessagePage> {
       "$baseUrl/api/timelineitem/${widget.id}",
       options: buildCacheOptions(
         const Duration(days: 5),
-        forceRefresh: true,
+        forceRefresh: false,
         options: Options(
           headers: {
             "Authorization": "Bearer $token",

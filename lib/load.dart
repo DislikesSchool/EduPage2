@@ -250,6 +250,7 @@ class LoadingScreenState extends State<LoadingScreen> {
       ),
     );
     sessionManager.set("messages", jsonEncode(response.data["Items"]));
+    sessionManager.set("homework", jsonEncode(response.data["Homeworks"]));
     progress = 1.0;
     loaderText = local!.loadDone;
     setState(() {});
