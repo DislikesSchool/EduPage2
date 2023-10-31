@@ -1,47 +1,127 @@
 {
   "loading": "Načítavam",
+  "@loading": {
+    "description": "When loading a page"
+  },
   "mainHome": "Domov",
-  "mainTimetable": "Rozvrh hodín",
+  "@mainHome": {
+    "description": "Label for home page button"
+  },
+  "mainTimetable": "Rozvrh",
+  "@mainTimetable": {
+    "description":"Label for time table page button"
+  },
   "mainICanteen": "iCanteen",
+  "@mainICanteen": {
+    "description":"Label for iCanteen page button"
+  },
   "mainMessages": "Správy",
-  "mainHomework": "Domáce úlohy",
+  "@mainMessages": {
+    "description":"Label for messages page button"
+  },
+  "mainHomework": "Úlohy",
+  "@mainHomework": {
+    "description":"Label for homework page button"
+  },
   "mainGrades": "Známky",
+  "@mainGrades": {
+    "description": "Label for grade page button"
+  },
   "homeLunchesNotLoaded": "Nepodarilo sa načítať obedy",
+  "@homeLunchesNotLoaded": {
+    "description": "Displayed when lunches weren't loaded"
+  },
   "homeNoLunchToday": "Dnes nemáte žiadny obed",
+  "@homeNoLunchToday": {
+    "description": "Displayed when the user hasn't ordered a lunch for today"
+  },
   "homeLunchToday": "Dnes máte možnosť obedu číslo {lunch}",
+  "@homeLunchToday": {
+    "description": "Shows the user the lunch that is ordered",
+    "placeholders": {
+      "lunch": {
+        "type": "int"
+      }
+    }
+  },
   "homeLunchDontForget": "Nezabudnite si objednať obed pre {date}",
+  "@homeLunchDontForget": {
+    "description": "Displayed to remind user to order lunch",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMd"
+      }
+    }
+  },
   "homeLogout": "Odhlásiť sa",
-  "homeSetupICanteen": "Nastavenie iCanteen",
+  "@homeLogout": {
+    "description": "Logout button on home page"
+  },
+  "homeSetupICanteen": "Nastaviť iCanteen",
   "homeNoClasses": "Dnes sa škola nekoná :D",
   "homeUpdateTitle": "Dostupná nová verzia",
-  "homeUpdateDescription": "Prosím, navštívte https://github.com/DislikesSchool/EduPage2/releases pre stiahnutie najnovšej verzie",
+  "homeUpdateDescription": "Prosím navštívte https://github.com/DislikesSchool/EduPage2/releases pre nejnovšiu verziu",
   "homeQuickstart": "Rýchly štart",
   "homePreview": "Náhľad",
-  "homePatchAvailable": "Inštaluje sa aktualizácia...",
-  "homePatchDownloaded": "Aktualizácia je stiahnutá, prosím reštartujte EduPage2",
+  "homePatchAvailable": "Inštaluje se nový patch...",
+  "homePatchDownloaded": "Patch bol stiahnutý, prosím reštartujte EduPage2",
   "homeworkTitle": "Domáce úlohy",
+  "@homeworkTitle": {
+    "description": "Title of homework page"
+  },
   "messagesTitle": "Správy",
-  "loginPleaseLogin": "Prosím, prihláste sa do EduPage2",
-  "loginUseExistingCredentials": "Použite svoje existujúce prihlasovacie údaje do EduPage",
+  "@messagesTitle": {
+    "description": "Title of messages page"
+  },
+  "loginPleaseLogin": "Prosím, prihláste sa",
+  "@loginPleaseLogin": {
+    "description": "Main text for login page"
+  },
+  "loginUseExistingCredentials": "Použite svoje existujúce údaje do EduPage",
+  "@loginUseExistingCredentials": {
+    "description": "Asks user to use their existing EduPage credentials"
+  },
   "loginUsername": "Prihlasovacie meno",
+  "@loginUsername": {
+    "description": "User's email or user name"
+  },
   "loginPassword": "Heslo",
+  "@loginPassword": {
+    "description": "User's password"
+  },
+  "loginServer": "Server (napr. skola.edupage.org)",
   "loginLogin": "Prihlásiť sa",
+  "@loginLogin": {
+    "description": "Login button"
+  },
+  "loginCustomEndpointCheckbox": "Použíť valstny endpoint",
+  "loginCustomEndpoint": "URL vlastného endpointu",
   "today": "Dnes",
   "tomorrow": "Zajtra",
-  "loadCredentials": "Načítavam prihlasovacie údaje...",
+  "loadCredentials": "Načítavam prihlasovacie údaje",
   "loadLoggingIn": "Prihlasovanie...",
   "loadLoggedIn": "Prihlásený",
-  "loadAccessToken": "Získavam prístupový token...",
-  "loadVerify": "Overujem",
-  "loadDownloadTimetable": "Sťahujem rozvrh hodín...",
-  "loadDownloadMessages": "Sťahujem správy...",
+  "loadAccessToken": "Získavanie prístupového tokenu...",
+  "loadVerify": "Overovanie...",
+  "loadDownloadTimetable": "Sťahovanie rozvrhu...",
+  "loadDownloadMessages": "Sťahovanie zpráv...",
   "loadDone": "Hotovo!",
-  "iCanteenLoading": "Načítavam obedy (môže to chvíľu trvať)",
+  "iCanteenLoading": "Načítavanie obedov (môže to chvíľu trvať)",
   "iCanteenCantLoad": "Nepodarilo sa načítať obedy",
   "iCanteenSetupPleaseLogin": "Prihláste sa do iCanteen",
-  "iCanteenSetupDetails": "Adresa URL v tomto formáte: https://lunches.yourschool.com/login",
-  "iCanteenSetupServer": "Adresa servera",
-  "iCanteenSetupEmail": "Používateľské meno",
+  "iCanteenSetupDetails": "Adresu URL zadajte vo formáte https://stravovanie.skola.sk/login",
+  "iCanteenSetupServer": "Adresa URL",
+  "iCanteenSetupEmail": "Prihlasovacie meno",
   "iCanteenSetupPassword": "Heslo",
-  "messagesLoadingAttachment": "Načítavam PDF..."
+  "messagesLoadingAttachment": "Načítavanie pdf súboru...",
+  "messagesAttachments": "{count, plural, =1{1 Prípona} few{{count} Prípony} other{{count} Prípon}}",
+  "@messagesAttachments": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  }
 }
