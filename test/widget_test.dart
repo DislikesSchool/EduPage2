@@ -5,38 +5,55 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:eduapge2/login.dart';
+import 'package:eduapge2/home.dart';
+import 'package:eduapge2/messages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  testWidgets('Login page', (WidgetTester tester) async {
-    // Initiates SharedPreferences
-    SharedPreferences.setMockInitialValues({});
+  group('TimeOfDay', () {
+    TimeOfDay time1 = const TimeOfDay(hour: 4, minute: 20);
+    TimeOfDay time2 = const TimeOfDay(hour: 6, minute: 09);
+    TimeOfDay time3 = const TimeOfDay(hour: 6, minute: 05);
+    TimeOfDay time4 = const TimeOfDay(hour: 4, minute: 19);
+    test('is lesser', () => {expect(time1 < time2, true)});
+    test('is lesser or equal (equal)', () => {expect(time1 <= time1, true)});
+    test('is lesser or equal (lesser)', () => {expect(time4 <= time1, true)});
+    test('is greater', () => {expect(time2 > time3, true)});
+  });
 
-    // Gets test user's username and password from environment
-    String? username = const String.fromEnvironment("USERNAME");
-    String? password = const String.fromEnvironment("PASSWORD");
+  group('DateTime', () {
+    DateTime parsed = DateTimeExtension.parseTime("4:20");
+    test(
+        'parseTime', () => {expect(parsed.hour, 4), expect(parsed.minute, 20)});
+  });
 
-    // Initiates widget
-    await tester.pumpWidget(const LocalizationsInj(child: LoginPage(err: "")));
-
-    // Checks for TextFields and login button
-    expect(find.text('Username'), findsOneWidget);
-    expect(find.text('Password'), findsOneWidget);
-    expect(find.text('Login'), findsOneWidget);
-
-    // Types test user's credentails into fields
-    await tester.enterText(find.byType(TextField).at(0), username);
-    await tester.enterText(find.byType(TextField).at(1), password);
-    await tester.tap(find.byType(ElevatedButton));
-
-    // Checks that the credentails were stored correctly
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    expect(prefs.get("email"), equals(username));
-    expect(prefs.get("password"), equals(password));
+  group('List', () {
+    List<int> testList = [1, 2, 3, 4, 5];
+    test(
+        'move forward',
+        () => {
+              testList.move(0, 4),
+              expect(testList[0] == 2, true),
+              expect(testList[4] == 1, true)
+            });
+    test(
+        'move back',
+        () => {
+              testList.move(4, 0),
+              expect(testList[0] == 1, true),
+              expect(testList[4] == 5, true)
+            });
+    test(
+        'move multiple',
+        () => {
+              testList.move(1, 3),
+              testList.move(2, 4),
+              expect(testList[1] == 3, true),
+              expect(testList[3] == 5, true),
+              expect(testList[4] == 4, true),
+            });
   });
 }
 

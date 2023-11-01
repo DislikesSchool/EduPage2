@@ -79,7 +79,7 @@ jobs:
     - run: flutter analyze .
     - run: flutter gen-l10n
     - run: dart pub global run full_coverage
-    - run: flutter test --coverage --dart-define=USERNAME=${{ secrets.USERNAME }} --dart-define=PASSWORD=${{ secrets.PASSWORD }}
+    - run: flutter test --coverage
     - name: run integration tests
       uses: reactivecircus/android-emulator-runner@v2
       with:
