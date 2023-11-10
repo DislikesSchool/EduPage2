@@ -1,3 +1,4 @@
+import 'package:eduapge2/api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -13,13 +14,13 @@ class HomeworkPage extends StatefulWidget {
 
 class HomeworkPageState extends State<HomeworkPage> {
   bool loading = true;
+  bool loaded = false;
   late List<dynamic> apidataMsg;
 
   late Widget messages;
 
   @override
   void initState() {
-    getData(); //fetching data
     super.initState();
   }
 
@@ -34,9 +35,8 @@ class HomeworkPageState extends State<HomeworkPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    Map<String, dynamic> msgs = await widget.sessionManager.get('homework');
-    apidataMsg = msgs.values.toList();
-    messages = getMessages(apidataMsg);
+    messages =
+        getMessages(EP2Data.getInstance().timeline.homeworks.values.toList());
 
     loading = false;
     setState(() {}); //refresh UI
@@ -44,6 +44,10 @@ class HomeworkPageState extends State<HomeworkPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!loaded) {
+      loaded = true;
+      getData();
+    }
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
@@ -61,30 +65,19 @@ class HomeworkPageState extends State<HomeworkPage> {
     setState(() {
       loading = true; //make loading true to show progressindicator
     });
-
-    Map<String, dynamic> msgs = await widget.sessionManager.get('homework');
-    apidataMsg = msgs.values.toList();
-    messages = getMessages(apidataMsg);
+    messages =
+        getMessages(EP2Data.getInstance().timeline.homeworks.values.toList());
 
     loading = false;
     setState(() {}); //refresh UI
   }
 
-  Widget getMessages(var apidataMsg) {
+  Widget getMessages(List<Homework> apidataMsg) {
     List<Widget> rows = <Widget>[];
-    apidataMsg ??= [
-      {
-        "type": "testpridelenie",
-        "title": "Načítání...",
-        "text": "Nebude to trvat dlouho",
-      }
-    ];
-    for (Map<String, dynamic> msg in apidataMsg) {
+    for (Homework msg in apidataMsg) {
       String textAsTitle = "This isn't supposed to happen...";
-      if (msg.keys.contains("name") && msg["name"] != null) {
-        textAsTitle = msg["name"];
-      } else if (msg.keys.contains("assignment") && msg["assignment"] != null) {
-        textAsTitle = msg["assignment"]["title"];
+      if (msg.name != "") {
+        textAsTitle = msg.name;
       } else {
         continue;
       }
@@ -96,11 +89,11 @@ class HomeworkPageState extends State<HomeworkPage> {
               children: [
                 Row(
                   children: [
-                    Text(msg["autor_meno"]),
+                    Text(msg.authorName),
                     const Icon(Icons.arrow_right_rounded),
                     Expanded(
                       child: Text(
-                        msg["predmet_meno"],
+                        msg.lessonName,
                         overflow: TextOverflow.fade,
                         maxLines: 5,
                         softWrap: false,

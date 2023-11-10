@@ -34,7 +34,7 @@ class EP2Data {
     return _instance!;
   }
 
-  Future<void> init() async {
+  Future<bool> init() async {
     sharedPreferences = await SharedPreferences.getInstance();
 
     String? endpoint = sharedPreferences.getString("customEndpoint");
@@ -48,14 +48,16 @@ class EP2Data {
 
     user = (await User.loadFromCache()) ??
         User(
-          username: sharedPreferences.getString("username") ?? "",
+          username: sharedPreferences.getString("email") ?? "",
           password: sharedPreferences.getString("password") ?? "",
           server: sharedPreferences.getString("server") ?? "",
         );
 
     if (isInternetAvailable) {
       if (!await user.validate()) {
-        await user.login();
+        if (!await user.login()) {
+          return false;
+        }
       }
     }
 
@@ -69,11 +71,13 @@ class EP2Data {
       await timeline.loadMessages();
     }
 
-    timetable = TimeTable();
+    timetable = (await TimeTable.loadFromCache()) ?? TimeTable();
 
     if (isInternetAvailable) {
       await timetable.loadRecentTt();
     }
+
+    return true;
   }
 }
 
@@ -85,8 +89,7 @@ class User {
   String? server = "";
 
   String token = "";
-  String firstname = "";
-  String lastname = "";
+  String name = "";
 
   User({
     required this.username,
@@ -94,10 +97,10 @@ class User {
     this.server,
   });
 
-  Future<void> login() async {
+  Future<bool> login() async {
     try {
       Response resp = await data.dio.post(
-        "${data.dio}/login",
+        "${data.baseUrl}/login",
         data: {
           "username": username,
           "password": password,
@@ -107,12 +110,13 @@ class User {
       );
 
       token = resp.data['token'];
-      firstname = resp.data['firstname'];
-      lastname = resp.data['lastname'];
+      name = resp.data["name"];
 
       await saveToCache();
+      return true;
     } catch (e) {
-      throw Exception('Login failed: $e');
+      print(e);
+      return false;
     }
   }
 
@@ -128,7 +132,7 @@ class User {
       }
       return true;
     } catch (e) {
-      throw Exception('Token validation failed: $e');
+      return false;
     }
   }
 
@@ -138,8 +142,7 @@ class User {
       'password': password,
       'server': server,
       'token': token,
-      'firstname': firstname,
-      'lastname': lastname,
+      'name': name,
     };
   }
 
@@ -150,8 +153,7 @@ class User {
       server: json['server'],
     )
       ..token = json['token']
-      ..firstname = json['firstname']
-      ..lastname = json['lastname'];
+      ..name = json['name'];
   }
 
   Future<void> saveToCache() async {
@@ -192,7 +194,7 @@ class TimeTable {
     );
 
     periods = [];
-    for (Map<String, dynamic> period in periodsResponse.data) {
+    for (Map<String, dynamic> period in periodsResponse.data.values) {
       periods!.add(TimeTablePeriod(period["id"], period["starttime"],
           period["endtime"], period["name"], period["short"]));
     }
@@ -205,14 +207,11 @@ class TimeTable {
       return timetables[date]!;
     }
 
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String token = sharedPreferences.getString("token")!;
-
     Response response = await data.dio.get(
       "${data.baseUrl}/api/timetable?to=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime(date.year, date.month, date.day))}&from=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime(date.year, date.month, date.day))}",
       options: Options(
         headers: {
-          "Authorization": "Bearer $token",
+          "Authorization": "Bearer ${data.user.token}",
         },
       ),
     );
@@ -226,7 +225,7 @@ class TimeTable {
       }
     }
 
-    periods = await loadPeriods(token);
+    periods = await loadPeriods(data.user.token);
 
     TimeTableData t = processTimeTable(TimeTableData(
         DateTime.parse(response.data["Days"].keys.isEmpty
@@ -240,37 +239,26 @@ class TimeTable {
   }
 
   Future<List<TimeTableData>> loadRecentTt() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String token = sharedPreferences.getString("token")!;
-
     Response response = await data.dio.get(
       "${data.baseUrl}/api/timetable/recent",
       options: Options(
         headers: {
-          "Authorization": "Bearer $token",
+          "Authorization": "Bearer ${data.user.token}",
         },
       ),
     );
 
     List<TimeTableData> recentTimetables = [];
-    for (Map<String, dynamic> ttData in response.data) {
+    for (MapEntry day in response.data["Days"].entries) {
       List<TimeTableClass> ttClasses = <TimeTableClass>[];
-      Map<String, dynamic> lessons = ttData["Days"];
-      for (Map<String, dynamic> ttLesson
-          in lessons.values.isEmpty ? [] : lessons.values.first) {
+      for (Map<String, dynamic> ttLesson in day.value) {
         if (ttLesson["studentids"] != null) {
-          ttClasses.add(
-            TimeTableClass.fromJson(ttLesson),
-          );
+          ttClasses.add(TimeTableClass.fromJson(ttLesson));
         }
       }
-
-      recentTimetables.add(TimeTableData(
-          DateTime.parse(ttData["Days"].keys.isEmpty
-              ? DateTime.now().toString()
-              : ttData["Days"].keys.first),
-          ttClasses,
-          periods!));
+      periods = await loadPeriods(data.user.token);
+      recentTimetables.add(processTimeTable(
+          TimeTableData(DateTime.parse(day.key), ttClasses, periods!)));
     }
 
     return recentTimetables;
@@ -279,6 +267,38 @@ class TimeTable {
   // Just a little shortcut
   Future<TimeTableData> today() async {
     return await loadTt(DateTime.now());
+  }
+
+  Map<String, dynamic> toJson() => {
+        'timetables': timetables.map(
+            (key, value) => MapEntry(key.toIso8601String(), value.toJson())),
+        'periods': periods?.map((p) => p.toJson()).toList(),
+      };
+
+  static TimeTable fromJson(Map<String, dynamic> json) {
+    return TimeTable()
+      ..timetables.addAll((json['timetables'] as Map<String, dynamic>).map(
+        (key, value) => MapEntry(
+          DateTime.parse(key),
+          TimeTableData.fromJson(value),
+        ),
+      ))
+      ..periods = (json['periods'] as List)
+          .map((p) => TimeTablePeriod.fromJson(p as Map<String, dynamic>))
+          .toList();
+  }
+
+  Future<void> saveToCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('timetable', jsonEncode(this.toJson()));
+  }
+
+  static Future<TimeTable?> loadFromCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('timetable')) {
+      return null;
+    }
+    return fromJson(jsonDecode(prefs.getString('timetable')!));
   }
 }
 
@@ -850,8 +870,8 @@ class Timeline {
       ),
     );
 
-    Map<String, dynamic> newHomeworks = jsonDecode(response.data["Homeworks"]);
-    Map<String, dynamic> newItems = jsonDecode(response.data["Items"]);
+    Map<String, dynamic> newHomeworks = response.data["Homeworks"];
+    Map<String, dynamic> newItems = response.data["Items"];
 
     newHomeworks.forEach((key, value) {
       homeworks[key] = Homework.fromJson(value);

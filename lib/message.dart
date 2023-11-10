@@ -1,3 +1,4 @@
+import 'package:eduapge2/api.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
@@ -48,9 +49,6 @@ class MessagePageState extends State<MessagePage> {
     setState(() {
       loading = true; //make loading true to show progressindicator
     });
-
-    sharedPreferences = await SharedPreferences.getInstance();
-    String token = sharedPreferences.getString("token")!;
     Response response = await dio.get(
       "$baseUrl/api/timelineitem/${widget.id}",
       options: buildCacheOptions(
@@ -58,7 +56,7 @@ class MessagePageState extends State<MessagePage> {
         forceRefresh: false,
         options: Options(
           headers: {
-            "Authorization": "Bearer $token",
+            "Authorization": "Bearer ${EP2Data.getInstance().user.token}",
           },
         ),
       ),

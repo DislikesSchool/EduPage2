@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TimeTablePage extends StatefulWidget {
@@ -30,16 +29,17 @@ class TimeTablePageState extends State<TimeTablePage> {
   bool refresh = false;
   bool userInteracted = false;
 
+  EP2Data data = EP2Data.getInstance();
+
   int daydiff = 0;
 
   List<TimeTableData> timetables = [];
 
   @override
   void initState() {
+    super.initState();
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
-    getData(); //fetching data
-    super.initState();
   }
 
   @override
@@ -56,90 +56,6 @@ class TimeTablePageState extends State<TimeTablePage> {
     return DateTime(now.year, now.month, now.day);
   }
 
-  getData() async {
-    setState(() {
-      loading = true; //make loading true to show progressindicator
-    });
-
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    String? endpoint = sp.getString("customEndpoint");
-
-    if (endpoint != null && endpoint != "") {
-      baseUrl = endpoint;
-    }
-    setState(() {});
-
-    apidataTT = await widget.sessionManager.get('timetable');
-    List<dynamic> periodData = await widget.sessionManager.get('periods');
-
-    for (Map<String, dynamic> period in periodData) {
-      periods.add(TimeTablePeriod(period["id"], period["starttime"],
-          period["endtime"], period["name"], period["short"]));
-    }
-
-    List<TimeTableClass> ttClasses = <TimeTableClass>[];
-    Map<String, dynamic> classes = apidataTT["Days"];
-    for (List<dynamic> ttClass in classes.values) {
-      ttClasses = [];
-      for (Map<String, dynamic> ttLesson in ttClass) {
-        if (ttLesson["studentids"] != null) {
-          ttClasses.add(TimeTableClass.fromJson(ttLesson));
-        }
-      }
-      TimeTableData t = processTimeTable(TimeTableData(
-          DateTime.parse(ttClass.first["date"]), ttClasses, periods));
-      timetables.add(t);
-    }
-
-    loading = false;
-    refresh = false;
-    setState(() {}); //refresh UI
-
-    if (sp.getBool('quickstart') ?? false) {
-      await loadTt(DateTime.now());
-      setState(() {});
-    }
-  }
-
-  Future<TimeTableData> loadTt(DateTime date) async {
-    if (timetables.any((element) => isSameDay(element.date, date))) {
-      return timetables.firstWhere((element) => isSameDay(element.date, date));
-    }
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String token = sharedPreferences.getString("token")!;
-
-    Response response = await dio.get(
-      "$baseUrl/api/timetable?to=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime(date.year, date.month, date.day))}&from=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime(date.year, date.month, date.day))}",
-      options: buildCacheOptions(
-        const Duration(days: 4),
-        forceRefresh: true,
-        maxStale: const Duration(days: 14),
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
-          },
-        ),
-      ),
-    );
-
-    List<TimeTableClass> ttClasses = <TimeTableClass>[];
-    Map<String, dynamic> lessons = response.data["Days"];
-    for (Map<String, dynamic> ttLesson
-        in lessons.values.isEmpty ? [] : lessons.values.first) {
-      if (ttLesson["studentids"] != null) {
-        ttClasses.add(TimeTableClass.fromJson(ttLesson));
-      }
-    }
-    TimeTableData t = processTimeTable(TimeTableData(
-        DateTime.parse(response.data["Days"].keys.isEmpty
-            ? date.toString()
-            : response.data["Days"].keys.first),
-        ttClasses,
-        periods));
-    timetables.add(t);
-    return t;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,7 +68,7 @@ class TimeTablePageState extends State<TimeTablePage> {
               controller: PageController(initialPage: 500),
               itemBuilder: (context, index) {
                 return getTimeTable(
-                    timetables.firstWhere(
+                    data.timetable.timetables.values.firstWhere(
                       (element) => isSameDay(
                         element.date,
                         DateTime.now().add(
@@ -160,17 +76,19 @@ class TimeTablePageState extends State<TimeTablePage> {
                         ),
                       ),
                       orElse: () {
-                        loadTt(
-                          DateTime.now().add(
-                            Duration(days: daydiff + index - 500),
-                          ),
-                        ).then(
-                          (value) => {
-                            setState(
-                              () {},
-                            ),
-                          },
-                        );
+                        data.timetable
+                            .loadTt(
+                              DateTime.now().add(
+                                Duration(days: daydiff + index - 500),
+                              ),
+                            )
+                            .then(
+                              (value) => {
+                                setState(
+                                  () {},
+                                ),
+                              },
+                            );
                         return TimeTableData(
                             DateTime.now().add(
                               Duration(days: daydiff + index - 500),
@@ -187,17 +105,19 @@ class TimeTablePageState extends State<TimeTablePage> {
                               userInteracted = true;
                             },
                           ),
-                          loadTt(
-                            DateTime.now().add(
-                              Duration(days: daydiff + index - 500),
-                            ),
-                          ).then(
-                            (value) => {
-                              setState(
-                                () {},
+                          data.timetable
+                              .loadTt(
+                                DateTime.now().add(
+                                  Duration(days: daydiff + index - 500),
+                                ),
+                              )
+                              .then(
+                                (value) => {
+                                  setState(
+                                    () {},
+                                  ),
+                                },
                               ),
-                            },
-                          ),
                         },
                     AppLocalizations.of(context),
                     true,

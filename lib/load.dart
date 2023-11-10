@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:eduapge2/api.dart';
 import 'package:eduapge2/login.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,17 @@ class LoadingScreenState extends State<LoadingScreen> {
     dio.interceptors
         .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
     setState(() {});
-    loadUser();
+    if (sharedPreferences.getString("email") != null &&
+        sharedPreferences.getString("password") != null) {
+      if (!await EP2Data.getInstance().init()) {
+        gotoLogin();
+      } else {
+        widget.loadedCallback();
+      }
+    } else {
+      gotoLogin();
+    }
+    //loadUser();
   }
 
   Future<Map<String, dynamic>> login(

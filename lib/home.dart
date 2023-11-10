@@ -7,12 +7,10 @@ import 'package:eduapge2/api.dart';
 import 'package:eduapge2/icanteen_setup.dart';
 import 'package:eduapge2/message.dart';
 import 'package:eduapge2/messages.dart';
-import 'package:eduapge2/timetable.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
-import 'package:intl/intl.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -94,7 +92,8 @@ extension DateTimeExtension on DateTime {
   }
 }
 
-LessonStatus getLessonStatus(List<dynamic> lessons, TimeOfDay currentTime) {
+LessonStatus getLessonStatus(
+    List<TimeTableClass> lessons, TimeOfDay currentTime) {
   // Check if the user has any lessons today
   final hasLessonsToday = lessons.isNotEmpty;
 
@@ -102,9 +101,9 @@ LessonStatus getLessonStatus(List<dynamic> lessons, TimeOfDay currentTime) {
   final hasLesson = hasLessonsToday &&
       lessons.any((lesson) {
         final startTime = TimeOfDay.fromDateTime(
-            DateTimeExtension.parseTime(lesson['starttime']));
-        final endTime = TimeOfDay.fromDateTime(
-            DateTimeExtension.parseTime(lesson['endtime']));
+            DateTimeExtension.parseTime(lesson.startTime));
+        final endTime =
+            TimeOfDay.fromDateTime(DateTimeExtension.parseTime(lesson.endTime));
         return startTime < endTime &&
             startTime <= currentTime &&
             endTime > currentTime;
@@ -116,21 +115,21 @@ LessonStatus getLessonStatus(List<dynamic> lessons, TimeOfDay currentTime) {
     if (hasLesson) {
       final currentLesson = lessons.firstWhere((lesson) {
         final startTime = TimeOfDay.fromDateTime(
-            DateTimeExtension.parseTime(lesson['starttime']));
-        final endTime = TimeOfDay.fromDateTime(
-            DateTimeExtension.parseTime(lesson['endtime']));
+            DateTimeExtension.parseTime(lesson.startTime));
+        final endTime =
+            TimeOfDay.fromDateTime(DateTimeExtension.parseTime(lesson.endTime));
         return startTime < endTime &&
             startTime <= currentTime &&
             endTime > currentTime;
       });
-      nextLessonTime = DateTimeExtension.parseTime(currentLesson['endtime']);
+      nextLessonTime = DateTimeExtension.parseTime(currentLesson.endTime);
     } else if (hasLessonsToday) {
       final nextLesson = lessons.firstWhere((lesson) {
         final startTime = TimeOfDay.fromDateTime(
-            DateTimeExtension.parseTime(lesson['starttime']));
+            DateTimeExtension.parseTime(lesson.startTime));
         return startTime > currentTime;
       });
-      nextLessonTime = DateTimeExtension.parseTime(nextLesson['starttime']);
+      nextLessonTime = DateTimeExtension.parseTime(nextLesson.startTime);
     } else {
       nextLessonTime = DateTime.now();
     }
@@ -164,8 +163,7 @@ class HomePageState extends State<HomePage> {
   bool updateAvailable = false;
   bool quickstart = false;
 
-  late Map<String, dynamic> apidataTT;
-  List<dynamic> apidataMsg = [];
+  List<TimelineItem> apidataMsg = [];
   late String username;
   late LessonStatus _lessonStatus;
   Timer? _timer;
@@ -205,57 +203,12 @@ class HomePageState extends State<HomePage> {
       baseUrl = endpoint;
     }
     quickstart = sharedPreferences.getBool('quickstart') ?? false;
-    var msgs = await widget.sessionManager.get('messages');
-    if (msgs != Null && msgs != null) {
-      setState(() {
-        apidataMsg = msgs.values.toList();
-      });
-    }
+    apidataMsg = EP2Data.getInstance().timeline.items.values.toList();
+    username = EP2Data.getInstance().user.name;
 
-    Map<String, dynamic> user = await widget.sessionManager.get('user');
-    username = user["name"];
-    String token = sharedPreferences.getString("token")!;
+    t = await EP2Data.getInstance().timetable.today();
 
-    Response response = await dio.get(
-      "$baseUrl/api/timetable?from=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime.now())}&to=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime.now())}",
-      options: buildCacheOptions(
-        Duration.zero,
-        maxStale: const Duration(days: 7),
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
-          },
-        ),
-      ),
-    );
-    apidataTT = response.data;
-
-    List<TimeTablePeriod> periods = [];
-    List<dynamic> periodData = await widget.sessionManager.get('periods');
-
-    for (Map<String, dynamic> period in periodData) {
-      periods.add(TimeTablePeriod(period["id"], period["starttime"],
-          period["endtime"], period["name"], period["short"]));
-    }
-
-    List<TimeTableClass> ttClasses = <TimeTableClass>[];
-    Map<String, dynamic> classes = apidataTT["Days"];
-    for (List<dynamic> ttClass in classes.values) {
-      ttClasses = [];
-      for (Map<String, dynamic> ttLesson in ttClass) {
-        if (ttLesson["studentids"] != null) {
-          ttClasses.add(TimeTableClass.fromJson(ttLesson));
-        }
-      }
-      t = processTimeTable(TimeTableData(
-          DateTime.parse(ttClass.first["date"]), ttClasses, periods));
-    }
-
-    _lessonStatus = getLessonStatus(
-        apidataTT["Days"].values.length == 0
-            ? []
-            : apidataTT["Days"].values.first,
-        TimeOfDay.now());
+    _lessonStatus = getLessonStatus(t.classes, TimeOfDay.now());
     if (_lessonStatus.hasLessonsToday) {
       _startTimer();
     }
@@ -267,8 +220,7 @@ class HomePageState extends State<HomePage> {
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() {
-        _lessonStatus =
-            getLessonStatus(apidataTT["Days"].values.first, TimeOfDay.now());
+        _lessonStatus = getLessonStatus(t.classes, TimeOfDay.now());
         if (!_lessonStatus.hasLessonsToday) {
           _timer?.cancel();
         }
@@ -359,16 +311,16 @@ class HomePageState extends State<HomePage> {
         }
       }
     }
-    List<dynamic> msgs =
-        apidataMsg.where((msg) => msg["typ"] == "sprava").toList();
-    List<dynamic> msgsWOR = List.from(msgs);
+    List<TimelineItem> msgs =
+        apidataMsg.where((msg) => msg.type == "sprava").toList();
+    List<TimelineItem> msgsWOR = List.from(msgs);
     List<Map<String, int>> bump = [];
-    for (Map<String, dynamic> msg in msgs) {
-      if (msg["replyOf"] != null) {
+    for (TimelineItem msg in msgs) {
+      if (msg.reactionTo != "") {
         if (!bump.any((element) =>
-            element["id"]!.compareTo(int.parse(msg["replyOf"])) == 0)) {
+            element["id"]!.compareTo(int.parse(msg.reactionTo)) == 0)) {
           bump.add(
-              {"id": int.parse(msg["replyOf"]), "index": msgsWOR.indexOf(msg)});
+              {"id": int.parse(msg.reactionTo), "index": msgsWOR.indexOf(msg)});
           msgsWOR.remove(msg);
         } else {
           msgsWOR.remove(msg);
@@ -376,9 +328,12 @@ class HomePageState extends State<HomePage> {
       }
     }
     for (Map<String, int> b in bump) {
+      if (!msgsWOR.any((element) => element.id == b["ineid"].toString())) {
+        continue;
+      }
       msgsWOR.move(
           msgsWOR.indexOf(msgsWOR
-              .firstWhere((element) => int.parse(element["id"]) == b["id"])),
+              .firstWhere((element) => int.parse(element.id) == b["id"])),
           b["index"]!);
     }
     final remainingTime =
@@ -447,7 +402,7 @@ class HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              if (apidataTT["Days"]?.length > 0)
+              if (t.classes.isNotEmpty)
                 Container(
                   width: MediaQuery.of(context).size.width,
                   margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
@@ -622,7 +577,7 @@ class HomePageState extends State<HomePage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          for (Map<String, dynamic> m in msgsWOR.length < 5
+                          for (TimelineItem m in msgsWOR.length < 5
                               ? msgsWOR
                               : msgsWOR.getRange(0, 4))
                             InkWell(
@@ -636,7 +591,7 @@ class HomePageState extends State<HomePage> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          '${m["vlastnik_meno"]?.trim()}: ${m["text"]}'
+                                          '${m.ownerName.trim()}: ${m.text}'
                                               .replaceAll(RegExp(r'\s+'), ' '),
                                           softWrap: false,
                                           overflow: TextOverflow.ellipsis,
@@ -653,7 +608,7 @@ class HomePageState extends State<HomePage> {
                                         builder: (context) => MessagePage(
                                             sessionManager:
                                                 widget.sessionManager,
-                                            id: int.parse(m["timelineid"]))));
+                                            id: int.parse(m.id))));
                               },
                             ),
                         ],
