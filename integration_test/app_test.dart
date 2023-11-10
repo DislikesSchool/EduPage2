@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'package:eduapge2/main.dart' as app;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'utils.dart';
@@ -25,20 +26,38 @@ void main() {
       await prep(tester, username, password, name);
 
       await tester.tap(find.byType(NavigationDestination).at(1));
-      await pumpUntilFound(tester, find.textContaining("Today"));
-      expect(find.textContaining("TODAY"), findsOneWidget);
+      await tester.pump(const Duration(seconds: 1));
+      String day = DateFormat('d', const Locale('en', 'US').toString())
+          .format(DateTime.now());
+      String month = DateFormat('MMMM', const Locale('en', 'US').toString())
+          .format(DateTime.now());
+
+      await pumpUntilFound(tester, find.textContaining("$day $month"));
+      expect(find.textContaining("$day $month"), findsWidgets);
     });
 
     testWidgets('Test TimeTable page scroll', (tester) async {
       await prep(tester, username, password, name);
 
       await tester.tap(find.byType(NavigationDestination).at(1));
-      await pumpUntilFound(tester, find.textContaining("Today"));
-      expect(find.textContaining("TODAY"), findsOneWidget);
+      await tester.pump(const Duration(seconds: 1));
+      String day = DateFormat('d', const Locale('en', 'US').toString())
+          .format(DateTime.now());
+      String month = DateFormat('MMMM', const Locale('en', 'US').toString())
+          .format(DateTime.now());
+
+      await pumpUntilFound(tester, find.textContaining("$day $month"));
+      expect(find.textContaining("$day $month"), findsWidgets);
 
       await tester.tap(find.byKey(const Key("TimeTableScrollForward")));
-      await pumpUntilFound(tester, find.textContaining("Tomorrow"));
-      expect(find.textContaining("TOMORROW"), findsOneWidget);
+      await tester.pump(const Duration(seconds: 1));
+      day = DateFormat('d', const Locale('en').toString())
+          .format(DateTime.now().add(const Duration(days: 1)));
+      month = DateFormat('MMMM', const Locale('en').toString())
+          .format(DateTime.now().add(const Duration(days: 1)));
+
+      await pumpUntilFound(tester, find.textContaining("$day $month"));
+      expect(find.textContaining("$day $month"), findsWidgets);
     });
   });
 }
