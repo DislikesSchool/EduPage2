@@ -207,7 +207,8 @@ class TimeTablePageState extends State<MessagesPage> {
     }
     for (Map<String, dynamic> msg in msgsWOR) {
       bool isImportantMessage = false;
-      if (msg["data"]["Value"]["messageContent"] != null) {
+      if (msg["data"] != null &&
+          msg["data"]["Value"]["messageContent"] != null) {
         isImportantMessage = true;
       }
       rows.add(Card(
