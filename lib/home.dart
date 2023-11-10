@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:eduapge2/api.dart';
 import 'package:eduapge2/icanteen_setup.dart';
 import 'package:eduapge2/message.dart';
 import 'package:eduapge2/messages.dart';
@@ -243,23 +244,7 @@ class HomePageState extends State<HomePage> {
       ttClasses = [];
       for (Map<String, dynamic> ttLesson in ttClass) {
         if (ttLesson["studentids"] != null) {
-          ttClasses.add(
-            TimeTableClass(
-              ttLesson["uniperiod"],
-              ttLesson["uniperiod"],
-              ttLesson["subject"]["short"],
-              ttLesson["teachers"].length > 0
-                  ? ttLesson["teachers"][0]["short"]
-                  : "?",
-              ttLesson["starttime"],
-              ttLesson["endtime"],
-              ttLesson["classrooms"].length > 0
-                  ? ttLesson["classrooms"][0]["short"]
-                  : "?",
-              0,
-              ttLesson,
-            ),
-          );
+          ttClasses.add(TimeTableClass.fromJson(ttLesson));
         }
       }
       t = processTimeTable(TimeTableData(
@@ -492,32 +477,36 @@ class HomePageState extends State<HomePage> {
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 for (int i = int.tryParse(
-                                                            ttclass
-                                                                .startPeriod) ??
+                                                            ttclass.startPeriod
+                                                                .id) ??
                                                         0;
                                                     i <=
                                                         (int.tryParse(ttclass
-                                                                .endPeriod) ??
+                                                                .endPeriod
+                                                                .id) ??
                                                             0);
                                                     i++)
                                                   Text(
-                                                    "$i${i != int.tryParse(ttclass.endPeriod) ? " - " : ""}",
+                                                    "$i${i != int.tryParse(ttclass.endPeriod.id) ? " - " : ""}",
                                                     style: const TextStyle(
                                                         fontSize: 10,
                                                         color: Colors.grey),
                                                   ),
                                               ],
                                             ),
-                                            Text(
-                                              ttclass.subject,
-                                              style:
-                                                  const TextStyle(fontSize: 22),
-                                            ),
-                                            Text(
-                                              ttclass.classRoom,
-                                              style:
-                                                  const TextStyle(fontSize: 14),
-                                            ),
+                                            if (ttclass.subject != null)
+                                              Text(
+                                                ttclass.subject!.short,
+                                                style: const TextStyle(
+                                                    fontSize: 22),
+                                              ),
+                                            for (Classroom classroom
+                                                in ttclass.classrooms)
+                                              Text(
+                                                classroom.short,
+                                                style: const TextStyle(
+                                                    fontSize: 14),
+                                              ),
                                             const SizedBox(height: 2),
                                             Text(
                                               "${ttclass.startTime} - ${ttclass.endTime}",

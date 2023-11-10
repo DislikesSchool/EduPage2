@@ -1,3 +1,4 @@
+import 'package:eduapge2/api.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -18,15 +19,6 @@ class TimeTablePage extends StatefulWidget {
 
 class TimeTablePageState extends State<TimeTablePage> {
   String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
-
-  TimeTableData tt = TimeTableData(DateTime.now(), <TimeTableClass>[
-    TimeTableClass("1", "1", "THIS", "Yeah", "8:55", "9:40", "U32", 0, {}),
-    TimeTableClass("2", "2", "IS", "I don't", "10:00", "10:45", "U02", 0, {}),
-    TimeTableClass("3", "3", "NOT", "Know", "10:55", "11:40", "U60", 0, {}),
-    TimeTableClass("4", "4", "WORKING", "Why", "11:50", "12:35", "U60", 1, {})
-  ], [
-    TimeTablePeriod("1", "8:00", "8:55", "1", "1")
-  ]);
 
   Dio dio = Dio();
 
@@ -91,23 +83,7 @@ class TimeTablePageState extends State<TimeTablePage> {
       ttClasses = [];
       for (Map<String, dynamic> ttLesson in ttClass) {
         if (ttLesson["studentids"] != null) {
-          ttClasses.add(
-            TimeTableClass(
-              ttLesson["uniperiod"],
-              ttLesson["uniperiod"],
-              ttLesson["subject"]["short"],
-              ttLesson["teachers"].length > 0
-                  ? ttLesson["teachers"][0]["short"]
-                  : "?",
-              ttLesson["starttime"],
-              ttLesson["endtime"],
-              ttLesson["classrooms"].length > 0
-                  ? ttLesson["classrooms"][0]["short"]
-                  : "?",
-              0,
-              ttLesson,
-            ),
-          );
+          ttClasses.add(TimeTableClass.fromJson(ttLesson));
         }
       }
       TimeTableData t = processTimeTable(TimeTableData(
@@ -151,23 +127,7 @@ class TimeTablePageState extends State<TimeTablePage> {
     for (Map<String, dynamic> ttLesson
         in lessons.values.isEmpty ? [] : lessons.values.first) {
       if (ttLesson["studentids"] != null) {
-        ttClasses.add(
-          TimeTableClass(
-            ttLesson["uniperiod"],
-            ttLesson["uniperiod"],
-            ttLesson["subject"]["short"],
-            ttLesson["teachers"].length > 0
-                ? ttLesson["teachers"][0]["short"]
-                : "?",
-            ttLesson["starttime"],
-            ttLesson["endtime"],
-            ttLesson["classrooms"].length > 0
-                ? ttLesson["classrooms"][0]["short"]
-                : "?",
-            0,
-            ttLesson,
-          ),
-        );
+        ttClasses.add(TimeTableClass.fromJson(ttLesson));
       }
     }
     TimeTableData t = processTimeTable(TimeTableData(
@@ -206,13 +166,17 @@ class TimeTablePageState extends State<TimeTablePage> {
                           ),
                         ).then(
                           (value) => {
-                            tt = value,
                             setState(
                               () {},
                             ),
                           },
                         );
-                        return tt;
+                        return TimeTableData(
+                            DateTime.now().add(
+                              Duration(days: daydiff + index - 500),
+                            ),
+                            [],
+                            []);
                       },
                     ),
                     daydiff,
@@ -229,7 +193,6 @@ class TimeTablePageState extends State<TimeTablePage> {
                             ),
                           ).then(
                             (value) => {
-                              tt = value,
                               setState(
                                 () {},
                               ),
@@ -256,29 +219,46 @@ TimeTableData processTimeTable(TimeTableData tt) {
   List<TimeTableClass> classes = tt.classes;
   List<TimeTablePeriod> periods = tt.periods;
 
+  // Go through all classes, and assign them a startPeriod and endPeriod both equal to the their period
+  for (int i = 0; i < classes.length; i++) {
+    TimeTableClass currentClass = classes[i];
+    TimeTablePeriod currentPeriod =
+        periods.firstWhere((period) => period.id == currentClass.period,
+            orElse: () => TimeTablePeriod.fromJson({
+                  "id": currentClass.period,
+                  "starttime": currentClass.startTime,
+                  "endtime": currentClass.endTime,
+                  "name": currentClass.period,
+                  "short": currentClass.period,
+                }));
+    currentClass.startPeriod = currentPeriod;
+    currentClass.endPeriod = currentPeriod;
+  }
+
   // Match class end times to period end times
   for (int i = 0; i < classes.length; i++) {
     TimeTableClass currentClass = classes[i];
-    TimeTablePeriod currentPeriod = periods.firstWhere(
-        (period) => period.id == currentClass.endPeriod,
-        orElse: () => TimeTablePeriod(
-            currentClass.startPeriod,
-            currentClass.startPeriod,
-            currentClass.endPeriod,
-            currentClass.startPeriod,
-            currentClass.startPeriod));
+    TimeTablePeriod currentPeriod =
+        periods.firstWhere((period) => period.id == currentClass.endPeriod.id,
+            orElse: () => TimeTablePeriod.fromJson({
+                  "id": currentClass.endPeriod.id,
+                  "starttime": currentClass.endTime,
+                  "endtime": currentClass.endTime,
+                  "name": currentClass.endPeriod.id,
+                  "short": currentClass.endPeriod.id,
+                }));
     if (currentClass.endTime != currentPeriod.endTime) {
       int nextPeriodIndex = periods
           .indexWhere((period) => period.endTime == currentClass.endTime);
       if (nextPeriodIndex != -1) {
         TimeTablePeriod nextPeriod = periods[nextPeriodIndex];
-        currentClass.endPeriod = nextPeriod.id;
+        currentClass.endPeriod = nextPeriod;
       }
     }
   }
 
-  classes.sort(
-      (a, b) => int.parse(a.startPeriod).compareTo(int.parse(b.startPeriod)));
+  classes.sort((a, b) =>
+      int.parse(a.startPeriod.id).compareTo(int.parse(b.startPeriod.id)));
   periods.sort((a, b) => a.startTime.compareTo(b.startTime));
 
   List<TimeTableClass> newClasses = [];
@@ -288,76 +268,31 @@ TimeTableData processTimeTable(TimeTableData tt) {
     TimeTableClass currentClass = classes[i];
     TimeTableClass nextClass = classes[i + 1];
     int currentPeriodIndex =
-        periods.indexWhere((period) => period.id == currentClass.endPeriod);
+        periods.indexWhere((period) => period.id == currentClass.endPeriod.id);
     int nextPeriodIndex =
-        periods.indexWhere((period) => period.id == nextClass.startPeriod);
+        periods.indexWhere((period) => period.id == nextClass.startPeriod.id);
     bool hasClassAfter =
         nextPeriodIndex != -1 && nextPeriodIndex - currentPeriodIndex > 1;
     if (hasClassAfter) {
       for (int j = currentPeriodIndex + 1; j < nextPeriodIndex; j++) {
         TimeTablePeriod emptyPeriod = periods[j];
         TimeTableClass emptyClass = TimeTableClass(
-          emptyPeriod.id,
-          emptyPeriod.id,
-          "",
-          "",
-          emptyPeriod.startTime,
-          emptyPeriod.endTime,
-          "",
-          0,
-          {},
+          period: emptyPeriod.id,
+          startTime: emptyPeriod.startTime,
+          endTime: emptyPeriod.endTime,
         );
+        emptyClass.startPeriod = emptyPeriod;
+        emptyClass.endPeriod = emptyPeriod;
         newClasses.add(emptyClass);
       }
     }
   }
 
   classes.addAll(newClasses);
-  classes.sort(
-      (a, b) => int.parse(a.startPeriod).compareTo(int.parse(b.startPeriod)));
+  classes.sort((a, b) =>
+      int.parse(a.startPeriod.id).compareTo(int.parse(b.startPeriod.id)));
 
   return TimeTableData(tt.date, classes, periods);
-}
-
-class TimeTableData {
-  TimeTableData(this.date, this.classes, this.periods);
-
-  final DateTime date;
-  final List<TimeTableClass> classes;
-  final List<TimeTablePeriod> periods;
-}
-
-class TimeTablePeriod {
-  final String id;
-  final String startTime;
-  final String endTime;
-  final String name;
-  final String short;
-
-  TimeTablePeriod(this.id, this.startTime, this.endTime, this.name, this.short);
-}
-
-class TimeTableClass {
-  TimeTableClass(
-      this.startPeriod,
-      this.endPeriod,
-      this.subject,
-      this.teacher,
-      this.startTime,
-      this.endTime,
-      this.classRoom,
-      this.notifications,
-      this.data);
-
-  final String startPeriod;
-  String endPeriod;
-  final String subject;
-  final String teacher;
-  final String startTime;
-  final String endTime;
-  final String classRoom;
-  final int notifications;
-  final dynamic data;
 }
 
 Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
@@ -366,13 +301,12 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
 
   for (TimeTableClass ttclass in tt.classes) {
     List<Widget> extrasRow = <Widget>[];
-    if (ttclass.data["teachers"] != null &&
-        ttclass.data["teachers"].length > 0) {
-      List<dynamic> teachers = ttclass.data["teachers"];
+    if (ttclass.teachers.isNotEmpty) {
+      List<Teacher> teachers = ttclass.teachers;
       String names = teachers.length == 1 ? "Teacher: " : "Teachers: ";
-      names += teachers[0]["firstname"] + " " + teachers[0]["lastname"];
-      for (Map<String, dynamic> teacher in teachers.skip(1)) {
-        names += ", ${teacher["firstname"]} ${teacher["lastname"]}";
+      names += "${teachers[0].firstName} ${teachers[0].lastName}";
+      for (Teacher teacher in teachers.skip(1)) {
+        names += ", ${teacher.firstName} ${teacher.lastName}";
       }
       extrasRow.add(
         Expanded(
@@ -385,6 +319,7 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
         ),
       );
     }
+    /* Not implemented yet
     if (ttclass.data['curriculum'] != null) {
       extrasRow.add(
         Expanded(
@@ -410,18 +345,15 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
         ),
       );
     }
+    */
     List<Widget> cRows = [];
-    int? sp = int.tryParse(ttclass.startPeriod);
-    int? ep = int.tryParse(ttclass.endPeriod);
+    int? sp = int.tryParse(ttclass.startPeriod.id);
+    int? ep = int.tryParse(ttclass.endPeriod.id);
     if (sp == null || ep == null) continue;
     for (int i = sp; i <= ep; i++) {
       TimeTablePeriod period = tt.periods.firstWhere((e) => e.short == "$i",
-          orElse: () => TimeTablePeriod(
-              ttclass.startPeriod,
-              ttclass.startPeriod,
-              ttclass.endPeriod,
-              ttclass.startPeriod,
-              ttclass.startPeriod));
+          orElse: () =>
+              TimeTablePeriod("$i", "00:00", "00:00", "Unknown", "Unknown"));
       cRows.add(
         Row(
           children: [
@@ -431,12 +363,13 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
                 fontSize: 14,
               ),
             ),
-            Text(
-              ttclass.subject,
-              style: const TextStyle(
-                fontSize: 22,
+            if (ttclass.subject != null)
+              Text(
+                ttclass.subject!.short,
+                style: const TextStyle(
+                  fontSize: 22,
+                ),
               ),
-            ),
             const Spacer(),
             Text(
               "${period.startTime} - ${period.endTime}",
@@ -445,12 +378,13 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
               ),
             ),
             const Spacer(),
-            Text(
-              "${ttclass.classRoom}  ",
-              style: const TextStyle(
-                fontSize: 18,
+            for (Classroom classroom in ttclass.classrooms)
+              Text(
+                "${classroom.short}  ",
+                style: const TextStyle(
+                  fontSize: 18,
+                ),
               ),
-            ),
             /* Not implemented yet
             Badge(
               label: Text(ttclass.notifications.toString()),
