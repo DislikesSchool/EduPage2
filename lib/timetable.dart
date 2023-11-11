@@ -24,7 +24,6 @@ class TimeTablePageState extends State<TimeTablePage> {
   bool error = false; //for error status
   bool loading = false; //for data featching status
   String errmsg = ""; //to assing any error message from API/runtime
-  late Map<String, dynamic> apidataTT;
   List<TimeTablePeriod> periods = [];
   bool refresh = false;
   bool userInteracted = false;

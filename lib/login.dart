@@ -49,7 +49,7 @@ class LoinPageState extends State<LoginPage> {
       server = sServer;
       _showServerField = true;
     }
-    if (sEndpoint != null) {
+    if (sEndpoint != null && sEndpoint != "") {
       _customEndpoint = sEndpoint;
       _useCustomEndpoint = true;
     }

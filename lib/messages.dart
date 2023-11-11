@@ -1,15 +1,9 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/message.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:html_unescape/html_unescape.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MessagesPage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -72,7 +66,7 @@ class TimeTablePageState extends State<MessagesPage> {
           _scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 200) {
         _isFetching = true;
-        await _fetchMessages();
+        await EP2Data.getInstance().timeline.loadOlderMessages();
         _isFetching = false;
       }
     });
@@ -80,30 +74,7 @@ class TimeTablePageState extends State<MessagesPage> {
         getMessages(EP2Data.getInstance().timeline.items.values.toList());
 
     loading = false;
-    setState(() {}); //refresh UI
-
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    if (sp.getBool('quickstart') ?? false) {
-      String token = sp.getString("token")!;
-      String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
-      Dio dio = Dio();
-      Response response = await dio.get(
-        "$baseUrl/api/timeline/recent",
-        options: buildCacheOptions(
-          const Duration(days: 5),
-          maxStale: const Duration(days: 14),
-          forceRefresh: true,
-          options: Options(
-            headers: {
-              "Authorization": "Bearer $token",
-            },
-          ),
-        ),
-      );
-      widget.sessionManager.set("messages", jsonEncode(response.data["Items"]));
-      messages = getMessages(response.data["Items"].values.toList());
-      setState(() {});
-    }
+    setState(() {});
   }
 
   @override
@@ -136,46 +107,6 @@ class TimeTablePageState extends State<MessagesPage> {
 
     loading = false;
     setState(() {}); //refresh UI
-  }
-
-  Future<void> _fetchMessages() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    String token = sp.getString("token")!;
-    String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
-    Dio dio = Dio();
-    DateTime oldestTimestamp = DateTime.now();
-    for (var message in apidataMsg.toList()) {
-      DateTime timestamp = DateTime.parse(message["cas_pridania"]);
-      if (timestamp.isBefore(oldestTimestamp)) {
-        oldestTimestamp = timestamp;
-      }
-    }
-
-    // Calculate from and to dates
-    DateTime from = oldestTimestamp.subtract(const Duration(days: 14));
-    DateTime to = oldestTimestamp;
-
-    // Add query parameters for from and to dates
-    Response response = await dio.get(
-      "$baseUrl/api/timeline",
-      queryParameters: {
-        "from": from.toIso8601String(),
-        "to": to.toIso8601String(),
-      },
-      options: buildCacheOptions(
-        const Duration(days: 5),
-        maxStale: const Duration(days: 14),
-        forceRefresh: true,
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
-          },
-        ),
-      ),
-    );
-    widget.sessionManager.set("messages", jsonEncode(response.data["Items"]));
-    messages = getMessages(response.data["Items"].values.toList());
-    setState(() {});
   }
 
   Widget getMessages(List<TimelineItem> apidataMsg) {

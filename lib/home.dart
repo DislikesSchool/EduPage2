@@ -287,10 +287,12 @@ class HomePageState extends State<HomePage> {
       var lunches = jsonDecode(l) as List<dynamic>;
       if (lunches.isNotEmpty) {
         var lunchToday = lunches[0] as Map<String, dynamic>;
-        lunch = 0;
-        var todayLunches = lunchToday["lunches"];
-        for (int i = 0; i < todayLunches.length; i++) {
-          if (todayLunches[i]["ordered"]) lunch = i + 1;
+        if (DateTime.parse(lunchToday["day"]).day != DateTime.now().day) {
+          lunch = 0;
+          var todayLunches = lunchToday["lunches"];
+          for (int i = 0; i < todayLunches.length; i++) {
+            if (todayLunches[i]["ordered"]) lunch = i + 1;
+          }
         }
         for (Map<String, dynamic> li in lunches) {
           bool canOrder = false;

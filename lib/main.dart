@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:eduapge2/api.dart';
 import 'package:eduapge2/homework.dart';
 import 'package:eduapge2/icanteen.dart';
 import 'package:eduapge2/load.dart';
@@ -104,7 +105,7 @@ class PageBaseState extends State<PageBase> {
   bool error = false; //for error status
   bool loading = false; //for data featching status
   String errmsg = ""; //to assing any error message from API/runtime
-  List<dynamic> apidataMsg = [];
+  List<TimelineItem> apidataMsg = [];
   bool refresh = true;
   bool iCanteenEnabled = false;
   bool _isCheckingForUpdate = false;
@@ -194,15 +195,10 @@ class PageBaseState extends State<PageBase> {
   }
 
   getMsgs() async {
-    var msgs = await sessionManager.get('messages');
+    apidataMsg = EP2Data.getInstance().timeline.items.values.toList();
     var ic = await sessionManager.get('iCanteenEnabled');
     if (ic == true) {
       iCanteenEnabled = true;
-    }
-    if (msgs != Null && msgs != null) {
-      setState(() {
-        apidataMsg = msgs.values.toList();
-      });
     }
   }
 
