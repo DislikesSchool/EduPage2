@@ -70,7 +70,14 @@ class LoadingScreenState extends State<LoadingScreen> {
     setState(() {});
     if (sharedPreferences.getString("email") != null &&
         sharedPreferences.getString("password") != null) {
-      if (!await EP2Data.getInstance().init()) {
+      if (!await EP2Data.getInstance().init(
+          onProgressUpdate: (text, prog) {
+            setState(() {
+              loaderText = text;
+              progress = prog;
+            });
+          },
+          local: local!)) {
         gotoLogin();
       } else {
         widget.loadedCallback();

@@ -5,6 +5,7 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<bool> isConnected() async {
   var connectivityResult = await (Connectivity().checkConnectivity());
@@ -34,7 +35,12 @@ class EP2Data {
     return _instance!;
   }
 
-  Future<bool> init() async {
+  Future<bool> init({
+    required Function(String, double) onProgressUpdate,
+    required AppLocalizations local,
+  }) async {
+    onProgressUpdate(local.loadCredentials, 0.1);
+
     sharedPreferences = await SharedPreferences.getInstance();
 
     String? endpoint = sharedPreferences.getString("customEndpoint");
@@ -55,11 +61,13 @@ class EP2Data {
 
     if (isInternetAvailable) {
       if (!await user.validate()) {
+        onProgressUpdate(local.loadLoggingIn, 0.2);
         if (!await user.login()) {
           return false;
         }
       }
     }
+    onProgressUpdate(local.loadLoggedIn, 0.4);
 
     timeline = (await Timeline.loadFromCache()) ??
         Timeline(
@@ -68,12 +76,14 @@ class EP2Data {
         );
 
     if (isInternetAvailable) {
+      onProgressUpdate(local.loadDownloadMessages, 0.6);
       await timeline.loadMessages();
     }
 
     timetable = (await TimeTable.loadFromCache()) ?? TimeTable();
 
     if (isInternetAvailable) {
+      onProgressUpdate(local.loadDownloadTimetable, 0.8);
       await timetable.loadRecentTt();
     }
 
@@ -115,7 +125,6 @@ class User {
       await saveToCache();
       return true;
     } catch (e) {
-      print(e);
       return false;
     }
   }
@@ -290,7 +299,7 @@ class TimeTable {
 
   Future<void> saveToCache() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString('timetable', jsonEncode(this.toJson()));
+    prefs.setString('timetable', jsonEncode(toJson()));
   }
 
   static Future<TimeTable?> loadFromCache() async {
