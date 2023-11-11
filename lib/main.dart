@@ -18,7 +18,6 @@ import 'home.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,8 +42,8 @@ Future<void> main() async {
     },
     appRunner: () => runApp(const MyApp()),
   );
-  OneSignal.shared.setAppId("85587dc6-0a3c-4e91-afd6-e0ca82361763");
-  OneSignal.shared.promptUserForPushNotificationPermission();
+  //OneSignal.shared.setAppId("85587dc6-0a3c-4e91-afd6-e0ca82361763");
+  //OneSignal.shared.promptUserForPushNotificationPermission();
 }
 
 class MyApp extends StatelessWidget {
