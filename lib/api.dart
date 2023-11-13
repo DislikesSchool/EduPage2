@@ -291,7 +291,6 @@ class TimeTable {
     return recentTimetables;
   }
 
-  // Just a little shortcut
   Future<TimeTableData> today() async {
     return await loadTt(DateTime.now());
   }
