@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/login.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -27,7 +25,6 @@ class LoadingScreenState extends State<LoadingScreen> {
 
   bool startedInit = false;
 
-  Dio dio = Dio();
   double progress = 0.0;
   String loaderText = "Loading...";
 
@@ -62,8 +59,6 @@ class LoadingScreenState extends State<LoadingScreen> {
     }
     progress = 0.1;
     loaderText = local!.loadCredentials;
-    dio.interceptors
-        .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
     setState(() {});
     if (sharedPreferences.getString("email") != null &&
         sharedPreferences.getString("password") != null) {

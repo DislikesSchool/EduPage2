@@ -2,12 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/icanteen_setup.dart';
 import 'package:eduapge2/message.dart';
 import 'package:eduapge2/messages.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
@@ -150,16 +148,7 @@ LessonStatus getLessonStatus(
 class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   late SharedPreferences sharedPreferences;
-  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
-  String testUrl = FirebaseRemoteConfig.instance.getString("testUrl");
-  late Response response;
-  Dio dio = Dio();
 
-  bool error = false; //for error status
-  bool loading = true; //for data featching status
-  String errmsg = ""; //to assing any error message from API/runtime
-  dynamic apidata; //for decoded JSON data
-  bool refresh = false;
   bool updateAvailable = false;
   bool quickstart = false;
 
@@ -172,8 +161,6 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    dio.interceptors
-        .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
     fetchAndCompareBuildName();
     getData(); //fetching data
   }
@@ -193,15 +180,7 @@ class HomePageState extends State<HomePage> {
   }
 
   getData() async {
-    setState(() {
-      loading = true;
-    });
     sharedPreferences = await SharedPreferences.getInstance();
-    String? endpoint = sharedPreferences.getString("customEndpoint");
-
-    if (endpoint != null && endpoint != "") {
-      baseUrl = endpoint;
-    }
     quickstart = sharedPreferences.getBool('quickstart') ?? false;
     apidataMsg = EP2Data.getInstance().timeline.items.values.toList();
     username = EP2Data.getInstance().user.name;
@@ -212,9 +191,7 @@ class HomePageState extends State<HomePage> {
     if (_lessonStatus.hasLessonsToday) {
       _startTimer();
     }
-    setState(() {
-      loading = false;
-    }); //refresh UI
+    setState(() {}); //refresh UI
   }
 
   void _startTimer() {
@@ -274,11 +251,6 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     AppLocalizations? local = AppLocalizations.of(context);
     ThemeData theme = Theme.of(context);
-    if (loading) {
-      return Center(
-        child: Text(local!.loading),
-      );
-    }
 
     int lunch = -1;
     DateTime orderLunchesFor = DateTime(1998, 4, 10);
