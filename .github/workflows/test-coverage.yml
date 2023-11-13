@@ -63,6 +63,7 @@ jobs:
         api-level: 31
         arch: x86_64
         profile: pixel_6_pro
+        avd-name: Pixel_6_Pro_API_31
         force-avd-creation: false
         ram-size: 4096M
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
