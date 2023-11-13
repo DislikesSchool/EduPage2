@@ -43,6 +43,8 @@ class EP2Data {
 
     sharedPreferences = await SharedPreferences.getInstance();
 
+    bool quickstart = sharedPreferences.getBool("quickstart") ?? false;
+
     String? endpoint = sharedPreferences.getString("customEndpoint");
     if (endpoint != null && endpoint != "") {
       baseUrl = endpoint;
@@ -59,7 +61,7 @@ class EP2Data {
           server: sharedPreferences.getString("server") ?? "",
         );
 
-    if (isInternetAvailable) {
+    if (isInternetAvailable && !quickstart) {
       if (!await user.validate()) {
         onProgressUpdate(local.loadLoggingIn, 0.2);
         if (!await user.login()) {
@@ -75,19 +77,31 @@ class EP2Data {
           items: {},
         );
 
-    if (isInternetAvailable) {
+    if (isInternetAvailable && !quickstart) {
       onProgressUpdate(local.loadDownloadMessages, 0.6);
       await timeline.loadMessages();
     }
 
     timetable = (await TimeTable.loadFromCache()) ?? TimeTable();
 
-    if (isInternetAvailable) {
+    if (isInternetAvailable && !quickstart) {
       onProgressUpdate(local.loadDownloadTimetable, 0.8);
       await timetable.loadRecentTt();
     }
 
+    if (quickstart && isInternetAvailable) {
+      loadInBackground();
+    }
+
     return true;
+  }
+
+  Future<void> loadInBackground() async {
+    if (!await user.validate()) {
+      await user.login();
+    }
+    await timeline.loadMessages();
+    await timetable.loadRecentTt();
   }
 }
 
@@ -918,8 +932,8 @@ class Timeline {
       ),
     );
 
-    Map<String, dynamic> newHomeworks = jsonDecode(response.data["Homeworks"]);
-    Map<String, dynamic> newItems = jsonDecode(response.data["Items"]);
+    Map<String, dynamic> newHomeworks = response.data["Homeworks"];
+    Map<String, dynamic> newItems = response.data["Items"];
 
     newHomeworks.forEach((key, value) {
       homeworks[key] = Homework.fromJson(value);
