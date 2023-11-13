@@ -136,7 +136,7 @@ class User {
       token = resp.data['token'];
       name = resp.data["name"];
 
-      await saveToCache();
+      saveToCache();
       return true;
     } catch (e) {
       return false;
@@ -257,7 +257,9 @@ class TimeTable {
         ttClasses,
         periods!));
 
-    timetables[date] = t;
+    DateTime dateOnly = DateTime(date.year, date.month, date.day);
+    timetables[dateOnly] = t;
+    await saveToCache();
     return t;
   }
 
@@ -282,8 +284,10 @@ class TimeTable {
       periods = await loadPeriods(data.user.token);
       recentTimetables.add(processTimeTable(
           TimeTableData(DateTime.parse(day.key), ttClasses, periods!)));
+      timetables[DateTime.parse(day.key)] = recentTimetables.last;
     }
 
+    await saveToCache();
     return recentTimetables;
   }
 
@@ -338,7 +342,8 @@ class TimeTableData {
         'periods': periods.map((p) => p.toJson()).toList(),
       };
 
-  static TimeTableData fromJson(Map<String, dynamic> json) => TimeTableData(
+  static TimeTableData fromJson(Map<String, dynamic> json) =>
+      processTimeTable(TimeTableData(
         DateTime.parse(json['date']),
         (json['classes'] as List)
             .map((c) => TimeTableClass.fromJson(c as Map<String, dynamic>))
@@ -346,7 +351,7 @@ class TimeTableData {
         (json['periods'] as List)
             .map((p) => TimeTablePeriod.fromJson(p as Map<String, dynamic>))
             .toList(),
-      );
+      ));
 }
 
 class TimeTablePeriod {
@@ -405,8 +410,8 @@ class TimeTableClass {
   final List<Classroom> classrooms;
   final List<String> studentIds;
   final List<String> colors;
-  late TimeTablePeriod startPeriod;
-  late TimeTablePeriod endPeriod;
+  TimeTablePeriod? startPeriod;
+  TimeTablePeriod? endPeriod;
 
   Map<String, dynamic> toJson() => {
         'type': type,
@@ -430,7 +435,8 @@ class TimeTableClass {
         period: json['uniperiod'],
         startTime: json['starttime'],
         endTime: json['endtime'],
-        subject: Subject.fromJson(json['subject']),
+        subject: Subject.fromJson(json['subject'] ??
+            {"id": "", "name": "", "short": "", "cbhidden": false}),
         classes: (json['classes'] as List)
             .map((c) => Class.fromJson(c as Map<String, dynamic>))
             .toList(),

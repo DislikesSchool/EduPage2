@@ -147,16 +147,17 @@ LessonStatus getLessonStatus(
 
 class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
-  late SharedPreferences sharedPreferences;
+  SharedPreferences? sharedPreferences;
 
   bool updateAvailable = false;
   bool quickstart = false;
 
   List<TimelineItem> apidataMsg = [];
-  late String username;
-  late LessonStatus _lessonStatus;
+  String username = "";
+  LessonStatus _lessonStatus = LessonStatus(
+      hasLessonsToday: false, hasLesson: false, nextLessonTime: DateTime.now());
   Timer? _timer;
-  late TimeTableData t;
+  TimeTableData t = TimeTableData(DateTime.now(), [], []);
 
   @override
   void initState() {
@@ -181,7 +182,7 @@ class HomePageState extends State<HomePage> {
 
   getData() async {
     sharedPreferences = await SharedPreferences.getInstance();
-    quickstart = sharedPreferences.getBool('quickstart') ?? false;
+    quickstart = sharedPreferences?.getBool('quickstart') ?? false;
     apidataMsg = EP2Data.getInstance().timeline.items.values.toList();
     username = EP2Data.getInstance().user.name;
 
@@ -254,7 +255,7 @@ class HomePageState extends State<HomePage> {
 
     int lunch = -1;
     DateTime orderLunchesFor = DateTime(1998, 4, 10);
-    String? l = sharedPreferences.getString("lunches");
+    String? l = sharedPreferences?.getString("lunches");
     if (l != null) {
       var lunches = jsonDecode(l) as List<dynamic>;
       if (lunches.isNotEmpty) {
@@ -406,17 +407,17 @@ class HomePageState extends State<HomePage> {
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 for (int i = int.tryParse(
-                                                            ttclass.startPeriod
+                                                            ttclass.startPeriod!
                                                                 .id) ??
                                                         0;
                                                     i <=
                                                         (int.tryParse(ttclass
-                                                                .endPeriod
+                                                                .endPeriod!
                                                                 .id) ??
                                                             0);
                                                     i++)
                                                   Text(
-                                                    "$i${i != int.tryParse(ttclass.endPeriod.id) ? " - " : ""}",
+                                                    "$i${i != int.tryParse(ttclass.endPeriod!.id) ? " - " : ""}",
                                                     style: const TextStyle(
                                                         fontSize: 10,
                                                         color: Colors.grey),
@@ -553,7 +554,8 @@ class HomePageState extends State<HomePage> {
                         children: [
                           for (TimelineItem m in msgsWOR.length < 5
                               ? msgsWOR
-                              : msgsWOR.getRange(0, 4))
+                              : msgsWOR.getRange(
+                                  msgsWOR.length - 5, msgsWOR.length))
                             InkWell(
                               highlightColor: Colors.transparent,
                               splashColor: Colors.transparent,
@@ -633,7 +635,7 @@ class HomePageState extends State<HomePage> {
                   child: Switch(
                     value: quickstart,
                     onChanged: (bool value) {
-                      sharedPreferences.setBool('quickstart', value);
+                      sharedPreferences?.setBool('quickstart', value);
                       setState(() {
                         quickstart = value;
                       });
@@ -641,7 +643,7 @@ class HomePageState extends State<HomePage> {
                   ),
                 ),
                 onTap: () {
-                  sharedPreferences.setBool('quickstart', !quickstart);
+                  sharedPreferences?.setBool('quickstart', !quickstart);
                   setState(() {
                     quickstart = !quickstart;
                   });
@@ -656,9 +658,9 @@ class HomePageState extends State<HomePage> {
                 leading: const Icon(Icons.logout),
                 title: Text(local.homeLogout),
                 onTap: () {
-                  sharedPreferences.remove('email');
-                  sharedPreferences.remove('password');
-                  sharedPreferences.remove('token');
+                  sharedPreferences?.remove('email');
+                  sharedPreferences?.remove('password');
+                  sharedPreferences?.remove('token');
                   widget.reLogin();
                 },
               ),

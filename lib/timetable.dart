@@ -158,13 +158,13 @@ TimeTableData processTimeTable(TimeTableData tt) {
   for (int i = 0; i < classes.length; i++) {
     TimeTableClass currentClass = classes[i];
     TimeTablePeriod currentPeriod =
-        periods.firstWhere((period) => period.id == currentClass.endPeriod.id,
+        periods.firstWhere((period) => period.id == currentClass.endPeriod!.id,
             orElse: () => TimeTablePeriod.fromJson({
-                  "id": currentClass.endPeriod.id,
+                  "id": currentClass.endPeriod!.id,
                   "starttime": currentClass.endTime,
                   "endtime": currentClass.endTime,
-                  "name": currentClass.endPeriod.id,
-                  "short": currentClass.endPeriod.id,
+                  "name": currentClass.endPeriod!.id,
+                  "short": currentClass.endPeriod!.id,
                 }));
     if (currentClass.endTime != currentPeriod.endTime) {
       int nextPeriodIndex = periods
@@ -177,7 +177,7 @@ TimeTableData processTimeTable(TimeTableData tt) {
   }
 
   classes.sort((a, b) =>
-      int.parse(a.startPeriod.id).compareTo(int.parse(b.startPeriod.id)));
+      int.parse(a.startPeriod!.id).compareTo(int.parse(b.startPeriod!.id)));
   periods.sort((a, b) => a.startTime.compareTo(b.startTime));
 
   List<TimeTableClass> newClasses = [];
@@ -187,9 +187,9 @@ TimeTableData processTimeTable(TimeTableData tt) {
     TimeTableClass currentClass = classes[i];
     TimeTableClass nextClass = classes[i + 1];
     int currentPeriodIndex =
-        periods.indexWhere((period) => period.id == currentClass.endPeriod.id);
+        periods.indexWhere((period) => period.id == currentClass.endPeriod!.id);
     int nextPeriodIndex =
-        periods.indexWhere((period) => period.id == nextClass.startPeriod.id);
+        periods.indexWhere((period) => period.id == nextClass.startPeriod!.id);
     bool hasClassAfter =
         nextPeriodIndex != -1 && nextPeriodIndex - currentPeriodIndex > 1;
     if (hasClassAfter) {
@@ -209,7 +209,7 @@ TimeTableData processTimeTable(TimeTableData tt) {
 
   classes.addAll(newClasses);
   classes.sort((a, b) =>
-      int.parse(a.startPeriod.id).compareTo(int.parse(b.startPeriod.id)));
+      int.parse(a.startPeriod!.id).compareTo(int.parse(b.startPeriod!.id)));
 
   return TimeTableData(tt.date, classes, periods);
 }
@@ -266,8 +266,8 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
     }
     */
     List<Widget> cRows = [];
-    int? sp = int.tryParse(ttclass.startPeriod.id);
-    int? ep = int.tryParse(ttclass.endPeriod.id);
+    int? sp = int.tryParse(ttclass.startPeriod!.id);
+    int? ep = int.tryParse(ttclass.endPeriod!.id);
     if (sp == null || ep == null) continue;
     for (int i = sp; i <= ep; i++) {
       TimeTablePeriod period = tt.periods.firstWhere((e) => e.short == "$i",
