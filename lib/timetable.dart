@@ -176,8 +176,12 @@ TimeTableData processTimeTable(TimeTableData tt) {
     }
   }
 
-  classes.sort((a, b) =>
-      int.parse(a.startPeriod!.id).compareTo(int.parse(b.startPeriod!.id)));
+  classes.sort((a, b) {
+    int? sp = int.tryParse(a.startPeriod!.id);
+    int? ep = int.tryParse(b.endPeriod!.id);
+    if (sp == null || ep == null) return 0;
+    return sp.compareTo(ep);
+  });
   periods.sort((a, b) => a.startTime.compareTo(b.startTime));
 
   List<TimeTableClass> newClasses = [];
@@ -208,8 +212,12 @@ TimeTableData processTimeTable(TimeTableData tt) {
   }
 
   classes.addAll(newClasses);
-  classes.sort((a, b) =>
-      int.parse(a.startPeriod!.id).compareTo(int.parse(b.startPeriod!.id)));
+  classes.sort((a, b) {
+    int? sp = int.tryParse(a.startPeriod!.id);
+    int? ep = int.tryParse(b.endPeriod!.id);
+    if (sp == null || ep == null) return 0;
+    return sp.compareTo(ep);
+  });
 
   return TimeTableData(tt.date, classes, periods);
 }
