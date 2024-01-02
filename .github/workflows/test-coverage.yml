@@ -20,7 +20,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Verify Changed files
-        uses: tj-actions/changed-files@v37
+        uses: tj-actions/changed-files@v41
         id: verify-changed-files
         with:
           files: |
