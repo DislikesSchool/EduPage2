@@ -162,8 +162,8 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    getData();
     fetchAndCompareBuildName();
-    getData(); //fetching data
   }
 
   @override

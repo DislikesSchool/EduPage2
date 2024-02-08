@@ -226,8 +226,9 @@ class TimeTable {
   }
 
   Future<TimeTableData> loadTt(DateTime date) async {
-    if (timetables.containsKey(date)) {
-      return timetables[date]!;
+    DateTime dateOnly = DateTime(date.year, date.month, date.day);
+    if (timetables.containsKey(dateOnly)) {
+      return timetables[dateOnly]!;
     }
 
     Response response = await data.dio.get(
@@ -257,7 +258,6 @@ class TimeTable {
         ttClasses,
         periods!));
 
-    DateTime dateOnly = DateTime(date.year, date.month, date.day);
     timetables[dateOnly] = t;
     await saveToCache();
     return t;
@@ -282,9 +282,11 @@ class TimeTable {
         }
       }
       periods = await loadPeriods(data.user.token);
-      recentTimetables.add(processTimeTable(
-          TimeTableData(DateTime.parse(day.key), ttClasses, periods!)));
-      timetables[DateTime.parse(day.key)] = recentTimetables.last;
+      DateTime date = DateTime.parse(day.key);
+      recentTimetables
+          .add(processTimeTable(TimeTableData(date, ttClasses, periods!)));
+      DateTime dateOnly = DateTime(date.year, date.month, date.day);
+      timetables[dateOnly] = recentTimetables.last;
     }
 
     await saveToCache();
