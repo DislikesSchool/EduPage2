@@ -1,14 +1,9 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:eduapge2/api.dart';
 import 'package:eduapge2/message.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:html_unescape/html_unescape.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MessagesPage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -35,6 +30,7 @@ extension MoveElement<T> on List<T> {
 
 class TimeTablePageState extends State<MessagesPage> {
   bool loading = true;
+  bool loaded = false;
   late List<dynamic> apidataMsg;
   AppLocalizations? loc;
   bool _isFetching = false;
@@ -45,7 +41,6 @@ class TimeTablePageState extends State<MessagesPage> {
 
   @override
   void initState() {
-    getData(); //fetching data
     super.initState();
   }
 
@@ -71,44 +66,24 @@ class TimeTablePageState extends State<MessagesPage> {
           _scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 200) {
         _isFetching = true;
-        await _fetchMessages();
+        await EP2Data.getInstance().timeline.loadOlderMessages();
         _isFetching = false;
       }
     });
-    Map<String, dynamic> msgs = await widget.sessionManager.get('messages');
-    apidataMsg = msgs.values.toList();
-    messages = getMessages(apidataMsg);
+    messages =
+        getMessages(EP2Data.getInstance().timeline.items.values.toList());
 
     loading = false;
-    setState(() {}); //refresh UI
-
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    if (sp.getBool('quickstart') ?? false) {
-      String token = sp.getString("token")!;
-      String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
-      Dio dio = Dio();
-      Response response = await dio.get(
-        "$baseUrl/api/timeline/recent",
-        options: buildCacheOptions(
-          const Duration(days: 5),
-          maxStale: const Duration(days: 14),
-          forceRefresh: true,
-          options: Options(
-            headers: {
-              "Authorization": "Bearer $token",
-            },
-          ),
-        ),
-      );
-      widget.sessionManager.set("messages", jsonEncode(response.data["Items"]));
-      messages = getMessages(response.data["Items"].values.toList());
-      setState(() {});
-    }
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     loc ??= AppLocalizations.of(context);
+    if (!loaded) {
+      loaded = true;
+      getData();
+    }
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
@@ -127,76 +102,27 @@ class TimeTablePageState extends State<MessagesPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    Map<String, dynamic> msgs = await widget.sessionManager.get('messages');
-    apidataMsg = msgs.values.toList();
-    messages = getMessages(apidataMsg);
+    messages =
+        getMessages(EP2Data.getInstance().timeline.items.values.toList());
 
     loading = false;
     setState(() {}); //refresh UI
   }
 
-  Future<void> _fetchMessages() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    String token = sp.getString("token")!;
-    String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
-    Dio dio = Dio();
-    DateTime oldestTimestamp = DateTime.now();
-    for (var message in apidataMsg.toList()) {
-      DateTime timestamp = DateTime.parse(message["cas_pridania"]);
-      if (timestamp.isBefore(oldestTimestamp)) {
-        oldestTimestamp = timestamp;
-      }
-    }
-
-    // Calculate from and to dates
-    DateTime from = oldestTimestamp.subtract(const Duration(days: 14));
-    DateTime to = oldestTimestamp;
-
-    // Add query parameters for from and to dates
-    Response response = await dio.get(
-      "$baseUrl/api/timeline",
-      queryParameters: {
-        "from": from.toIso8601String(),
-        "to": to.toIso8601String(),
-      },
-      options: buildCacheOptions(
-        const Duration(days: 5),
-        maxStale: const Duration(days: 14),
-        forceRefresh: true,
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
-          },
-        ),
-      ),
-    );
-    widget.sessionManager.set("messages", jsonEncode(response.data["Items"]));
-    messages = getMessages(response.data["Items"].values.toList());
-    setState(() {});
-  }
-
-  Widget getMessages(var apidataMsg) {
+  Widget getMessages(List<TimelineItem> apidataMsg) {
     HtmlUnescape unescape = HtmlUnescape();
     List<Widget> rows = <Widget>[];
-    apidataMsg ??= [
-      {
-        "type": "sprava",
-        "title": "Načítání...",
-        "text": "Nebude to trvat dlouho",
-      }
-    ];
-    List<dynamic> msgs =
-        apidataMsg.where((msg) => msg["typ"] == "sprava").toList();
-    msgs.sort((a, b) => DateTime.parse(b["cas_pridania"])
-        .compareTo(DateTime.parse(a["cas_pridania"])));
-    List<dynamic> msgsWOR = List.from(msgs);
+    List<TimelineItem> msgs =
+        apidataMsg.where((msg) => msg.type == "sprava").toList();
+    msgs.sort((a, b) => b.timeAdded.compareTo(a.timeAdded));
+    List<TimelineItem> msgsWOR = List.from(msgs);
     List<Map<String, int>> bump = [];
-    for (Map<String, dynamic> msg in msgs) {
-      if (msg["reakcia_na"] != null && msg["reakcia_na"] != "") {
+    for (TimelineItem msg in msgs) {
+      if (msg.reactionTo != "") {
         if (!bump.any((element) =>
-            element["ineid"]!.compareTo(int.parse(msg["reakcia_na"])) == 0)) {
+            element["ineid"]!.compareTo(int.parse(msg.reactionTo)) == 0)) {
           bump.add({
-            "ineid": int.parse(msg["reakcia_na"]),
+            "ineid": int.parse(msg.reactionTo),
             "index": msgsWOR.indexOf(msg)
           });
           msgsWOR.remove(msg);
@@ -205,10 +131,9 @@ class TimeTablePageState extends State<MessagesPage> {
         }
       }
     }
-    for (Map<String, dynamic> msg in msgsWOR) {
+    for (TimelineItem msg in msgsWOR) {
       bool isImportantMessage = false;
-      if (msg["data"] != null &&
-          msg["data"]["Value"]["messageContent"] != null) {
+      if (msg.data["Value"]["messageContent"] != null) {
         isImportantMessage = true;
       }
       rows.add(Card(
@@ -220,7 +145,7 @@ class TimeTablePageState extends State<MessagesPage> {
                 MaterialPageRoute(
                     builder: (BuildContext buildContext) => MessagePage(
                         sessionManager: widget.sessionManager,
-                        id: int.parse(msg["timelineid"]))));
+                        id: int.parse(msg.id))));
           },
           child: Padding(
             padding: const EdgeInsets.all(10),
@@ -236,7 +161,7 @@ class TimeTablePageState extends State<MessagesPage> {
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     Text(
-                      msg["vlastnik_meno"].replaceAll(RegExp(r'\s+'), ' '),
+                      msg.ownerName.replaceAll(RegExp(r'\s+'), ' '),
                       style: const TextStyle(fontSize: 18),
                     ),
                     const Icon(
@@ -245,7 +170,7 @@ class TimeTablePageState extends State<MessagesPage> {
                     ),
                     Expanded(
                       child: Text(
-                        unescape.convert(msg["user_meno"]),
+                        unescape.convert(msg.userName),
                         overflow: TextOverflow.fade,
                         maxLines: 5,
                         softWrap: false,
@@ -258,7 +183,7 @@ class TimeTablePageState extends State<MessagesPage> {
                   children: [
                     Expanded(
                       child: Text(
-                        unescape.convert(msg["text"]),
+                        unescape.convert(msg.text),
                         style: const TextStyle(fontSize: 12),
                         overflow: TextOverflow.fade,
                         maxLines: 5,
@@ -267,10 +192,10 @@ class TimeTablePageState extends State<MessagesPage> {
                     )
                   ],
                 ),
-                if (msg["reakcia_na"] != null && msg["reakcia_na"] != "")
-                  for (Map<String, dynamic> r in msgs
+                if (msg.reactionTo != "")
+                  for (TimelineItem r in msgs
                       .where((element) =>
-                          element["reakcia_na"] == msg["ineid"].toString())
+                          element.reactionTo == msg.otherId.toString())
                       .toList())
                     Row(
                       children: [
@@ -282,9 +207,7 @@ class TimeTablePageState extends State<MessagesPage> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                r["vlastnik_meno"] +
-                                    ": " +
-                                    unescape.convert(r["text"]),
+                                "${r.ownerName}: ${unescape.convert(r.text)}",
                                 softWrap: false,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -293,8 +216,8 @@ class TimeTablePageState extends State<MessagesPage> {
                         ),
                       ],
                     ),
-                if (msg["data"]["Value"].containsKey("attachements") &&
-                    msg["data"]["Value"]["attachements"].length > 0)
+                if (msg.data["Value"].containsKey("attachements") &&
+                    msg.data["Value"]["attachements"].length > 0)
                   Padding(
                     padding: const EdgeInsets.only(top: 5),
                     child: Row(
@@ -305,7 +228,7 @@ class TimeTablePageState extends State<MessagesPage> {
                           size: 18,
                         ),
                         Text(loc?.messagesAttachments(
-                                msg["data"]["Value"]["attachements"].length) ??
+                                msg.data["Value"]["attachements"].length) ??
                             ""),
                       ],
                     ),
@@ -317,12 +240,9 @@ class TimeTablePageState extends State<MessagesPage> {
       ));
     }
     for (Map<String, int> b in bump) {
-      Map<String, dynamic> toBump = msgs.firstWhere(
-          (element) => element["timelineid"] == b["ineid"].toString(),
-          orElse: () {
-        return {"fail": true};
-      });
-      if (toBump["fail"] ?? false) continue;
+      if (!msgs.any((element) => element.id == b["ineid"].toString())) continue;
+      TimelineItem toBump =
+          msgs.firstWhere((element) => element.id == b["ineid"].toString());
       rows.move(msgsWOR.indexOf(toBump), b["index"]!);
     }
     return Card(

@@ -59,7 +59,7 @@ void main() {
 
 class LocalizationsInj extends StatelessWidget {
   final Widget child;
-  const LocalizationsInj({Key? key, required this.child}) : super(key: key);
+  const LocalizationsInj({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

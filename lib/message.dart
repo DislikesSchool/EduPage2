@@ -1,3 +1,4 @@
+import 'package:eduapge2/api.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -48,19 +48,12 @@ class MessagePageState extends State<MessagePage> {
     setState(() {
       loading = true; //make loading true to show progressindicator
     });
-
-    sharedPreferences = await SharedPreferences.getInstance();
-    String token = sharedPreferences.getString("token")!;
     Response response = await dio.get(
       "$baseUrl/api/timelineitem/${widget.id}",
-      options: buildCacheOptions(
-        const Duration(days: 5),
-        forceRefresh: false,
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
-          },
-        ),
+      options: Options(
+        headers: {
+          "Authorization": "Bearer ${EP2Data.getInstance().user.token}",
+        },
       ),
     );
 
