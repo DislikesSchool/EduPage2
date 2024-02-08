@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
@@ -20,8 +19,6 @@ class ICanteenSetupScreen extends StatefulWidget {
 class ICanteenSetupScreenState extends State<ICanteenSetupScreen> {
   late SessionManager sessionManager;
   late SharedPreferences sharedPreferences;
-
-  Dio dio = Dio();
 
   String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
 

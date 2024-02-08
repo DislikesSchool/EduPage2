@@ -6,7 +6,6 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -51,14 +50,10 @@ class MessagePageState extends State<MessagePage> {
     });
     Response response = await dio.get(
       "$baseUrl/api/timelineitem/${widget.id}",
-      options: buildCacheOptions(
-        const Duration(days: 5),
-        forceRefresh: false,
-        options: Options(
-          headers: {
-            "Authorization": "Bearer ${EP2Data.getInstance().user.token}",
-          },
-        ),
+      options: Options(
+        headers: {
+          "Authorization": "Bearer ${EP2Data.getInstance().user.token}",
+        },
       ),
     );
 

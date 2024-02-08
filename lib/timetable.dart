@@ -1,8 +1,6 @@
 import 'package:eduapge2/api.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -18,8 +16,6 @@ class TimeTablePage extends StatefulWidget {
 
 class TimeTablePageState extends State<TimeTablePage> {
   String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
-
-  Dio dio = Dio();
 
   bool error = false; //for error status
   bool loading = false; //for data featching status
@@ -37,8 +33,6 @@ class TimeTablePageState extends State<TimeTablePage> {
   @override
   void initState() {
     super.initState();
-    dio.interceptors
-        .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
   }
 
   @override

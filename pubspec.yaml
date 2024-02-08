@@ -3,43 +3,37 @@ description: A custom mobile client for EduPage, focusing on design and speed im
 publish_to: none
 version: 1.8.2
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: '^3.2.0'
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  cupertino_icons: ^1.0.2
-  dio: ^4.0.6
-  dio_http_cache: ^0.3.0
+  dio: ^5.4.0
   shared_preferences: ^2.0.17
   flutter_session_manager: ^1.0.3
-  connectivity_plus: ^3.0.2
+  connectivity_plus: ^5.0.2
   intl: any
   sentry_flutter: ^7.4.0
   firebase_core: ^2.9.0
   firebase_analytics: ^10.2.0
-  onesignal_flutter: ^3.5.0
+  onesignal_flutter: ^5.1.0
   firebase_performance: ^0.9.1
   html_unescape: ^2.0.0
-  webview_flutter: ^4.2.0
   flutter_cached_pdfview: ^0.4.1
-  package_info: ^2.0.2
+  package_info_plus: ^5.0.1
   url_launcher: ^6.1.12
-  jwt_decoder: ^2.0.1
   shorebird_code_push: ^1.1.0
   restart_app: ^1.2.1
   flutter_linkify: ^6.0.0
   dynamic_color: ^1.4.0
   firebase_remote_config: ^4.2.6
-dependency_overrides:
-  flutter_pdfview: 1.2.9
 dev_dependencies:
   integration_test:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
 flutter:
   assets:
     - shorebird.yaml

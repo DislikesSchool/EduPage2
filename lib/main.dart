@@ -1,5 +1,3 @@
-import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/homework.dart';
@@ -97,8 +95,6 @@ class PageBase extends StatefulWidget {
 class PageBaseState extends State<PageBase> {
   int _selectedIndex = 0;
   String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
-  late Response response;
-  Dio dio = Dio();
 
   bool loaded = false;
 
@@ -115,8 +111,6 @@ class PageBaseState extends State<PageBase> {
 
   @override
   void initState() {
-    dio.interceptors
-        .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
     if (!_isCheckingForUpdate) _checkForUpdate(); // ik that it's not necessary
     super.initState();
   }
