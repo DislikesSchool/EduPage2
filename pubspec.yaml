@@ -28,6 +28,7 @@ dependencies:
   flutter_linkify: ^6.0.0
   dynamic_color: ^1.4.0
   firebase_remote_config: ^4.2.6
+  flutter_displaymode: ^0.6.0
 dev_dependencies:
   integration_test:
     sdk: flutter
