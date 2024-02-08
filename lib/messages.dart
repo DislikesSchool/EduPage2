@@ -1,14 +1,9 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:eduapge2/api.dart';
 import 'package:eduapge2/message.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:html_unescape/html_unescape.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MessagesPage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -35,13 +30,17 @@ extension MoveElement<T> on List<T> {
 
 class TimeTablePageState extends State<MessagesPage> {
   bool loading = true;
+  bool loaded = false;
   late List<dynamic> apidataMsg;
+  AppLocalizations? loc;
+  bool _isFetching = false;
 
   late Widget messages;
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
-    getData(); //fetching data
     super.initState();
   }
 
@@ -51,43 +50,40 @@ class TimeTablePageState extends State<MessagesPage> {
     super.setState(fn);
   }
 
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   getData() async {
     setState(() {
       loading = true; //make loading true to show progressindicator
     });
 
-    apidataMsg = await widget.sessionManager.get('messages');
-    messages = getMessages(apidataMsg);
+    _scrollController.addListener(() async {
+      if (!_isFetching &&
+          _scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 200) {
+        _isFetching = true;
+        await EP2Data.getInstance().timeline.loadOlderMessages();
+        _isFetching = false;
+      }
+    });
+    messages =
+        getMessages(EP2Data.getInstance().timeline.items.values.toList());
 
     loading = false;
-    setState(() {}); //refresh UI
-
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    if (sp.getBool('quickstart') ?? false) {
-      String token = sp.getString("token")!;
-      String baseUrl = FirebaseRemoteConfig.instance.getString("baseUrl");
-      Dio dio = Dio();
-      Response response = await dio.get(
-        "$baseUrl/messages",
-        options: buildCacheOptions(
-          const Duration(days: 5),
-          maxStale: const Duration(days: 14),
-          forceRefresh: true,
-          options: Options(
-            headers: {
-              "Authorization": "Bearer $token",
-            },
-          ),
-        ),
-      );
-      widget.sessionManager.set("messages", jsonEncode(response.data));
-      messages = getMessages(response.data);
-      setState(() {});
-    }
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    loc ??= AppLocalizations.of(context);
+    if (!loaded) {
+      loaded = true;
+      getData();
+    }
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
@@ -106,49 +102,42 @@ class TimeTablePageState extends State<MessagesPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    apidataMsg = await widget.sessionManager.get('messages');
-    messages = getMessages(apidataMsg);
+    messages =
+        getMessages(EP2Data.getInstance().timeline.items.values.toList());
 
     loading = false;
     setState(() {}); //refresh UI
   }
 
-  Widget getMessages(var apidataMsg) {
+  Widget getMessages(List<TimelineItem> apidataMsg) {
     HtmlUnescape unescape = HtmlUnescape();
     List<Widget> rows = <Widget>[];
-    apidataMsg ??= [
-      {
-        "type": "sprava",
-        "title": "Načítání...",
-        "text": "Nebude to trvat dlouho",
-      }
-    ];
-    List<dynamic> msgs =
-        apidataMsg.where((msg) => msg["type"] == "sprava").toList();
-    List<dynamic> msgsWOR = List.from(msgs);
+    List<TimelineItem> msgs =
+        apidataMsg.where((msg) => msg.type == "sprava").toList();
+    msgs.sort((a, b) => b.timeAdded.compareTo(a.timeAdded));
+    List<TimelineItem> msgsWOR = List.from(msgs);
     List<Map<String, int>> bump = [];
-    for (Map<String, dynamic> msg in msgs) {
-      if (msg["replyOf"] != null) {
+    for (TimelineItem msg in msgs) {
+      if (msg.reactionTo != "") {
         if (!bump.any((element) =>
-            element["id"]!.compareTo(int.parse(msg["replyOf"])) == 0)) {
-          bump.add(
-              {"id": int.parse(msg["replyOf"]), "index": msgsWOR.indexOf(msg)});
+            element["ineid"]!.compareTo(int.parse(msg.reactionTo)) == 0)) {
+          bump.add({
+            "ineid": int.parse(msg.reactionTo),
+            "index": msgsWOR.indexOf(msg)
+          });
           msgsWOR.remove(msg);
         } else {
           msgsWOR.remove(msg);
         }
       }
     }
-    for (Map<String, dynamic> msg in msgsWOR) {
-      String attText = msg["attachments"].length < 5
-          ? msg["attachments"].length > 1
-              ? "y"
-              : "a"
-          : "";
+    for (TimelineItem msg in msgsWOR) {
+      bool isImportantMessage = false;
+      if (msg.data["Value"]["messageContent"] != null) {
+        isImportantMessage = true;
+      }
       rows.add(Card(
-        color: msg["isSeen"]
-            ? null
-            : Theme.of(context).colorScheme.tertiaryContainer,
+        //color: msg["isSeen"] ? null : Theme.of(context).colorScheme.tertiaryContainer,
         child: InkWell(
           onTap: () {
             Navigator.push(
@@ -156,7 +145,7 @@ class TimeTablePageState extends State<MessagesPage> {
                 MaterialPageRoute(
                     builder: (BuildContext buildContext) => MessagePage(
                         sessionManager: widget.sessionManager,
-                        id: int.parse(msg["id"]))));
+                        id: int.parse(msg.id))));
           },
           child: Padding(
             padding: const EdgeInsets.all(10),
@@ -165,9 +154,14 @@ class TimeTablePageState extends State<MessagesPage> {
               children: [
                 Row(
                   children: [
+                    if (isImportantMessage)
+                      const Text(
+                        "!  ",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
                     Text(
-                      '${msg["owner"]["firstname"]?.trim()} ${msg["owner"]["lastname"]?.trim()}'
-                          .replaceAll(RegExp(r'\s+'), ' '),
+                      msg.ownerName.replaceAll(RegExp(r'\s+'), ' '),
                       style: const TextStyle(fontSize: 18),
                     ),
                     const Icon(
@@ -176,7 +170,7 @@ class TimeTablePageState extends State<MessagesPage> {
                     ),
                     Expanded(
                       child: Text(
-                        unescape.convert(msg["title"]),
+                        unescape.convert(msg.userName),
                         overflow: TextOverflow.fade,
                         maxLines: 5,
                         softWrap: false,
@@ -189,7 +183,7 @@ class TimeTablePageState extends State<MessagesPage> {
                   children: [
                     Expanded(
                       child: Text(
-                        unescape.convert(msg["text"]),
+                        unescape.convert(msg.text),
                         style: const TextStyle(fontSize: 12),
                         overflow: TextOverflow.fade,
                         maxLines: 5,
@@ -198,27 +192,32 @@ class TimeTablePageState extends State<MessagesPage> {
                     )
                   ],
                 ),
-                for (Map<String, dynamic> r in msg["replies"])
-                  Row(
-                    children: [
-                      const SizedBox(width: 10),
-                      const Icon(Icons.subdirectory_arrow_right_rounded),
-                      Expanded(
-                        child: Card(
-                          elevation: 10,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              r["owner"] + ": " + unescape.convert(r["text"]),
-                              softWrap: false,
-                              overflow: TextOverflow.ellipsis,
+                if (msg.reactionTo != "")
+                  for (TimelineItem r in msgs
+                      .where((element) =>
+                          element.reactionTo == msg.otherId.toString())
+                      .toList())
+                    Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        const Icon(Icons.subdirectory_arrow_right_rounded),
+                        Expanded(
+                          child: Card(
+                            elevation: 10,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "${r.ownerName}: ${unescape.convert(r.text)}",
+                                softWrap: false,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                if (msg["attachments"].length > 0)
+                      ],
+                    ),
+                if (msg.data["Value"].containsKey("attachements") &&
+                    msg.data["Value"]["attachements"].length > 0)
                   Padding(
                     padding: const EdgeInsets.only(top: 5),
                     child: Row(
@@ -228,8 +227,9 @@ class TimeTablePageState extends State<MessagesPage> {
                           Icons.attach_file_rounded,
                           size: 18,
                         ),
-                        Text(msg["attachments"].length.toString()),
-                        Text(" Přípon$attText"),
+                        Text(loc?.messagesAttachments(
+                                msg.data["Value"]["attachements"].length) ??
+                            ""),
                       ],
                     ),
                   ),
@@ -240,10 +240,10 @@ class TimeTablePageState extends State<MessagesPage> {
       ));
     }
     for (Map<String, int> b in bump) {
-      rows.move(
-          msgsWOR.indexOf(msgsWOR
-              .firstWhere((element) => int.parse(element["id"]) == b["id"])),
-          b["index"]!);
+      if (!msgs.any((element) => element.id == b["ineid"].toString())) continue;
+      TimelineItem toBump =
+          msgs.firstWhere((element) => element.id == b["ineid"].toString());
+      rows.move(msgsWOR.indexOf(toBump), b["index"]!);
     }
     return Card(
       elevation: 5,
@@ -261,8 +261,12 @@ class TimeTablePageState extends State<MessagesPage> {
                 padding: const EdgeInsets.only(top: 40),
                 child: RefreshIndicator(
                   onRefresh: _pullRefresh,
-                  child: ListView(
-                    children: rows,
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: rows.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return rows[index];
+                    },
                   ),
                 )),
           ],

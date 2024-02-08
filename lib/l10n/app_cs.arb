@@ -90,10 +90,13 @@
   "@loginPassword": {
     "description": "User's password"
   },
+  "loginServer": "Server (např. skola.edupage.org)",
   "loginLogin": "Přihlásit se",
   "@loginLogin": {
     "description": "Login button"
   },
+  "loginCustomEndpointCheckbox": "Použít valstní endpoint",
+  "loginCustomEndpoint": "URL vlastního endpointu",
   "today": "Dnes",
   "tomorrow": "Zítra",
   "loadCredentials": "Načítání přihlašovacích údajů",
@@ -111,5 +114,14 @@
   "iCanteenSetupServer": "Adresa URL",
   "iCanteenSetupEmail": "Přihlašovací jméno",
   "iCanteenSetupPassword": "Heslo",
-  "messagesLoadingAttachment": "Načítání pdf souboru..."
+  "messagesLoadingAttachment": "Načítání pdf souboru...",
+  "messagesAttachments": "{count, plural, =1{1 Přípona} few{{count} Přípony} other{{count} Přípon}}",
+  "@messagesAttachments": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  }
 }

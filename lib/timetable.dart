@@ -1,12 +1,8 @@
-import 'dart:convert';
-
+import 'package:eduapge2/api.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TimeTablePage extends StatefulWidget {
@@ -19,24 +15,16 @@ class TimeTablePage extends StatefulWidget {
 }
 
 class TimeTablePageState extends State<TimeTablePage> {
-  String baseUrl = FirebaseRemoteConfig.instance.getString("baseUrl");
-
-  TimeTableData tt = TimeTableData(DateTime.now(), <TimeTableClass>[
-    TimeTableClass("2", "ZAE", "STJI", "8:55", "9:40", "U32", 0, {}),
-    TimeTableClass("3", "ANJ", "MAOL", "10:00", "10:45", "U02", 0, {}),
-    TimeTableClass("4", "CJL", "GAMA", "10:55", "11:40", "U60", 0, {}),
-    TimeTableClass("5", "MAT", "VAPE", "11:50", "12:35", "U60", 1, {})
-  ]);
-
-  late Response response;
-  Dio dio = Dio();
+  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
 
   bool error = false; //for error status
   bool loading = false; //for data featching status
   String errmsg = ""; //to assing any error message from API/runtime
-  late Map<String, dynamic> apidataTT;
+  List<TimeTablePeriod> periods = [];
   bool refresh = false;
   bool userInteracted = false;
+
+  EP2Data data = EP2Data.getInstance();
 
   int daydiff = 0;
 
@@ -44,9 +32,6 @@ class TimeTablePageState extends State<TimeTablePage> {
 
   @override
   void initState() {
-    dio.interceptors
-        .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
-    getData(); //fetching data
     super.initState();
   }
 
@@ -64,170 +49,74 @@ class TimeTablePageState extends State<TimeTablePage> {
     return DateTime(now.year, now.month, now.day);
   }
 
-  getData() async {
-    setState(() {
-      loading = true; //make loading true to show progressindicator
-    });
-
-    apidataTT = await widget.sessionManager.get('timetable');
-
-    List<TimeTableClass> ttClasses = <TimeTableClass>[];
-    List<dynamic> lessons = apidataTT["lessons"];
-    for (Map<String, dynamic> ttLesson in lessons) {
-      ttClasses.add(
-        TimeTableClass(
-          ttLesson["period"]["name"],
-          ttLesson["subject"]["short"],
-          ttLesson["teachers"][0]["short"],
-          ttLesson["period"]["startTime"],
-          ttLesson["period"]["endTime"],
-          ttLesson["classrooms"][0]["short"],
-          0,
-          ttLesson,
-        ),
-      );
-    }
-    tt = TimeTableData(DateTime.parse(apidataTT["date"]), ttClasses);
-    timetables.add(tt);
-
-    loading = false;
-    refresh = false;
-    setState(() {}); //refresh UI
-
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    if (sp.getBool('quickstart') ?? false) {
-      String token = sp.getString("token")!;
-      String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
-      Dio dio = Dio();
-      Response response = await dio.get(
-        "$baseUrl/timetable/${getWeekDay().toString()}",
-        options: buildCacheOptions(
-          const Duration(days: 5),
-          maxStale: const Duration(days: 14),
-          forceRefresh: true,
-          options: Options(
-            headers: {
-              "Authorization": "Bearer $token",
-            },
-          ),
-        ),
-      );
-      widget.sessionManager.set("timetable", jsonEncode(response.data));
-
-      List<TimeTableClass> ttClasses = <TimeTableClass>[];
-      List<dynamic> lessons = jsonDecode(response.data)["lessons"];
-      for (Map<String, dynamic> ttLesson in lessons) {
-        ttClasses.add(
-          TimeTableClass(
-            ttLesson["period"]["name"],
-            ttLesson["subject"]["short"],
-            ttLesson["teachers"][0]["short"],
-            ttLesson["period"]["startTime"],
-            ttLesson["period"]["endTime"],
-            ttLesson["classrooms"][0]["short"],
-            0,
-            ttLesson,
-          ),
-        );
-      }
-      tt = TimeTableData(DateTime.parse(apidataTT["date"]), ttClasses);
-      timetables.clear();
-      timetables.add(tt);
-
-      setState(() {});
-    }
-  }
-
-  Future<TimeTableData> loadTt(DateTime date) async {
-    if (timetables.any((element) => isSameDay(element.date, date))) {
-      return timetables.firstWhere((element) => isSameDay(element.date, date));
-    }
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String token = sharedPreferences.getString("token")!;
-
-    Response response = await dio.get(
-      "$baseUrl/timetable/${DateTime(date.year, date.month, date.day).toString()}",
-      options: buildCacheOptions(
-        const Duration(days: 4),
-        maxStale: const Duration(days: 14),
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
-          },
-        ),
-      ),
-    );
-
-    List<TimeTableClass> ttClasses = <TimeTableClass>[];
-    List<dynamic> lessons = jsonDecode(response.data)["lessons"];
-    for (Map<String, dynamic> ttLesson in lessons) {
-      ttClasses.add(
-        TimeTableClass(
-          ttLesson["period"]["name"],
-          ttLesson["subject"]["short"],
-          ttLesson["teachers"].length > 0
-              ? ttLesson["teachers"][0]["short"]
-              : "?",
-          ttLesson["period"]["startTime"],
-          ttLesson["period"]["endTime"],
-          ttLesson["classrooms"].length > 0
-              ? ttLesson["classrooms"][0]["short"]
-              : "?",
-          0,
-          ttLesson,
-        ),
-      );
-    }
-    TimeTableData t = TimeTableData(
-        DateTime.parse(jsonDecode(response.data)["date"]), ttClasses);
-    timetables.add(t);
-    return t;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
       ),
-      body: Stack(
-        children: <Widget>[
-          getTimeTable(
-              timetables.firstWhere(
-                (element) => isSameDay(
-                  element.date,
-                  DateTime.now().add(
-                    Duration(days: daydiff),
-                  ),
-                ),
-                orElse: () => tt,
-              ),
-              daydiff,
-              (diff) => {
-                    setState(
-                      () {
-                        daydiff = daydiff + diff;
-                        userInteracted = true;
-                      },
-                    ),
-                    loadTt(
-                      DateTime.now().add(
-                        Duration(days: daydiff),
-                      ),
-                    ).then(
-                      (value) => {
-                        tt = value,
-                        setState(
-                          () {},
+      body: loading
+          ? const CircularProgressIndicator()
+          : PageView.builder(
+              controller: PageController(initialPage: 500),
+              itemBuilder: (context, index) {
+                return getTimeTable(
+                    data.timetable.timetables.values.firstWhere(
+                      (element) => isSameDay(
+                        element.date,
+                        DateTime.now().add(
+                          Duration(days: daydiff + index - 500),
                         ),
+                      ),
+                      orElse: () {
+                        data.timetable
+                            .loadTt(
+                              DateTime.now().add(
+                                Duration(days: daydiff + index - 500),
+                              ),
+                            )
+                            .then(
+                              (value) => {
+                                setState(
+                                  () {},
+                                ),
+                              },
+                            );
+                        return TimeTableData(
+                            DateTime.now().add(
+                              Duration(days: daydiff + index - 500),
+                            ),
+                            [],
+                            []);
                       },
                     ),
-                  },
-              AppLocalizations.of(context),
-              userInteracted,
-              context),
-        ],
-      ),
+                    daydiff,
+                    (diff) => {
+                          setState(
+                            () {
+                              daydiff = daydiff + diff;
+                              userInteracted = true;
+                            },
+                          ),
+                          data.timetable
+                              .loadTt(
+                                DateTime.now().add(
+                                  Duration(days: daydiff + index - 500),
+                                ),
+                              )
+                              .then(
+                                (value) => {
+                                  setState(
+                                    () {},
+                                  ),
+                                },
+                              ),
+                        },
+                    AppLocalizations.of(context),
+                    true,
+                    context);
+              },
+            ),
       backgroundColor: Theme.of(context).colorScheme.background,
     );
   }
@@ -239,43 +128,119 @@ bool isSameDay(DateTime day1, DateTime day2) {
       day1.year == day2.year;
 }
 
-class TimeTableData {
-  TimeTableData(this.date, this.classes);
+TimeTableData processTimeTable(TimeTableData tt) {
+  List<TimeTableClass> classes = tt.classes;
+  List<TimeTablePeriod> periods = tt.periods;
 
-  final DateTime date;
-  final List<TimeTableClass> classes;
-}
+  // Go through all classes, and assign them a startPeriod and endPeriod both equal to the their period
+  for (int i = 0; i < classes.length; i++) {
+    TimeTableClass currentClass = classes[i];
+    TimeTablePeriod currentPeriod =
+        periods.firstWhere((period) => period.id == currentClass.period,
+            orElse: () => TimeTablePeriod.fromJson({
+                  "id": currentClass.period,
+                  "starttime": currentClass.startTime,
+                  "endtime": currentClass.endTime,
+                  "name": currentClass.period,
+                  "short": currentClass.period,
+                }));
+    currentClass.startPeriod = currentPeriod;
+    currentClass.endPeriod = currentPeriod;
+  }
 
-class TimeTableClass {
-  TimeTableClass(this.period, this.subject, this.teacher, this.startTime,
-      this.endTime, this.classRoom, this.notifications, this.data);
+  // Match class end times to period end times
+  for (int i = 0; i < classes.length; i++) {
+    TimeTableClass currentClass = classes[i];
+    TimeTablePeriod currentPeriod =
+        periods.firstWhere((period) => period.id == currentClass.endPeriod!.id,
+            orElse: () => TimeTablePeriod.fromJson({
+                  "id": currentClass.endPeriod!.id,
+                  "starttime": currentClass.endTime,
+                  "endtime": currentClass.endTime,
+                  "name": currentClass.endPeriod!.id,
+                  "short": currentClass.endPeriod!.id,
+                }));
+    if (currentClass.endTime != currentPeriod.endTime) {
+      int nextPeriodIndex = periods
+          .indexWhere((period) => period.endTime == currentClass.endTime);
+      if (nextPeriodIndex != -1) {
+        TimeTablePeriod nextPeriod = periods[nextPeriodIndex];
+        currentClass.endPeriod = nextPeriod;
+      }
+    }
+  }
 
-  final String period;
-  final String subject;
-  final String teacher;
-  final String startTime;
-  final String endTime;
-  final String classRoom;
-  final int notifications;
-  final dynamic data;
+  classes.sort((a, b) {
+    int? sp = int.tryParse(a.startPeriod!.id);
+    int? ep = int.tryParse(b.endPeriod!.id);
+    if (sp == null || ep == null) return 0;
+    return sp.compareTo(ep);
+  });
+  periods.sort((a, b) => a.startTime.compareTo(b.startTime));
+
+  List<TimeTableClass> newClasses = [];
+
+  // Add empty classes in between existing classes
+  for (int i = 0; i < classes.length - 1; i++) {
+    TimeTableClass currentClass = classes[i];
+    TimeTableClass nextClass = classes[i + 1];
+    int currentPeriodIndex =
+        periods.indexWhere((period) => period.id == currentClass.endPeriod!.id);
+    int nextPeriodIndex =
+        periods.indexWhere((period) => period.id == nextClass.startPeriod!.id);
+    bool hasClassAfter =
+        nextPeriodIndex != -1 && nextPeriodIndex - currentPeriodIndex > 1;
+    if (hasClassAfter) {
+      for (int j = currentPeriodIndex + 1; j < nextPeriodIndex; j++) {
+        TimeTablePeriod emptyPeriod = periods[j];
+        TimeTableClass emptyClass = TimeTableClass(
+          period: emptyPeriod.id,
+          startTime: emptyPeriod.startTime,
+          endTime: emptyPeriod.endTime,
+        );
+        emptyClass.startPeriod = emptyPeriod;
+        emptyClass.endPeriod = emptyPeriod;
+        newClasses.add(emptyClass);
+      }
+    }
+  }
+
+  classes.addAll(newClasses);
+  classes.sort((a, b) {
+    int? sp = int.tryParse(a.startPeriod!.id);
+    int? ep = int.tryParse(b.endPeriod!.id);
+    if (sp == null || ep == null) return 0;
+    return sp.compareTo(ep);
+  });
+
+  return TimeTableData(tt.date, classes, periods);
 }
 
 Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
     AppLocalizations? local, bool userInteracted, BuildContext context) {
   List<TableRow> rows = <TableRow>[];
-  /*
-  if (daydiff == 0 && tt.classes.isNotEmpty) {
-    String endTime = tt.classes.last.endTime;
-    DateTime now = DateTime.now();
-    DateTime end = DateTime(now.year, now.month, now.day,
-        int.parse(endTime.split(':')[0]), int.parse(endTime.split(':')[1]));
-    if (end.compareTo(now) < 0 && !userInteracted) {
-      modifyDayDiff(1);
-    }
-  }
-  */
+
   for (TimeTableClass ttclass in tt.classes) {
     List<Widget> extrasRow = <Widget>[];
+    if (ttclass.teachers.isNotEmpty) {
+      List<Teacher> teachers = ttclass.teachers;
+      String names = teachers.length == 1 ? "Teacher: " : "Teachers: ";
+      names += "${teachers[0].firstName} ${teachers[0].lastName}";
+      for (Teacher teacher in teachers.skip(1)) {
+        names += ", ${teacher.firstName} ${teacher.lastName}";
+      }
+      extrasRow.add(
+        Expanded(
+          child: Text(
+            names,
+            overflow: TextOverflow.fade,
+            maxLines: 5,
+            softWrap: false,
+          ),
+        ),
+      );
+    }
+    /* Not implemented yet
     if (ttclass.data['curriculum'] != null) {
       extrasRow.add(
         Expanded(
@@ -301,6 +266,57 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
         ),
       );
     }
+    */
+    List<Widget> cRows = [];
+    int? sp = int.tryParse(ttclass.startPeriod!.id);
+    int? ep = int.tryParse(ttclass.endPeriod!.id);
+    if (sp == null || ep == null) continue;
+    for (int i = sp; i <= ep; i++) {
+      TimeTablePeriod period = tt.periods.firstWhere((e) => e.short == "$i",
+          orElse: () =>
+              TimeTablePeriod("$i", "00:00", "00:00", "Unknown", "Unknown"));
+      cRows.add(
+        Row(
+          children: [
+            Text(
+              "${period.short}.  ",
+              style: const TextStyle(
+                fontSize: 14,
+              ),
+            ),
+            if (ttclass.subject != null)
+              Text(
+                ttclass.subject!.short,
+                style: const TextStyle(
+                  fontSize: 22,
+                ),
+              ),
+            const Spacer(),
+            Text(
+              "${period.startTime} - ${period.endTime}",
+              style: const TextStyle(
+                fontSize: 14,
+              ),
+            ),
+            const Spacer(),
+            for (Classroom classroom in ttclass.classrooms)
+              Text(
+                "${classroom.short}  ",
+                style: const TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+            /* Not implemented yet
+            Badge(
+              label: Text(ttclass.notifications.toString()),
+              isLabelVisible: ttclass.notifications != 0,
+              child: const Icon(Icons.inbox),
+            )
+            */
+          ],
+        ),
+      );
+    }
     rows.add(TableRow(
       children: [
         TableCell(
@@ -309,41 +325,7 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
                 padding: const EdgeInsets.all(10),
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        Text(
-                          "${ttclass.period}.  ",
-                          style: const TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          ttclass.subject,
-                          style: const TextStyle(
-                            fontSize: 22,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          "${ttclass.startTime} - ${ttclass.endTime}",
-                          style: const TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          "${ttclass.classRoom}  ",
-                          style: const TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                        Badge(
-                          label: Text(ttclass.notifications.toString()),
-                          isLabelVisible: ttclass.notifications != 0,
-                          child: const Icon(Icons.inbox),
-                        )
-                      ],
-                    ),
+                    ...cRows,
                     Row(
                       children: extrasRow,
                     ),

@@ -64,7 +64,8 @@ jobs:
         commitChange: true
         branch: 'build-release'
         labels: 'bump'
-        message: 'Bump version to ${{ steps.semvers.outputs.minor }}'
+        createPR: true
+        message: 'Bump version to ${{ steps.semvers.outputs.minor }} [no ci]'
         description: 'Automatic version bump to ${{ steps.semvers.outputs.minor }} for release build'
     - run: flutter pub get
     - run: flutter gen-l10n

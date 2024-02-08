@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,7 +27,7 @@ class ICanteenPageState extends State<ICanteenPage> {
 
   Dio dio = Dio();
 
-  String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app/api";
+  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
   bool loading = true;
 
   List<Widget> lunches = [];
@@ -46,31 +46,24 @@ class ICanteenPageState extends State<ICanteenPage> {
 
   getData() async {
     sharedPreferences = await SharedPreferences.getInstance();
-    dio.interceptors
-        .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
 
     setState(() {
       loading = true; //make loading true to show progressindicator
     });
 
-    String token = sharedPreferences.getString("token")!;
-
     Response response = await dio
-        .get(
-      "$baseUrl/lunches",
-      options: buildCacheOptions(
-        const Duration(days: 0),
-        forceRefresh: true,
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
-          },
-        ),
-      ),
+        .post(
+      "$baseUrl/icanteen",
+      data: {
+        "username": sharedPreferences.getString("ic_email"),
+        "password": sharedPreferences.getString("ic_password"),
+        "server": sharedPreferences.getString("ic_server"),
+      },
+      options: Options(contentType: Headers.formUrlEncodedContentType),
     )
         .catchError((obj) {
       return Response(
-        requestOptions: RequestOptions(path: "$baseUrl/lunches"),
+        requestOptions: RequestOptions(path: "$baseUrl/icanteen"),
         statusCode: 500,
       );
     });

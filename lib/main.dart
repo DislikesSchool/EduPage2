@@ -1,6 +1,5 @@
-import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:eduapge2/api.dart';
 import 'package:eduapge2/homework.dart';
 import 'package:eduapge2/icanteen.dart';
 import 'package:eduapge2/load.dart';
@@ -12,17 +11,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:restart_app/restart_app.dart';
+import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'home.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  final remoteConfig = FirebaseRemoteConfig.instance;
+  await remoteConfig.setConfigSettings(RemoteConfigSettings(
+    fetchTimeout: const Duration(minutes: 1),
+    minimumFetchInterval: const Duration(hours: 1),
+  ));
+  await remoteConfig.setDefaults(const {
+    "baseUrl": "https://lobster-app-z6jfk.ondigitalocean.app/api",
+    "testUrl": "https://edupage2-server.onrender.com"
+  });
+  await remoteConfig.fetchAndActivate();
   await SentryFlutter.init(
     (options) {
       options.dsn =
@@ -31,8 +41,8 @@ Future<void> main() async {
     },
     appRunner: () => runApp(const MyApp()),
   );
-  OneSignal.shared.setAppId("85587dc6-0a3c-4e91-afd6-e0ca82361763");
-  OneSignal.shared.promptUserForPushNotificationPermission();
+  //OneSignal.shared.setAppId("85587dc6-0a3c-4e91-afd6-e0ca82361763");
+  //OneSignal.shared.promptUserForPushNotificationPermission();
 }
 
 class MyApp extends StatelessWidget {
@@ -84,26 +94,24 @@ class PageBase extends StatefulWidget {
 
 class PageBaseState extends State<PageBase> {
   int _selectedIndex = 0;
-  String baseUrl = "https://lobster-app-z6jfk.ondigitalocean.app";
-  late Response response;
-  Dio dio = Dio();
+  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
 
   bool loaded = false;
 
   bool error = false; //for error status
   bool loading = false; //for data featching status
   String errmsg = ""; //to assing any error message from API/runtime
-  List<dynamic> apidataMsg = [];
+  List<TimelineItem> apidataMsg = [];
   bool refresh = true;
   bool iCanteenEnabled = false;
+  bool _isCheckingForUpdate = false;
+  final ShorebirdCodePush _shorebirdCodePush = ShorebirdCodePush();
 
   SessionManager sessionManager = SessionManager();
 
   @override
   void initState() {
-    dio.interceptors
-        .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
-    getMsgs();
+    if (!_isCheckingForUpdate) _checkForUpdate(); // ik that it's not necessary
     super.initState();
   }
 
@@ -119,30 +127,72 @@ class PageBaseState extends State<PageBase> {
     });
   }
 
-  initRemoteConfig() async {
-    final remoteConfig = FirebaseRemoteConfig.instance;
-    await remoteConfig.setConfigSettings(RemoteConfigSettings(
-      fetchTimeout: const Duration(minutes: 1),
-      minimumFetchInterval: const Duration(hours: 1),
-    ));
-    await remoteConfig.setDefaults(const {
-      "baseUrl": "https://lobster-app-z6jfk.ondigitalocean.app",
+  Future<void> _checkForUpdate() async {
+    setState(() {
+      _isCheckingForUpdate = true;
     });
-    await remoteConfig.fetchAndActivate();
-    baseUrl = remoteConfig.getString("baseUrl");
+
+    // Ask the Shorebird servers if there is a new patch available.
+    final isUpdateAvailable =
+        await _shorebirdCodePush.isNewPatchAvailableForDownload();
+
+    if (!mounted) return;
+
+    setState(() {
+      _isCheckingForUpdate = false;
+    });
+
+    if (isUpdateAvailable) {
+      _downloadUpdate();
+    }
+  }
+
+  void _showDownloadingBanner() {
+    ScaffoldMessenger.of(context).showMaterialBanner(
+      const MaterialBanner(
+        content: Text('Downloading patch...'),
+        actions: [
+          SizedBox(
+            height: 14,
+            width: 14,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  void _showRestartBanner() {
+    ScaffoldMessenger.of(context).showMaterialBanner(
+      const MaterialBanner(
+        content: Text('A new patch is ready!'),
+        actions: [
+          TextButton(
+            // Restart the app for the new patch to take effect.
+            onPressed: Restart.restartApp,
+            child: Text('Restart app'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _downloadUpdate() async {
+    _showDownloadingBanner();
+    await _shorebirdCodePush.downloadUpdateIfAvailable();
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+    _showRestartBanner();
   }
 
   getMsgs() async {
-    await initRemoteConfig();
-    var msgs = await sessionManager.get('messages');
+    apidataMsg = EP2Data.getInstance().timeline.items.values.toList();
     var ic = await sessionManager.get('iCanteenEnabled');
     if (ic == true) {
       iCanteenEnabled = true;
-    }
-    if (msgs != Null && msgs != null) {
-      setState(() {
-        apidataMsg = msgs;
-      });
     }
   }
 
@@ -212,6 +262,7 @@ class PageBaseState extends State<PageBase> {
                     label: AppLocalizations.of(context)!.mainICanteen,
                     selectedIcon: const Icon(Icons.lunch_dining_outlined),
                   ),
+                /*
                 NavigationDestination(
                   icon: Badge(
                     label: Text(apidataMsg
@@ -230,6 +281,12 @@ class PageBaseState extends State<PageBase> {
                         .toString()),
                     child: const Icon(Icons.mail_outline),
                   ),
+                ),
+                */
+                NavigationDestination(
+                  icon: const Icon(Icons.mail),
+                  label: AppLocalizations.of(context)!.mainMessages,
+                  selectedIcon: const Icon(Icons.mail_outline),
                 ),
                 NavigationDestination(
                   icon: const Icon(Icons.home_work),

@@ -25,7 +25,10 @@
   "loginUseExistingCredentials": "Use your existing EduPage credentials",
   "loginUsername": "Username",
   "loginPassword": "Password",
+  "loginServer": "Server (e.g., school.edupage.org)",
   "loginLogin": "Login",
+  "loginCustomEndpointCheckbox": "Use custom endpoint",
+  "loginCustomEndpoint": "Enter custom endpoint URL",
   "today": "Today",
   "tomorrow": "Tomorrow",
   "loadCredentials": "Loading credentials...",
@@ -43,5 +46,14 @@
   "iCanteenSetupServer": "Server address",
   "iCanteenSetupEmail": "Username",
   "iCanteenSetupPassword": "Password",
-  "messagesLoadingAttachment": "Loading pdf..."
+  "messagesLoadingAttachment": "Loading pdf...",
+  "messagesAttachments": "{count, plural, =1{1 Attachment} other{{count} Attachments}}",
+  "@messagesAttachments": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  }
 }
