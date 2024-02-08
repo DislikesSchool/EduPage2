@@ -1,6 +1,5 @@
-import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:eduapge2/api.dart';
 import 'package:eduapge2/homework.dart';
 import 'package:eduapge2/icanteen.dart';
 import 'package:eduapge2/load.dart';
@@ -10,6 +9,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:restart_app/restart_app.dart';
@@ -18,7 +18,6 @@ import 'home.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,8 +42,8 @@ Future<void> main() async {
     },
     appRunner: () => runApp(const MyApp()),
   );
-  OneSignal.shared.setAppId("85587dc6-0a3c-4e91-afd6-e0ca82361763");
-  OneSignal.shared.promptUserForPushNotificationPermission();
+  //OneSignal.shared.setAppId("85587dc6-0a3c-4e91-afd6-e0ca82361763");
+  //OneSignal.shared.promptUserForPushNotificationPermission();
 }
 
 class MyApp extends StatelessWidget {
@@ -97,15 +96,13 @@ class PageBase extends StatefulWidget {
 class PageBaseState extends State<PageBase> {
   int _selectedIndex = 0;
   String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
-  late Response response;
-  Dio dio = Dio();
 
   bool loaded = false;
 
   bool error = false; //for error status
   bool loading = false; //for data featching status
   String errmsg = ""; //to assing any error message from API/runtime
-  List<dynamic> apidataMsg = [];
+  List<TimelineItem> apidataMsg = [];
   bool refresh = true;
   bool iCanteenEnabled = false;
   bool _isCheckingForUpdate = false;
@@ -115,10 +112,26 @@ class PageBaseState extends State<PageBase> {
 
   @override
   void initState() {
-    dio.interceptors
-        .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
+    setOptimalDisplayMode();
     if (!_isCheckingForUpdate) _checkForUpdate(); // ik that it's not necessary
     super.initState();
+  }
+
+  Future<void> setOptimalDisplayMode() async {
+    final List<DisplayMode> supported = await FlutterDisplayMode.supported;
+    final DisplayMode active = await FlutterDisplayMode.active;
+
+    final List<DisplayMode> sameResolution = supported
+        .where((DisplayMode m) =>
+            m.width == active.width && m.height == active.height)
+        .toList()
+      ..sort((DisplayMode a, DisplayMode b) =>
+          b.refreshRate.compareTo(a.refreshRate));
+
+    final DisplayMode mostOptimalMode =
+        sameResolution.isNotEmpty ? sameResolution.first : active;
+
+    await FlutterDisplayMode.setPreferredMode(mostOptimalMode);
   }
 
   @override
@@ -195,15 +208,10 @@ class PageBaseState extends State<PageBase> {
   }
 
   getMsgs() async {
-    var msgs = await sessionManager.get('messages');
+    apidataMsg = EP2Data.getInstance().timeline.items.values.toList();
     var ic = await sessionManager.get('iCanteenEnabled');
     if (ic == true) {
       iCanteenEnabled = true;
-    }
-    if (msgs != Null && msgs != null) {
-      setState(() {
-        apidataMsg = msgs.values.toList();
-      });
     }
   }
 

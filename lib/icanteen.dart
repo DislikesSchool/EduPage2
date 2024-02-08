@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
@@ -47,8 +46,6 @@ class ICanteenPageState extends State<ICanteenPage> {
 
   getData() async {
     sharedPreferences = await SharedPreferences.getInstance();
-    dio.interceptors
-        .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
 
     setState(() {
       loading = true; //make loading true to show progressindicator

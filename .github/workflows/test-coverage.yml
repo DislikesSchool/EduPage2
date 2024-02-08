@@ -20,10 +20,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: Verify Changed files
-        uses: tj-actions/changed-files@v37
+        uses: tj-actions/changed-files@v41
         id: verify-changed-files
         with:
           files: |
+              .github/workflows/test-coverage.yml
               pubspec.yaml
               pubspec.lock
               l10n.yaml
@@ -40,30 +41,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Gradle cache
-      uses: gradle/gradle-build-action@v2
-      
-    - name: AVD cache
-      uses: actions/cache@v3
-      id: avd-cache
-      with:
-        path: |
-          ~/.android/avd/*
-          ~/.android/adb*
-        key: avd-33
-
-    - name: create AVD and generate snapshot for caching
-      if: steps.avd-cache.outputs.cache-hit != 'true'
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: 31
-        arch: x86_64
-        profile: pixel_6_pro
-        force-avd-creation: false
-        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-        disable-animations: false
-        script: echo "Generated AVD snapshot for caching."
-
     - uses: actions/setup-java@v2
       with:
         distribution: 'zulu'
@@ -79,14 +56,16 @@ jobs:
     - run: flutter analyze .
     - run: flutter gen-l10n
     - run: dart pub global run full_coverage
-    - run: flutter test --coverage --dart-define=USERNAME=${{ secrets.USERNAME }} --dart-define=PASSWORD=${{ secrets.PASSWORD }}
+    - run: flutter test --coverage
     - name: run integration tests
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: 31
         arch: x86_64
         profile: pixel_6_pro
+        avd-name: Pixel_6_Pro_API_31
         force-avd-creation: false
+        ram-size: 4096M
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
         disable-animations: true
         script: flutter test integration_test/app_test.dart --coverage --dart-define=USERNAME=${{ secrets.USERNAME }} --dart-define=PASSWORD=${{ secrets.PASSWORD }} --dart-define=NAME="${{ secrets.NAME }}"

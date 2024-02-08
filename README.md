@@ -25,6 +25,9 @@
 
 - [Table Of Contents](#table-of-contents)
 - [About The Project](#about-the-project)
+- [Backend Status](#backend-status)
+  - [Quick status](#quick-status)
+  - [Statuspage](#statuspage)
 - [Disclaimer](#disclaimer)
 - [Built With](#built-with)
 - [Getting Started](#getting-started)
@@ -46,6 +49,19 @@ And that's why we made EduPage2. So far, EduPage2 lacks a pretty big amount of f
 
 EduPage2 uses local caching on your device, and a caching server with our own privte software, which periodically updates data from EduPage, strips it of all useless data (which EduPage includes for some reason), and finally sends out to your device when requested.
 
+## Backend Status
+
+### Quick status
+
+| Host       | Status                                                                                                                                             |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Render.com | [![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/w8hv.svg)](https://uptime.betterstack.com/?utm_source=status_badge) |
+| Deta.space | [![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/wt8i.svg)](https://uptime.betterstack.com/?utm_source=status_badge) |
+
+### Statuspage
+
+Currently there are two status pages for the EduPage2 backend. The one on [Better Stack](https://ep2.betteruptime.com/) which we have confirmed to work, and the other one on [Statuspage](https://edupage2.statuspage.io/) which seems to work, but we will have to wait unitl an outage occurs to test that.
+
 ## Disclaimer
 
 **EduPage2** is an open-source project with contributions from multiple individuals and is not affiliated with or endorsed by the creators of EduPage. EduPage is a separate and (possibly) trademarked platform owned by asc Applied Software Consultants, s.r.o.
@@ -58,13 +74,12 @@ This project is open source and distributed under the [GPL-3.0 license](https://
 
 This is a list of all the main tools, libraries and frameworks, that were used in this project
 
+- [Flutter](https://flutter.dev/)
 - [Firebase](https://firebase.google.com/)
 - [OneSignal](https://onesignal.com/)
-- [Flutter](https://flutter.dev/)
-- [Express.js](https://expressjs.com/)
-- [PlanetScale](https://planetscale.com/)
-- [Passport.js](https://www.passportjs.org/)
 - [Shorebird](https://shorebird.dev/)
+- [Golang](https://go.dev/)
+- [Gin](https://gin-gonic.com/)
 
 ## Getting Started
 

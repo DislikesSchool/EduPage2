@@ -23,10 +23,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: Verify Changed files
-        uses: tj-actions/changed-files@v37
+        uses: tj-actions/changed-files@v41
         id: verify-changed-files
         with:
           files: |
+              .github/workflows/build-patch.yml
               pubspec.yaml
               pubspec.lock
               l10n.yaml
@@ -46,7 +47,6 @@ jobs:
         java-version: '11'
     - uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.10.6'
         channel: 'stable'
         cache: true
         cache-key: 'flutter-:os:-:channel:-:version:' # optional, change this to force refresh cache
