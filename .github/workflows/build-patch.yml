@@ -27,6 +27,7 @@ jobs:
         id: verify-changed-files
         with:
           files: |
+              .github/workflows/build-patch.yml
               pubspec.yaml
               pubspec.lock
               l10n.yaml
