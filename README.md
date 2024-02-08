@@ -20,6 +20,7 @@
 
 [![test-coverage](https://github.com/DislikesSchool/EduPage2/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/DislikesSchool/EduPage2/actions/workflows/test-coverage.yml)
 [![build-patch-android](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-patch.yml/badge.svg)](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-patch.yml)
+
 ## Table Of Contents
 
 - [Table Of Contents](#table-of-contents)
@@ -49,12 +50,16 @@ And that's why we made EduPage2. So far, EduPage2 lacks a pretty big amount of f
 EduPage2 uses local caching on your device, and a caching server with our own privte software, which periodically updates data from EduPage, strips it of all useless data (which EduPage includes for some reason), and finally sends out to your device when requested.
 
 ## Backend Status
+
 ### Quick status
-| Host | Status |
-| --- | --- |
+
+| Host       | Status                                                                                                                                             |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Render.com | [![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/w8hv.svg)](https://uptime.betterstack.com/?utm_source=status_badge) |
 | Deta.space | [![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/wt8i.svg)](https://uptime.betterstack.com/?utm_source=status_badge) |
+
 ### Statuspage
+
 Currently there are two status pages for the EduPage2 backend. The one on [Better Stack](https://ep2.betteruptime.com/) which we have confirmed to work, and the other one on [Statuspage](https://edupage2.statuspage.io/) which seems to work, but we will have to wait unitl an outage occurs to test that.
 
 ## Disclaimer
