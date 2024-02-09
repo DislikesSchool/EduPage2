@@ -16,11 +16,11 @@ jobs:
       run_build: ${{ steps.verify-changed-files.outputs.any_changed }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Verify Changed files
-        uses: tj-actions/changed-files@v41
+        uses: tj-actions/changed-files@v42
         id: verify-changed-files
         with:
           files: |
@@ -28,10 +28,10 @@ jobs:
               pubspec.yaml
               pubspec.lock
               l10n.yaml
-              lib
-              android
-              test
-              integration_test
+              lib/**
+              android/**
+              test/**
+              integration_test/**
   build:
     runs-on: macos-latest
     needs: check_changes
