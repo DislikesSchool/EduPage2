@@ -108,7 +108,7 @@ class User {
 
   final String username;
   final String password;
-  String? server = "";
+  String server = "";
 
   String token = "";
   String name = "";
@@ -116,7 +116,7 @@ class User {
   User({
     required this.username,
     required this.password,
-    this.server,
+    this.server = "",
   });
 
   Future<bool> login() async {
@@ -126,7 +126,7 @@ class User {
         data: {
           "username": username,
           "password": password,
-          "server": server ?? "",
+          "server": server,
         },
         options: Options(contentType: Headers.formUrlEncodedContentType),
       );
