@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:eduapge2/main.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
@@ -16,10 +17,10 @@ class ICanteenPage extends StatefulWidget {
   });
 
   @override
-  State<ICanteenPage> createState() => ICanteenPageState();
+  BaseState<ICanteenPage> createState() => ICanteenPageState();
 }
 
-class ICanteenPageState extends State<ICanteenPage> {
+class ICanteenPageState extends BaseState<ICanteenPage> {
   late SessionManager sessionManager;
   late SharedPreferences sharedPreferences;
 
@@ -36,12 +37,6 @@ class ICanteenPageState extends State<ICanteenPage> {
   void initState() {
     super.initState();
     getData();
-  }
-
-  @override
-  void setState(VoidCallback fn) {
-    if (!mounted) return;
-    super.setState(fn);
   }
 
   getData() async {

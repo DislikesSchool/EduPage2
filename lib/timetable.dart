@@ -1,4 +1,5 @@
 import 'package:eduapge2/api.dart';
+import 'package:eduapge2/main.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
@@ -11,10 +12,10 @@ class TimeTablePage extends StatefulWidget {
   const TimeTablePage({super.key, required this.sessionManager});
 
   @override
-  State<TimeTablePage> createState() => TimeTablePageState();
+  BaseState<TimeTablePage> createState() => TimeTablePageState();
 }
 
-class TimeTablePageState extends State<TimeTablePage> {
+class TimeTablePageState extends BaseState<TimeTablePage> {
   String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
 
   bool error = false; //for error status
@@ -33,12 +34,6 @@ class TimeTablePageState extends State<TimeTablePage> {
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void setState(VoidCallback fn) {
-    if (!mounted) return;
-    super.setState(fn);
   }
 
   DateTime getWeekDay() {

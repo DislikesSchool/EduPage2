@@ -1,4 +1,5 @@
 import 'package:eduapge2/api.dart';
+import 'package:eduapge2/main.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
@@ -18,10 +19,10 @@ class MessagePage extends StatefulWidget {
       {super.key, required this.sessionManager, required this.id});
 
   @override
-  State<MessagePage> createState() => MessagePageState();
+  BaseState<MessagePage> createState() => MessagePageState();
 }
 
-class MessagePageState extends State<MessagePage> {
+class MessagePageState extends BaseState<MessagePage> {
   late SessionManager sessionManager;
   late SharedPreferences sharedPreferences;
   String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
@@ -36,12 +37,6 @@ class MessagePageState extends State<MessagePage> {
   void initState() {
     getData(); //fetching data
     super.initState();
-  }
-
-  @override
-  void setState(VoidCallback fn) {
-    if (!mounted) return;
-    super.setState(fn);
   }
 
   getData() async {

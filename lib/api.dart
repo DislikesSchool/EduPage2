@@ -9,12 +9,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<bool> isConnected() async {
   var connectivityResult = await (Connectivity().checkConnectivity());
-  if (connectivityResult == ConnectivityResult.mobile) {
-    return true;
-  } else if (connectivityResult == ConnectivityResult.wifi) {
-    return true;
+  if (connectivityResult == ConnectivityResult.none) {
+    return false;
   }
-  return false;
+  return true;
 }
 
 class EP2Data {

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/login.dart';
+import 'package:eduapge2/main.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
@@ -16,10 +17,10 @@ class LoadingScreen extends StatefulWidget {
   final SessionManager sessionManager;
 
   @override
-  State<StatefulWidget> createState() => LoadingScreenState();
+  BaseState<StatefulWidget> createState() => LoadingScreenState();
 }
 
-class LoadingScreenState extends State<LoadingScreen> {
+class LoadingScreenState extends BaseState<LoadingScreen> {
   late SessionManager sessionManager;
   late SharedPreferences sharedPreferences;
 
@@ -37,12 +38,6 @@ class LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void setState(VoidCallback fn) {
-    if (!mounted) return;
-    super.setState(fn);
   }
 
   Future<void> init() async {

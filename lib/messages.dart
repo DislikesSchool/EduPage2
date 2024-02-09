@@ -1,4 +1,5 @@
 import 'package:eduapge2/api.dart';
+import 'package:eduapge2/main.dart';
 import 'package:eduapge2/message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
@@ -11,7 +12,7 @@ class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key, required this.sessionManager});
 
   @override
-  State<MessagesPage> createState() => TimeTablePageState();
+  BaseState<MessagesPage> createState() => TimeTablePageState();
 }
 
 extension MoveElement<T> on List<T> {
@@ -28,7 +29,7 @@ extension MoveElement<T> on List<T> {
   }
 }
 
-class TimeTablePageState extends State<MessagesPage> {
+class TimeTablePageState extends BaseState<MessagesPage> {
   bool loading = true;
   bool loaded = false;
   late List<dynamic> apidataMsg;
@@ -42,12 +43,6 @@ class TimeTablePageState extends State<MessagesPage> {
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void setState(VoidCallback fn) {
-    if (!mounted) return;
-    super.setState(fn);
   }
 
   @override

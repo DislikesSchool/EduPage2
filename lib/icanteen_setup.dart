@@ -1,3 +1,4 @@
+import 'package:eduapge2/main.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
@@ -13,10 +14,10 @@ class ICanteenSetupScreen extends StatefulWidget {
   final SessionManager sessionManager;
 
   @override
-  State<StatefulWidget> createState() => ICanteenSetupScreenState();
+  BaseState<StatefulWidget> createState() => ICanteenSetupScreenState();
 }
 
-class ICanteenSetupScreenState extends State<ICanteenSetupScreen> {
+class ICanteenSetupScreenState extends BaseState<ICanteenSetupScreen> {
   late SessionManager sessionManager;
   late SharedPreferences sharedPreferences;
 
