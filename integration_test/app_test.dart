@@ -21,13 +21,19 @@ void main() {
     String? password = const String.fromEnvironment("PASSWORD");
     String? name = const String.fromEnvironment("NAME");
 
+    String token = "";
+
     testWidgets('Run app and login', (tester) async {
-      await prep(tester, username, password, name, true);
+      await prep(tester, username, password, name, true, "https://ep2.vypal.me",
+          false, "");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      token = prefs.getString("token") ?? "";
+      expect(find.text(name), findsWidgets);
       expect(find.text("Username"), findsNothing);
     });
 
     testWidgets('Test TimeTable page', (tester) async {
-      await prep(tester, username, password, name, false);
+      await prep(tester, username, password, name, false, "", false, token);
 
       await tester.pump(const Duration(seconds: 1));
 
@@ -43,7 +49,7 @@ void main() {
     });
 
     testWidgets('Test TimeTable page scroll', (tester) async {
-      await prep(tester, username, password, name, false);
+      await prep(tester, username, password, name, false, "", true, token);
 
       await tester.tap(find.byType(NavigationDestination).at(1));
       await tester.pump(const Duration(seconds: 1));
@@ -68,9 +74,21 @@ void main() {
   });
 }
 
-Future<void> prep(WidgetTester tester, String username, String password,
-    String name, bool enableiCanteen) async {
-  SharedPreferences.setMockInitialValues({"ice": enableiCanteen});
+Future<void> prep(
+    WidgetTester tester,
+    String username,
+    String password,
+    String name,
+    bool enableiCanteen,
+    String customEndPoint,
+    bool quickstart,
+    String token) async {
+  SharedPreferences.setMockInitialValues({
+    "ice": enableiCanteen,
+    "customEndpoint": customEndPoint,
+    "quickstart": quickstart,
+    "token": token
+  });
   final FlutterExceptionHandler? originalOnError = FlutterError.onError;
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
