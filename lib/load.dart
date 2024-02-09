@@ -84,14 +84,6 @@ class LoadingScreenState extends BaseState<LoadingScreen> {
             });
   }
 
-  DateTime getWeekDay() {
-    DateTime now = DateTime.now();
-    if (now.weekday > 5) {
-      now.add(Duration(days: 8 - now.weekday));
-    }
-    return DateTime(now.year, now.month, now.day);
-  }
-
   @override
   Widget build(BuildContext context) {
     if (!startedInit) {
