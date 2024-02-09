@@ -71,6 +71,16 @@ void main() {
       await pumpUntilFound(tester, find.textContaining("$day $month"));
       expect(find.textContaining("$day $month"), findsWidgets);
     });
+
+    testWidgets('Test Messages page', (tester) async {
+      await prep(tester, username, password, name, false, "", true, token);
+
+      await tester.tap(find.byType(NavigationDestination).at(2));
+      await tester.pump(const Duration(seconds: 1));
+
+      await pumpUntilFound(tester, find.text("Messages"));
+      expect(find.text("Messages"), findsWidgets);
+    });
   });
 }
 
