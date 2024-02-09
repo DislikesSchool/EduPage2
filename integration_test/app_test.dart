@@ -22,12 +22,12 @@ void main() {
     String? name = const String.fromEnvironment("NAME");
 
     testWidgets('Run app and login', (tester) async {
-      await prep(tester, username, password, name);
+      await prep(tester, username, password, name, true);
       expect(find.text("Username"), findsNothing);
     });
 
     testWidgets('Test TimeTable page', (tester) async {
-      await prep(tester, username, password, name);
+      await prep(tester, username, password, name, false);
 
       await tester.pump(const Duration(seconds: 1));
 
@@ -43,7 +43,7 @@ void main() {
     });
 
     testWidgets('Test TimeTable page scroll', (tester) async {
-      await prep(tester, username, password, name);
+      await prep(tester, username, password, name, false);
 
       await tester.tap(find.byType(NavigationDestination).at(1));
       await tester.pump(const Duration(seconds: 1));
@@ -68,9 +68,9 @@ void main() {
   });
 }
 
-Future<void> prep(
-    WidgetTester tester, String username, String password, String name) async {
-  SharedPreferences.setMockInitialValues({});
+Future<void> prep(WidgetTester tester, String username, String password,
+    String name, bool enableiCanteen) async {
+  SharedPreferences.setMockInitialValues({"ice": enableiCanteen});
   final FlutterExceptionHandler? originalOnError = FlutterError.onError;
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
