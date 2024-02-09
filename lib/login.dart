@@ -1,3 +1,4 @@
+import 'package:eduapge2/main.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -7,10 +8,10 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.err});
 
   @override
-  State<StatefulWidget> createState() => LoinPageState();
+  BaseState<StatefulWidget> createState() => LoinPageState();
 }
 
-class LoinPageState extends State<LoginPage> {
+class LoinPageState extends BaseState<LoginPage> {
   AppLocalizations? local;
   late SharedPreferences sharedPreferences;
   String email = "";

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/icanteen_setup.dart';
+import 'package:eduapge2/main.dart';
 import 'package:eduapge2/message.dart';
 import 'package:eduapge2/messages.dart';
 import 'package:flutter/foundation.dart';
@@ -26,7 +27,7 @@ class HomePage extends StatefulWidget {
       required this.onDestinationSelected});
 
   @override
-  State<HomePage> createState() => HomePageState();
+  BaseState<HomePage> createState() => HomePageState();
 }
 
 class LessonStatus {
@@ -145,7 +146,7 @@ LessonStatus getLessonStatus(
   }
 }
 
-class HomePageState extends State<HomePage> {
+class HomePageState extends BaseState<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   SharedPreferences? sharedPreferences;
 
@@ -164,12 +165,6 @@ class HomePageState extends State<HomePage> {
     super.initState();
     getData();
     fetchAndCompareBuildName();
-  }
-
-  @override
-  void setState(VoidCallback fn) {
-    if (!mounted) return;
-    super.setState(fn);
   }
 
   DateTime getWeekDay() {

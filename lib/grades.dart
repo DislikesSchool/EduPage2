@@ -1,3 +1,4 @@
+import 'package:eduapge2/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -8,10 +9,10 @@ class GradesPage extends StatefulWidget {
   const GradesPage({super.key, required this.sessionManager});
 
   @override
-  State<GradesPage> createState() => GradesPageState();
+  BaseState<GradesPage> createState() => GradesPageState();
 }
 
-class GradesPageState extends State<GradesPage> {
+class GradesPageState extends BaseState<GradesPage> {
   bool loading = true;
   late List<dynamic> apidataMsg;
 
@@ -21,12 +22,6 @@ class GradesPageState extends State<GradesPage> {
   void initState() {
     getData(); //fetching data
     super.initState();
-  }
-
-  @override
-  void setState(VoidCallback fn) {
-    if (!mounted) return;
-    super.setState(fn);
   }
 
   getData() async {

@@ -1,4 +1,5 @@
 import 'package:eduapge2/api.dart';
+import 'package:eduapge2/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -9,10 +10,10 @@ class HomeworkPage extends StatefulWidget {
   const HomeworkPage({super.key, required this.sessionManager});
 
   @override
-  State<HomeworkPage> createState() => HomeworkPageState();
+  BaseState<HomeworkPage> createState() => HomeworkPageState();
 }
 
-class HomeworkPageState extends State<HomeworkPage> {
+class HomeworkPageState extends BaseState<HomeworkPage> {
   bool loading = true;
   bool loaded = false;
   late List<dynamic> apidataMsg;
@@ -22,12 +23,6 @@ class HomeworkPageState extends State<HomeworkPage> {
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void setState(VoidCallback fn) {
-    if (!mounted) return;
-    super.setState(fn);
   }
 
   getData() async {

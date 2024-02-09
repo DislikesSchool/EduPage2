@@ -31,7 +31,7 @@ Future<void> main() async {
   ));
   await remoteConfig.setDefaults(const {
     "baseUrl": "https://lobster-app-z6jfk.ondigitalocean.app/api",
-    "testUrl": "https://edupage2-server.onrender.com"
+    "testUrl": "https://ep2.vypal.me"
   });
   await remoteConfig.fetchAndActivate();
   await SentryFlutter.init(
@@ -44,6 +44,13 @@ Future<void> main() async {
   );
   //OneSignal.shared.setAppId("85587dc6-0a3c-4e91-afd6-e0ca82361763");
   //OneSignal.shared.promptUserForPushNotificationPermission();
+}
+
+abstract class BaseState<T extends StatefulWidget> extends State<T> {
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) super.setState(fn);
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -90,10 +97,10 @@ class PageBase extends StatefulWidget {
   const PageBase({super.key});
 
   @override
-  State<PageBase> createState() => PageBaseState();
+  BaseState<PageBase> createState() => PageBaseState();
 }
 
-class PageBaseState extends State<PageBase> {
+class PageBaseState extends BaseState<PageBase> {
   int _selectedIndex = 0;
   String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
 
@@ -132,12 +139,6 @@ class PageBaseState extends State<PageBase> {
         sameResolution.isNotEmpty ? sameResolution.first : active;
 
     await FlutterDisplayMode.setPreferredMode(mostOptimalMode);
-  }
-
-  @override
-  void setState(VoidCallback fn) {
-    if (!mounted) return;
-    super.setState(fn);
   }
 
   void _onDestinationSelected(int index) {
