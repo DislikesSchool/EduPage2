@@ -144,6 +144,9 @@ class User {
   }
 
   Future<bool> validate() async {
+    if (token == "") {
+      return false;
+    }
     try {
       Response resp = await data.dio.get(
         "${data.baseUrl}/validate-token",
