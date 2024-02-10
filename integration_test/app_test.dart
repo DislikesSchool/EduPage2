@@ -80,6 +80,18 @@ void main() {
 
       await pumpUntilFound(tester, find.text("Messages"));
       expect(find.text("Messages"), findsWidgets);
+      expect(find.byType(Card), findsWidgets);
+    });
+
+    testWidgets('Test Homework page', (tester) async {
+      await prep(tester, username, password, name, false, "", true, token);
+
+      await tester.tap(find.byType(NavigationDestination).at(3));
+      await tester.pump(const Duration(seconds: 1));
+
+      await pumpUntilFound(tester, find.text("Homework"));
+      expect(find.text("Homework"), findsWidgets);
+      expect(find.byType(Card), findsWidgets);
     });
   });
 }
