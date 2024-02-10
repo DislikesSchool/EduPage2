@@ -83,6 +83,26 @@ void main() {
       expect(find.byType(Card), findsWidgets);
     });
 
+    testWidgets('Test Message page', (tester) async {
+      await prep(tester, username, password, name, false, "", true, token);
+
+      await tester.tap(find.byType(NavigationDestination).at(2));
+      await tester.pump(const Duration(seconds: 1));
+
+      await pumpUntilFound(tester, find.text("Messages"));
+      expect(find.text("Messages"), findsWidgets);
+      expect(find.byType(Card), findsWidgets);
+
+      await tester.tap(find.byType(InkWell).at(0));
+      await tester.pump(const Duration(seconds: 1));
+
+      await pumpUntilFound(tester,
+          find.byWidget(const Icon(Icons.arrow_right_rounded, size: 18)));
+      expect(find.byWidget(const Icon(Icons.arrow_right_rounded, size: 18)),
+          findsOneWidget);
+      expect(find.byType(Card), findsWidgets);
+    });
+
     testWidgets('Test Homework page', (tester) async {
       await prep(tester, username, password, name, false, "", true, token);
 
