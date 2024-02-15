@@ -29,6 +29,7 @@ class ICanteenSetupScreenState extends BaseState<ICanteenSetupScreen> {
   String email = "";
   String password = "";
   String server = "";
+  bool showPassword = false;
 
   Future<void> login() async {
     setState(() {
@@ -88,9 +89,18 @@ class ICanteenSetupScreenState extends BaseState<ICanteenSetupScreen> {
                 decoration: InputDecoration(
                   icon: const Icon(Icons.key),
                   hintText: local!.iCanteenSetupPassword,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                        showPassword ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        showPassword = !showPassword;
+                      });
+                    },
+                  ),
                 ),
                 onChanged: (text) => {password = text},
-                obscureText: true,
+                obscureText: !showPassword,
                 keyboardType: TextInputType.visiblePassword,
               ),
               ElevatedButton(

@@ -20,6 +20,7 @@ class LoinPageState extends BaseState<LoginPage> {
   bool _showServerField = false;
   bool _useCustomEndpoint = false;
   String _customEndpoint = '';
+  bool showPassword = false;
 
   @override
   void initState() {
@@ -87,6 +88,15 @@ class LoinPageState extends BaseState<LoginPage> {
                 decoration: InputDecoration(
                   icon: const Icon(Icons.key),
                   hintText: local!.loginPassword,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                        showPassword ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        showPassword = !showPassword;
+                      });
+                    },
+                  ),
                 ),
                 onChanged: (text) => {password = text},
                 obscureText: true,
