@@ -717,7 +717,7 @@ class Homework {
   final List<String> groups;
   final int eTestCards;
   final int eTestAnswerCards;
-  final bool studyTopics;
+  final dynamic studyTopics;
   final dynamic gradeEventId;
   final String studentsHidden;
   final Map<String, dynamic> data;
