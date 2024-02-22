@@ -255,7 +255,7 @@ class HomePageState extends BaseState<HomePage> {
       var lunches = jsonDecode(l) as List<dynamic>;
       if (lunches.isNotEmpty) {
         var lunchToday = lunches[0] as Map<String, dynamic>;
-        if (DateTime.parse(lunchToday["day"]).day != DateTime.now().day) {
+        if (DateTime.parse(lunchToday["day"]).day == DateTime.now().day) {
           lunch = 0;
           var todayLunches = lunchToday["lunches"];
           for (int i = 0; i < todayLunches.length; i++) {
