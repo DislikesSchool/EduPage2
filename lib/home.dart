@@ -548,9 +548,11 @@ class HomePageState extends BaseState<HomePage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           for (TimelineItem m in msgsWOR.length < 5
-                              ? msgsWOR
-                              : msgsWOR.getRange(
-                                  msgsWOR.length - 5, msgsWOR.length))
+                              ? msgsWOR.reversed
+                              : msgsWOR
+                                  .getRange(msgsWOR.length - 5, msgsWOR.length)
+                                  .toList()
+                                  .reversed)
                             InkWell(
                               highlightColor: Colors.transparent,
                               splashColor: Colors.transparent,
