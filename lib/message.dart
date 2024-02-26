@@ -14,9 +14,13 @@ import 'package:url_launcher/url_launcher.dart';
 class MessagePage extends StatefulWidget {
   final SessionManager sessionManager;
   final int id;
+  final DateTime date;
 
   const MessagePage(
-      {super.key, required this.sessionManager, required this.id});
+      {super.key,
+      required this.sessionManager,
+      required this.id,
+      required this.date});
 
   @override
   BaseState<MessagePage> createState() => MessagePageState();
@@ -44,7 +48,7 @@ class MessagePageState extends BaseState<MessagePage> {
       loading = true; //make loading true to show progressindicator
     });
     Response response = await dio.get(
-      "$baseUrl/api/timelineitem/${widget.id}",
+      "$baseUrl/api/timelineitem/${widget.id}?date=${widget.date.toIso8601String()}",
       options: Options(
         headers: {
           "Authorization": "Bearer ${EP2Data.getInstance().user.token}",

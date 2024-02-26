@@ -143,11 +143,15 @@ class TimeTablePageState extends BaseState<MessagesPage> {
         child: InkWell(
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext buildContext) => MessagePage(
-                        sessionManager: widget.sessionManager,
-                        id: int.parse(msg.id))));
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext buildContext) => MessagePage(
+                  sessionManager: widget.sessionManager,
+                  id: int.parse(msg.id),
+                  date: msg.timestamp,
+                ),
+              ),
+            );
           },
           child: Padding(
             padding: const EdgeInsets.all(10),

@@ -576,12 +576,15 @@ class HomePageState extends BaseState<HomePage> {
                               ),
                               onTap: () {
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MessagePage(
-                                            sessionManager:
-                                                widget.sessionManager,
-                                            id: int.parse(m.id))));
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MessagePage(
+                                      sessionManager: widget.sessionManager,
+                                      id: int.parse(m.id),
+                                      date: m.timestamp,
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                         ],
