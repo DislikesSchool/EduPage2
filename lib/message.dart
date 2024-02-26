@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/main.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -57,7 +59,7 @@ class MessagePageState extends BaseState<MessagePage> {
     );
 
     HtmlUnescape unescape = HtmlUnescape();
-
+    print(jsonEncode(response.data));
     Map<String, dynamic> data = response.data;
     bool isImportantMessage = false;
     if (data["data"]["Value"] != null &&
@@ -262,10 +264,10 @@ class MessagePageState extends BaseState<MessagePage> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                  "${r["owner"]["firstname"]} ${r["owner"]["lastname"]}: "),
-                              Text(
-                                unescape.convert(r["text"]),
+                              Text("${r["vlastnik_meno"]}: "),
+                              SelectableLinkify(
+                                text: unescape.convert(r["text"]),
+                                onOpen: _onOpen,
                               ),
                             ],
                           ),
