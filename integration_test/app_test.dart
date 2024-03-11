@@ -82,24 +82,25 @@ void main() {
       expect(find.text("Messages"), findsWidgets);
       expect(find.byType(Card), findsWidgets);
     });
-
     testWidgets('Test Message page', (tester) async {
-      await prep(tester, username, password, name, false, "", true, token);
+      await prep(tester, username, password, name, false, "", false, "");
 
       await tester.tap(find.byType(NavigationDestination).at(2));
-      await tester.pump(const Duration(seconds: 1));
 
       await pumpUntilFound(tester, find.text("Messages"));
       expect(find.text("Messages"), findsWidgets);
-      expect(find.byType(Card), findsWidgets);
+      Finder f = find.byWidgetPredicate((widget) =>
+          widget is Icon &&
+          widget.size == 18 &&
+          widget.icon == Icons.arrow_right_rounded);
+      await pumpUntilFound(tester, f);
+      expect(f, findsWidgets);
 
-      await tester.tap(find.byType(InkWell).at(0));
+      await tester.tap(f.at(0));
       await tester.pump(const Duration(seconds: 1));
 
-      await pumpUntilFound(tester,
-          find.byWidget(const Icon(Icons.arrow_right_rounded, size: 18)));
-      expect(find.byWidget(const Icon(Icons.arrow_right_rounded, size: 18)),
-          findsOneWidget);
+      await pumpUntilFound(tester, f);
+      expect(f, findsOneWidget);
       expect(find.byType(Card), findsWidgets);
     });
 
