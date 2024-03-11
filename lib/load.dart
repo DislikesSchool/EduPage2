@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/login.dart';
 import 'package:eduapge2/main.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,11 +28,7 @@ class LoadingScreenState extends BaseState<LoadingScreen> {
   double progress = 0.0;
   String loaderText = "Loading...";
 
-  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
-
   late AppLocalizations? local;
-
-  late bool quickstart;
 
   @override
   void initState() {
@@ -44,11 +39,6 @@ class LoadingScreenState extends BaseState<LoadingScreen> {
     if (startedInit) return;
     startedInit = true;
     sharedPreferences = await SharedPreferences.getInstance();
-    String? endpoint = sharedPreferences.getString("customEndpoint");
-    if (endpoint != null && endpoint != "") {
-      baseUrl = endpoint;
-    }
-    quickstart = sharedPreferences.getBool('quickstart') ?? false;
     if (sharedPreferences.getBool("ice") == true) {
       sessionManager.set("iCanteenEnabled", true);
     }
@@ -82,14 +72,6 @@ class LoadingScreenState extends BaseState<LoadingScreen> {
                 startedInit = false;
               })
             });
-  }
-
-  DateTime getWeekDay() {
-    DateTime now = DateTime.now();
-    if (now.weekday > 5) {
-      now.add(Duration(days: 8 - now.weekday));
-    }
-    return DateTime(now.year, now.month, now.day);
   }
 
   @override

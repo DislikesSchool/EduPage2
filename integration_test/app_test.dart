@@ -21,13 +21,19 @@ void main() {
     String? password = const String.fromEnvironment("PASSWORD");
     String? name = const String.fromEnvironment("NAME");
 
+    String token = "";
+
     testWidgets('Run app and login', (tester) async {
-      await prep(tester, username, password, name);
+      await prep(tester, username, password, name, true, "https://ep2.vypal.me",
+          false, "");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      token = prefs.getString("token") ?? "";
+      expect(find.text(name), findsWidgets);
       expect(find.text("Username"), findsNothing);
     });
 
     testWidgets('Test TimeTable page', (tester) async {
-      await prep(tester, username, password, name);
+      await prep(tester, username, password, name, false, "", false, token);
 
       await tester.pump(const Duration(seconds: 1));
 
@@ -43,7 +49,7 @@ void main() {
     });
 
     testWidgets('Test TimeTable page scroll', (tester) async {
-      await prep(tester, username, password, name);
+      await prep(tester, username, password, name, false, "", true, token);
 
       await tester.tap(find.byType(NavigationDestination).at(1));
       await tester.pump(const Duration(seconds: 1));
@@ -65,12 +71,67 @@ void main() {
       await pumpUntilFound(tester, find.textContaining("$day $month"));
       expect(find.textContaining("$day $month"), findsWidgets);
     });
+
+    testWidgets('Test Messages page', (tester) async {
+      await prep(tester, username, password, name, false, "", true, token);
+
+      await tester.tap(find.byType(NavigationDestination).at(2));
+      await tester.pump(const Duration(seconds: 1));
+
+      await pumpUntilFound(tester, find.text("Messages"));
+      expect(find.text("Messages"), findsWidgets);
+      expect(find.byType(Card), findsWidgets);
+    });
+    testWidgets('Test Message page', (tester) async {
+      await prep(tester, username, password, name, false, "", false, "");
+
+      await tester.tap(find.byType(NavigationDestination).at(2));
+
+      await pumpUntilFound(tester, find.text("Messages"));
+      expect(find.text("Messages"), findsWidgets);
+      Finder f = find.byWidgetPredicate((widget) =>
+          widget is Icon &&
+          widget.size == 18 &&
+          widget.icon == Icons.arrow_right_rounded);
+      await pumpUntilFound(tester, f);
+      expect(f, findsWidgets);
+
+      await tester.tap(f.at(0));
+      await tester.pump(const Duration(seconds: 1));
+
+      await pumpUntilFound(tester, f);
+      expect(f, findsOneWidget);
+      expect(find.byType(Card), findsWidgets);
+    });
+
+    testWidgets('Test Homework page', (tester) async {
+      await prep(tester, username, password, name, false, "", true, token);
+
+      await tester.tap(find.byType(NavigationDestination).at(3));
+      await tester.pump(const Duration(seconds: 1));
+
+      await pumpUntilFound(tester, find.text("Homework"));
+      expect(find.text("Homework"), findsWidgets);
+      expect(find.byType(Card), findsWidgets);
+    });
   });
 }
 
 Future<void> prep(
-    WidgetTester tester, String username, String password, String name) async {
-  SharedPreferences.setMockInitialValues({});
+    WidgetTester tester,
+    String username,
+    String password,
+    String name,
+    bool enableiCanteen,
+    String customEndPoint,
+    bool quickstart,
+    String token) async {
+  SharedPreferences.setMockInitialValues({
+    "ice": enableiCanteen,
+    "customEndpoint": customEndPoint,
+    "quickstart": quickstart,
+    "token": token
+  });
   final FlutterExceptionHandler? originalOnError = FlutterError.onError;
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
