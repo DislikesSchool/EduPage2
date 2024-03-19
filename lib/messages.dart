@@ -1,4 +1,5 @@
 import 'package:eduapge2/api.dart';
+import 'package:eduapge2/create_message.dart';
 import 'package:eduapge2/main.dart';
 import 'package:eduapge2/message.dart';
 import 'package:flutter/material.dart';
@@ -89,6 +90,16 @@ class TimeTablePageState extends BaseState<MessagesPage> {
             )
           : Text(AppLocalizations.of(context)!.loading),
       backgroundColor: Theme.of(context).colorScheme.background,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext buildContext) =>
+                      const SendMessageScreen()));
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 

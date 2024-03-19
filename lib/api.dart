@@ -103,6 +103,87 @@ class EP2Data {
   }
 }
 
+enum RecipientType { student, teacher }
+
+class Recipient {
+  String id;
+  RecipientType type;
+  String name;
+
+  Recipient({
+    required this.id,
+    required this.type,
+    required this.name,
+  });
+
+  String recipientString(bool parents) {
+    switch (type) {
+      case RecipientType.student:
+        return parents ? "Student$id" : "StudentOnly$id";
+      case RecipientType.teacher:
+        return "Teacher$id";
+    }
+  }
+
+  factory Recipient.fromJson(Map<String, dynamic> json) {
+    return Recipient(
+      id: json['id'],
+      type: json['type'] == "student"
+          ? RecipientType.student
+          : RecipientType.teacher,
+      name: json['name'],
+    );
+  }
+}
+
+class MessageOptions {
+  final String text;
+  final bool important;
+  final PollOptions? poll;
+
+  MessageOptions({
+    required this.text,
+    required this.important,
+    this.poll,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'text': text,
+        'important': important,
+        'poll': poll?.toJson(),
+      };
+}
+
+class PollOption {
+  final String text;
+  final String id;
+
+  PollOption({
+    required this.text,
+    required this.id,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'text': text,
+        'id': id,
+      };
+}
+
+class PollOptions {
+  final List<PollOption> options;
+  final bool multiple;
+
+  PollOptions({
+    required this.options,
+    required this.multiple,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'options': options.map((option) => option.toJson()).toList(),
+        'multiple': multiple,
+      };
+}
+
 class User {
   final EP2Data data = EP2Data.getInstance();
 
