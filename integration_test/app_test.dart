@@ -82,6 +82,24 @@ void main() {
       expect(find.text("Messages"), findsWidgets);
       expect(find.byType(Card), findsWidgets);
     });
+
+    testWidgets('Test Send Message page', (tester) async {
+      await prep(tester, username, password, name, false, "", true, token);
+
+      await tester.tap(find.byType(NavigationDestination).at(2));
+      await tester.pump(const Duration(seconds: 1));
+
+      await pumpUntilFound(tester, find.text("Messages"));
+      expect(find.text("Messages"), findsWidgets);
+      expect(find.byType(Card), findsWidgets);
+      expect(find.byType(FloatingActionButton), findsOneWidget);
+
+      await tester.tap(find.byType(FloatingActionButton).at(0));
+      await pumpUntilFound(tester, find.text("Select recipient"));
+
+      expect(find.text("Select recipient"), findsOneWidget);
+    });
+
     testWidgets('Test Message page', (tester) async {
       await prep(tester, username, password, name, false, "", false, "");
 
