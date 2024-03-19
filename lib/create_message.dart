@@ -147,7 +147,6 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
               onPressed: () {
                 EP2Data data = EP2Data.getInstance();
 
-                // Create a MessageOptions object
                 final messageOptions = MessageOptions(
                   text: message,
                   important: isImportant,
@@ -157,7 +156,6 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                       : null,
                 );
 
-                // Convert the MessageOptions object to JSON
                 final messageOptionsJson = jsonEncode(messageOptions);
 
                 data.dio
