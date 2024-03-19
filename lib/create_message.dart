@@ -159,7 +159,6 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
 
                 // Convert the MessageOptions object to JSON
                 final messageOptionsJson = jsonEncode(messageOptions);
-                print(selectedRecipient);
 
                 data.dio
                     .post(
@@ -171,14 +170,16 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                   options: Options(
                     headers: {"Authorization": "Bearer ${data.user.token}"},
                     contentType: Headers.formUrlEncodedContentType,
-                    validateStatus: (status) => true,
                   ),
                 )
                     .then((response) {
-                  print(response);
-                  //Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                 }).catchError((error) {
-                  print(error);
+                  final snackBar = SnackBar(
+                    content: Text(error.toString()),
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 });
               },
               child: const Text('Send Message'),
