@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/main.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -59,7 +57,6 @@ class MessagePageState extends BaseState<MessagePage> {
     );
 
     HtmlUnescape unescape = HtmlUnescape();
-    print(jsonEncode(response.data));
     Map<String, dynamic> data = response.data;
     bool isImportantMessage = false;
     if (data["data"]["Value"] != null &&
