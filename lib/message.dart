@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/main.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -14,9 +16,13 @@ import 'package:url_launcher/url_launcher.dart';
 class MessagePage extends StatefulWidget {
   final SessionManager sessionManager;
   final int id;
+  final DateTime date;
 
   const MessagePage(
-      {super.key, required this.sessionManager, required this.id});
+      {super.key,
+      required this.sessionManager,
+      required this.id,
+      required this.date});
 
   @override
   BaseState<MessagePage> createState() => MessagePageState();
@@ -44,7 +50,7 @@ class MessagePageState extends BaseState<MessagePage> {
       loading = true; //make loading true to show progressindicator
     });
     Response response = await dio.get(
-      "$baseUrl/api/timelineitem/${widget.id}",
+      "$baseUrl/api/timelineitem/${widget.id}?date=${widget.date.toIso8601String()}",
       options: Options(
         headers: {
           "Authorization": "Bearer ${EP2Data.getInstance().user.token}",
@@ -53,7 +59,7 @@ class MessagePageState extends BaseState<MessagePage> {
     );
 
     HtmlUnescape unescape = HtmlUnescape();
-
+    print(jsonEncode(response.data));
     Map<String, dynamic> data = response.data;
     bool isImportantMessage = false;
     if (data["data"]["Value"] != null &&
@@ -258,10 +264,10 @@ class MessagePageState extends BaseState<MessagePage> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                  "${r["owner"]["firstname"]} ${r["owner"]["lastname"]}: "),
-                              Text(
-                                unescape.convert(r["text"]),
+                              Text("${r["vlastnik_meno"]}: "),
+                              SelectableLinkify(
+                                text: unescape.convert(r["text"]),
+                                onOpen: _onOpen,
                               ),
                             ],
                           ),

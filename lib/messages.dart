@@ -126,9 +126,9 @@ class TimeTablePageState extends BaseState<MessagesPage> {
     for (TimelineItem msg in msgs) {
       if (msg.reactionTo != "") {
         if (!bump.any((element) =>
-            element["ineid"]!.compareTo(int.parse(msg.reactionTo)) == 0)) {
+            element["timelineid"]!.compareTo(int.parse(msg.reactionTo)) == 0)) {
           bump.add({
-            "ineid": int.parse(msg.reactionTo),
+            "timelineid": int.parse(msg.reactionTo),
             "index": msgsWOR.indexOf(msg)
           });
           msgsWOR.remove(msg);
@@ -142,16 +142,27 @@ class TimeTablePageState extends BaseState<MessagesPage> {
       if (msg.data["Value"]["messageContent"] != null) {
         isImportantMessage = true;
       }
+      /*
+      for (TimelineItem r in msgs
+          .where((element) => element.reactionTo == msg.otherId.toString())
+          .toList()) {
+        print(r.id);
+      }
+      */
       rows.add(Card(
         //color: msg["isSeen"] ? null : Theme.of(context).colorScheme.tertiaryContainer,
         child: InkWell(
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext buildContext) => MessagePage(
-                        sessionManager: widget.sessionManager,
-                        id: int.parse(msg.id))));
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext buildContext) => MessagePage(
+                  sessionManager: widget.sessionManager,
+                  id: int.parse(msg.id),
+                  date: msg.timestamp,
+                ),
+              ),
+            );
           },
           child: Padding(
             padding: const EdgeInsets.all(10),
@@ -198,10 +209,10 @@ class TimeTablePageState extends BaseState<MessagesPage> {
                     )
                   ],
                 ),
-                if (msg.reactionTo != "")
+                if (msg.reactionTo == "")
                   for (TimelineItem r in msgs
-                      .where((element) =>
-                          element.reactionTo == msg.otherId.toString())
+                      .where(
+                          (element) => element.reactionTo == msg.id.toString())
                       .toList())
                     Row(
                       children: [

@@ -255,7 +255,7 @@ class HomePageState extends BaseState<HomePage> {
       var lunches = jsonDecode(l) as List<dynamic>;
       if (lunches.isNotEmpty) {
         var lunchToday = lunches[0] as Map<String, dynamic>;
-        if (DateTime.parse(lunchToday["day"]).day != DateTime.now().day) {
+        if (DateTime.parse(lunchToday["day"]).day == DateTime.now().day) {
           lunch = 0;
           var todayLunches = lunchToday["lunches"];
           for (int i = 0; i < todayLunches.length; i++) {
@@ -548,9 +548,11 @@ class HomePageState extends BaseState<HomePage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           for (TimelineItem m in msgsWOR.length < 5
-                              ? msgsWOR
-                              : msgsWOR.getRange(
-                                  msgsWOR.length - 5, msgsWOR.length))
+                              ? msgsWOR.reversed
+                              : msgsWOR
+                                  .getRange(msgsWOR.length - 5, msgsWOR.length)
+                                  .toList()
+                                  .reversed)
                             InkWell(
                               highlightColor: Colors.transparent,
                               splashColor: Colors.transparent,
@@ -574,12 +576,15 @@ class HomePageState extends BaseState<HomePage> {
                               ),
                               onTap: () {
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MessagePage(
-                                            sessionManager:
-                                                widget.sessionManager,
-                                            id: int.parse(m.id))));
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MessagePage(
+                                      sessionManager: widget.sessionManager,
+                                      id: int.parse(m.id),
+                                      date: m.timestamp,
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                         ],
