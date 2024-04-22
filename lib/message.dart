@@ -47,6 +47,79 @@ class MessagePageState extends BaseState<MessagePage> {
     setState(() {
       loading = true; //make loading true to show progressindicator
     });
+
+    if (EP2Data.getInstance().sharedPreferences.getBool("demo") ?? false) {
+      messages = Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: ListView(
+              children: const [
+                Card(
+                  elevation: 2,
+                  child: Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 60, top: 5),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Demo",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              Icon(Icons.arrow_right_rounded, size: 18),
+                              Expanded(
+                                child: Text(
+                                  "Demo",
+                                  overflow: TextOverflow.fade,
+                                  maxLines: 5,
+                                  softWrap: true,
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        SelectableLinkify(
+                          text: "Demo",
+                          onOpen: _onOpen,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 15,
+            left: 15,
+            child: Card(
+              elevation: 10,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_rounded,
+                  size: 40,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          ),
+        ],
+      );
+      loading = false;
+      setState(() {}); //refresh UI
+      return;
+    }
+
     Response response = await dio.get(
       "$baseUrl/api/timelineitem/${widget.id}?date=${widget.date.toIso8601String()}",
       options: Options(

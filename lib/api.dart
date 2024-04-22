@@ -41,6 +41,39 @@ class EP2Data {
 
     sharedPreferences = await SharedPreferences.getInstance();
 
+    if (sharedPreferences.getBool("demo") ?? false) {
+      user = User(username: "demo", password: "demo", server: "demo");
+      user.name = "Demo User";
+      timeline = Timeline(homeworks: {}, items: {
+        "1234": TimelineItem(
+          id: '1234',
+          timestamp: DateTime.now(),
+          reactionTo: '',
+          type: 'sprava',
+          user: 'demo',
+          targetUser: 'demo',
+          userName: 'demo',
+          otherId: 'demo',
+          text: 'demo',
+          timeAdded: DateTime.now(),
+          timeEvent: DateTime.now(),
+          data: {
+            "Value": {"messageContent": null}
+          },
+          owner: 'demo',
+          ownerName: 'demo',
+          reactionCount: 0,
+          lastReaction: 'demo',
+          pomocnyZaznam: 'demo',
+          removed: 0,
+          timeAddedBTC: DateTime.now(),
+          lastReactionBTC: DateTime.now(),
+        ),
+      });
+      timetable = TimeTable();
+      return true;
+    }
+
     bool quickstart = sharedPreferences.getBool("quickstart") ?? false;
 
     String? endpoint = sharedPreferences.getString("customEndpoint");
@@ -229,6 +262,11 @@ class TimeTable {
   Future<TimeTableData> loadTt(DateTime date) async {
     DateTime dateOnly = DateTime(date.year, date.month, date.day);
     if (timetables.containsKey(dateOnly)) {
+      return timetables[dateOnly]!;
+    }
+
+    if (data.sharedPreferences.getBool("demo") ?? false) {
+      timetables[dateOnly] = TimeTableData(date, [], []);
       return timetables[dateOnly]!;
     }
 

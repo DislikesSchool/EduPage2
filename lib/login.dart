@@ -62,89 +62,109 @@ class LoinPageState extends BaseState<LoginPage> {
   Widget build(BuildContext context) {
     local ??= AppLocalizations.of(context);
     return Center(
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                local!.loginPleaseLogin,
-                style: const TextStyle(
-                  fontSize: 18,
-                ),
-              ),
-              Text(local!.loginUseExistingCredentials),
-              if (widget.err != "") Text(widget.err),
-              TextField(
-                decoration: InputDecoration(
-                  icon: const Icon(Icons.email),
-                  hintText: local!.loginUsername,
-                ),
-                onChanged: (text) => {email = text},
-                keyboardType: TextInputType.emailAddress,
-              ),
-              TextField(
-                decoration: InputDecoration(
-                  icon: const Icon(Icons.key),
-                  hintText: local!.loginPassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                        showPassword ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () {
-                      setState(() {
-                        showPassword = !showPassword;
-                      });
-                    },
-                  ),
-                ),
-                onChanged: (text) => {password = text},
-                obscureText: true,
-                keyboardType: TextInputType.visiblePassword,
-              ),
-              Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Checkbox(
-                    value: _useCustomEndpoint,
-                    onChanged: (value) {
-                      setState(() {
-                        _useCustomEndpoint = value!;
-                      });
-                    },
+                  Text(
+                    local!.loginPleaseLogin,
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
                   ),
-                  Text(local!.loginCustomEndpointCheckbox),
+                  Text(local!.loginUseExistingCredentials),
+                  if (widget.err != "") Text(widget.err),
+                  TextField(
+                    decoration: InputDecoration(
+                      icon: const Icon(Icons.email),
+                      hintText: local!.loginUsername,
+                    ),
+                    onChanged: (text) => {email = text},
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  TextField(
+                    decoration: InputDecoration(
+                      icon: const Icon(Icons.key),
+                      hintText: local!.loginPassword,
+                      suffixIcon: IconButton(
+                        icon: Icon(showPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            showPassword = !showPassword;
+                          });
+                        },
+                      ),
+                    ),
+                    onChanged: (text) => {password = text},
+                    obscureText: true,
+                    keyboardType: TextInputType.visiblePassword,
+                  ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _useCustomEndpoint,
+                        onChanged: (value) {
+                          setState(() {
+                            _useCustomEndpoint = value!;
+                          });
+                        },
+                      ),
+                      Text(local!.loginCustomEndpointCheckbox),
+                    ],
+                  ),
+                  if (_useCustomEndpoint)
+                    TextField(
+                        decoration: InputDecoration(
+                          icon: const Icon(Icons.language),
+                          hintText: local!.loginCustomEndpoint,
+                        ),
+                        onChanged: (value) => {_customEndpoint = value}),
+                  if (widget.err != "" || _showServerField)
+                    TextField(
+                      decoration: InputDecoration(
+                        icon: const Icon(Icons.cloud_queue),
+                        hintText: local!.loginServer,
+                      ),
+                      onChanged: (text) => {server = text},
+                      keyboardType: TextInputType.url,
+                    ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () => {
+                      sharedPreferences.setString("email", email),
+                      sharedPreferences.setString("password", password),
+                      sharedPreferences.setString("server", server),
+                      sharedPreferences.setString(
+                          "customEndpoint", _customEndpoint),
+                      sharedPreferences.setBool("demo", false),
+                      Navigator.pop(context),
+                    },
+                    style: ButtonStyle(
+                      elevation: MaterialStateProperty.all(3),
+                    ),
+                    child: Text(local!.loginLogin),
+                  ),
                 ],
               ),
-              if (_useCustomEndpoint)
-                TextField(
-                    decoration: InputDecoration(
-                      icon: const Icon(Icons.language),
-                      hintText: local!.loginCustomEndpoint,
-                    ),
-                    onChanged: (value) => {_customEndpoint = value}),
-              if (widget.err != "" || _showServerField)
-                TextField(
-                  decoration: InputDecoration(
-                    icon: const Icon(Icons.cloud_queue),
-                    hintText: local!.loginServer,
-                  ),
-                  onChanged: (text) => {server = text},
-                  keyboardType: TextInputType.url,
-                ),
-              ElevatedButton(
-                onPressed: () => {
-                  sharedPreferences.setString("email", email),
-                  sharedPreferences.setString("password", password),
-                  sharedPreferences.setString("server", server),
-                  sharedPreferences.setString(
-                      "customEndpoint", _customEndpoint),
-                  Navigator.pop(context),
-                },
-                child: Text(local!.loginLogin),
-              ),
-            ],
+            ),
           ),
-        ),
+          ElevatedButton(
+            onPressed: () => {
+              sharedPreferences.setString("email", ""),
+              sharedPreferences.setString("password", ""),
+              sharedPreferences.setBool("demo", true),
+              Navigator.pop(context),
+            },
+            child: const Text("Or try the demo"),
+          ),
+        ],
       ),
     );
   }
