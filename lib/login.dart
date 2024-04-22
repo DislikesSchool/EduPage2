@@ -162,7 +162,7 @@ class LoinPageState extends BaseState<LoginPage> {
               sharedPreferences.setBool("demo", true),
               Navigator.pop(context),
             },
-            child: const Text("Or try the demo"),
+            child: Text(local!.loginDemoButton),
           ),
         ],
       ),
