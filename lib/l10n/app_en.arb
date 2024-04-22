@@ -29,6 +29,7 @@
   "loginLogin": "Login",
   "loginCustomEndpointCheckbox": "Use custom endpoint",
   "loginCustomEndpoint": "Enter custom endpoint URL",
+  "loginDemoButton": "Or try the demo",
   "today": "Today",
   "tomorrow": "Tomorrow",
   "loadCredentials": "Loading credentials...",

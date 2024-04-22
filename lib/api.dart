@@ -41,6 +41,39 @@ class EP2Data {
 
     sharedPreferences = await SharedPreferences.getInstance();
 
+    if (sharedPreferences.getBool("demo") ?? false) {
+      user = User(username: "demo", password: "demo", server: "demo");
+      user.name = "Demo User";
+      timeline = Timeline(homeworks: {}, items: {
+        "1234": TimelineItem(
+          id: '1234',
+          timestamp: DateTime.now(),
+          reactionTo: '',
+          type: 'sprava',
+          user: 'demo',
+          targetUser: 'demo',
+          userName: 'demo',
+          otherId: 'demo',
+          text: 'demo',
+          timeAdded: DateTime.now(),
+          timeEvent: DateTime.now(),
+          data: {
+            "Value": {"messageContent": null}
+          },
+          owner: 'demo',
+          ownerName: 'demo',
+          reactionCount: 0,
+          lastReaction: 'demo',
+          pomocnyZaznam: 'demo',
+          removed: 0,
+          timeAddedBTC: DateTime.now(),
+          lastReactionBTC: DateTime.now(),
+        ),
+      });
+      timetable = TimeTable();
+      return true;
+    }
+
     bool quickstart = sharedPreferences.getBool("quickstart") ?? false;
 
     String? endpoint = sharedPreferences.getString("customEndpoint");
@@ -229,6 +262,61 @@ class TimeTable {
   Future<TimeTableData> loadTt(DateTime date) async {
     DateTime dateOnly = DateTime(date.year, date.month, date.day);
     if (timetables.containsKey(dateOnly)) {
+      return timetables[dateOnly]!;
+    }
+
+    if (data.sharedPreferences.getBool("demo") ?? false) {
+      TimeTableClass demoClass = TimeTableClass(
+        type: "1",
+        date: "2021-09-01",
+        period: "1",
+        startTime: "08:00",
+        endTime: "08:45",
+        subject: Subject(
+          id: "1",
+          name: "Math",
+          short: "M",
+          cbHidden: false,
+        ),
+        classes: [
+          Class(
+            id: "1",
+            name: "Math",
+            short: "M",
+            grade: "1",
+            teacherId: "1",
+            teacher2Id: "2",
+            classroomId: "1",
+          ),
+        ],
+        groupNames: ["1A"],
+        iGroupId: "1",
+        teachers: [
+          Teacher(
+            id: "1",
+            firstName: "John",
+            lastName: "Doe",
+            short: "JD",
+            gender: "M",
+            classroomId: "1",
+            dateFrom: "2021-09-01",
+            dateTo: "2021-09-01",
+            isOut: false,
+          ),
+        ],
+        classrooms: [
+          Classroom(
+            id: "1",
+            name: "1A",
+            short: "1A",
+          ),
+        ],
+      );
+      TimeTablePeriod demoPeriod =
+          TimeTablePeriod("1", "08:00", "08:45", "1", "1");
+      demoClass.startPeriod = demoPeriod;
+      demoClass.endPeriod = demoPeriod;
+      timetables[dateOnly] = TimeTableData(date, [demoClass], [demoPeriod]);
       return timetables[dateOnly]!;
     }
 

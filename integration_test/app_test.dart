@@ -153,7 +153,7 @@ Future<void> prep(
 
   await tester.enterText(find.byType(TextField).at(0), username);
   await tester.enterText(find.byType(TextField).at(1), password);
-  await tester.tap(find.byType(ElevatedButton));
+  await tester.tap(find.byType(ElevatedButton).at(0));
 
   await pumpUntilFound(tester, find.text(name));
   await tester.pumpAndSettle();

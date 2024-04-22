@@ -97,6 +97,7 @@
   },
   "loginCustomEndpointCheckbox": "Použít valstní endpoint",
   "loginCustomEndpoint": "URL vlastního endpointu",
+  "loginDemoButton": "Anebo si prohledněte demo",
   "today": "Dnes",
   "tomorrow": "Zítra",
   "loadCredentials": "Načítání přihlašovacích údajů",
