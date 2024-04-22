@@ -9,10 +9,7 @@ permissions:
   repository-projects: write
   security-events: write
   statuses: write
-on:
-  push:
-    branches:
-      - master
+on: workflow_dispatch
 jobs:
   check_changes:
     outputs:
