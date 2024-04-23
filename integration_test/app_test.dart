@@ -98,6 +98,32 @@ void main() {
       await pumpUntilFound(tester, find.text("Select recipient"));
 
       expect(find.text("Select recipient"), findsOneWidget);
+
+      await tester.tap(find.text("Select recipient"));
+      await pumpUntilFound(tester, find.byType(Autocomplete));
+
+      expect(find.byType(Autocomplete), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), name);
+      await tester.pump(const Duration(seconds: 1));
+
+      await tester.tap(find.byType(ListTile).at(0));
+      await pumpUntilFound(tester, find.text(name));
+
+      expect(find.text(name), findsOneWidget);
+
+      await tester.enterText(
+          find.byType(TextField).at(0), "EduPage2 Automated test");
+
+      await tester.tap(find.byType(SwitchListTile).at(0));
+      await tester.tap(find.byType(SwitchListTile).at(1));
+      await tester.pump(const Duration(seconds: 1));
+      await tester.tap(find.byType(SwitchListTile).at(1));
+
+      await tester.tap(find.byType(ElevatedButton).at(0));
+
+      await pumpUntilFound(tester, find.text("Messages"));
+      expect(find.text("Messages"), findsWidgets);
     });
 
     testWidgets('Test Message page', (tester) async {
