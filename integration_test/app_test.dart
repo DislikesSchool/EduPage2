@@ -99,12 +99,13 @@ void main() {
 
       expect(find.text("Select recipient"), findsOneWidget);
 
-      await tester.tap(find.text("Select recipient"));
-      await pumpUntilFound(tester, find.byType(Autocomplete));
+      await tester.tap(find.byType(Autocomplete));
+      await pumpUntilFound(tester, find.byType(TextFormField));
 
       expect(find.byType(Autocomplete), findsOneWidget);
+      expect(find.byType(TextFormField), findsOneWidget);
 
-      await tester.enterText(find.byType(TextField), name);
+      await tester.enterText(find.byType(TextFormField), name);
       await tester.pump(const Duration(seconds: 1));
 
       await tester.tap(find.byType(ListTile).at(0));
