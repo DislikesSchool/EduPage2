@@ -9,7 +9,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<bool> isConnected() async {
   var connectivityResult = await (Connectivity().checkConnectivity());
-  if (connectivityResult == ConnectivityResult.none) {
+  if (connectivityResult.contains(ConnectivityResult.none)) {
     return false;
   }
   return true;
