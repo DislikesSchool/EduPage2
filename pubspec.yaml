@@ -12,16 +12,16 @@ dependencies:
   dio: ^5.4.0
   shared_preferences: ^2.0.17
   flutter_session_manager: ^1.0.3
-  connectivity_plus: ^5.0.2
+  connectivity_plus: ^6.0.3
   intl: any
-  sentry_flutter: ^7.4.0
+  sentry_flutter: ^8.0.0
   firebase_core: ^2.9.0
   firebase_analytics: ^10.2.0
   onesignal_flutter: ^5.1.0
   firebase_performance: ^0.9.1
   html_unescape: ^2.0.0
   flutter_cached_pdfview: ^0.4.1
-  package_info_plus: ^5.0.1
+  package_info_plus: ^7.0.0
   url_launcher: ^6.1.12
   shorebird_code_push: ^1.1.0
   restart_app: ^1.2.1
