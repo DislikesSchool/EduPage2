@@ -121,7 +121,7 @@ class Recipient {
       case RecipientType.student:
         return parents ? "Student$id" : "StudentOnly$id";
       case RecipientType.teacher:
-        return "Teacher$id";
+        return "Ucitel$id";
     }
   }
 
