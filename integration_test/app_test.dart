@@ -1,3 +1,4 @@
+import 'package:eduapge2/api.dart';
 import 'package:eduapge2/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -99,10 +100,10 @@ void main() {
 
       expect(find.text("Select recipient"), findsOneWidget);
 
-      await tester.tap(find.byType(Autocomplete));
+      await tester.tap(find.byType(Autocomplete<Recipient>));
       await pumpUntilFound(tester, find.byType(TextFormField));
 
-      expect(find.byType(Autocomplete), findsOneWidget);
+      expect(find.byType(Autocomplete<Recipient>), findsOneWidget);
       expect(find.byType(TextFormField), findsOneWidget);
 
       await tester.enterText(find.byType(TextFormField), name);
