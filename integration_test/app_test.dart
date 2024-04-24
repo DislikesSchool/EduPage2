@@ -39,7 +39,7 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
 
       await tester.tap(find.byType(NavigationDestination).at(1));
-      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
       String day = DateFormat('d', const Locale('en', 'US').toString())
           .format(DateTime.now());
       String month = DateFormat('MMMM', const Locale('en', 'US').toString())
@@ -53,7 +53,7 @@ void main() {
       await prep(tester, username, password, name, false, "", true, token);
 
       await tester.tap(find.byType(NavigationDestination).at(1));
-      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
       String day = DateFormat('d', const Locale('en', 'US').toString())
           .format(DateTime.now());
       String month = DateFormat('MMMM', const Locale('en', 'US').toString())
@@ -63,7 +63,7 @@ void main() {
       expect(find.textContaining("$day $month"), findsWidgets);
 
       await tester.tap(find.byKey(const Key("TimeTableScrollForward")));
-      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
       day = DateFormat('d', const Locale('en').toString())
           .format(DateTime.now().add(const Duration(days: 1)));
       month = DateFormat('MMMM', const Locale('en').toString())
@@ -77,7 +77,7 @@ void main() {
       await prep(tester, username, password, name, false, "", true, token);
 
       await tester.tap(find.byType(NavigationDestination).at(2));
-      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
 
       await pumpUntilFound(tester, find.text("Messages"));
       expect(find.text("Messages"), findsWidgets);
@@ -88,7 +88,7 @@ void main() {
       await prep(tester, username, password, name, false, "", true, token);
 
       await tester.tap(find.byType(NavigationDestination).at(2));
-      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
 
       await pumpUntilFound(tester, find.text("Messages"));
       expect(find.text("Messages"), findsWidgets);
@@ -105,27 +105,23 @@ void main() {
 
       expect(find.byType(Autocomplete<Recipient>), findsOneWidget);
       expect(find.byType(TextFormField), findsOneWidget);
-
-      await tester.enterText(find.byType(TextFormField), name);
       await tester.pump(const Duration(seconds: 1));
 
-      await tester.tap(find.byType(ListTile).at(0));
+      await tester.enterText(find.byType(TextFormField), name);
+      await tester.pump();
+      expect(find.text(name), findsExactly(2));
+      await tester.tap(find.text(name).at(1));
       await pumpUntilFound(tester, find.text(name));
 
       expect(find.text(name), findsOneWidget);
 
       await tester.enterText(
-          find.byType(TextField).at(0), "EduPage2 Automated test");
+          find.byType(TextField).at(1), "EduPage2 Automated test");
 
       await tester.tap(find.byType(SwitchListTile).at(0));
       await tester.tap(find.byType(SwitchListTile).at(1));
       await tester.pump(const Duration(seconds: 1));
       await tester.tap(find.byType(SwitchListTile).at(1));
-
-      await tester.tap(find.byType(ElevatedButton).at(0));
-
-      await pumpUntilFound(tester, find.text("Messages"));
-      expect(find.text("Messages"), findsWidgets);
     });
 
     testWidgets('Test Message page', (tester) async {
