@@ -76,4 +76,7 @@ jobs:
         disable-animations: true
         script: flutter test integration_test/app_test.dart --coverage --dart-define=USERNAME=${{ secrets.USERNAME }} --dart-define=PASSWORD=${{ secrets.PASSWORD }} --dart-define=NAME="${{ secrets.NAME }}"
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: true
