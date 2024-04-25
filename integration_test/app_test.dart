@@ -121,7 +121,12 @@ void main() {
       await tester.tap(find.byType(SwitchListTile).at(0));
       await tester.tap(find.byType(SwitchListTile).at(1));
       await tester.pump(const Duration(seconds: 1));
+      await tester.tap(find.byType(SwitchListTile).at(2));
+      await tester.pump(const Duration(seconds: 1));
       await tester.tap(find.byType(SwitchListTile).at(1));
+      await tester.tap(find.byType(SwitchListTile).at(0));
+
+      await tester.tap(find.byType(ElevatedButton));
     });
 
     testWidgets('Test Message page', (tester) async {
