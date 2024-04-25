@@ -128,7 +128,7 @@ class TimeTablePageState extends BaseState<MessagesPage> {
     }
     for (TimelineItem msg in msgsWOR) {
       bool isImportantMessage = false;
-      if (msg.data["Value"]["messageContent"] != null) {
+      if (msg.data["Value"]?["messageContent"] != null) {
         isImportantMessage = true;
       }
       /*
