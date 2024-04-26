@@ -233,8 +233,8 @@ class TimeTablePageState extends BaseState<MessagesPage> {
                         ),
                       ],
                     ),
-                if (msg.data["Value"].containsKey("attachements") &&
-                    msg.data["Value"]["attachements"].length > 0)
+                if (msg.data["Value"] != null &&
+                    msg.data["Value"]["attachements"]?.length > 0)
                   Padding(
                     padding: const EdgeInsets.only(top: 5),
                     child: Row(
