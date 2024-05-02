@@ -253,6 +253,21 @@ class TimeTablePageState extends BaseState<MessagesPage> {
                       ],
                     ),
                   ),
+                if (msg.data["Value"] != null &&
+                    msg.data["Value"]["votingParams"] != null)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Icon(
+                          Icons.poll_rounded,
+                          size: 18,
+                        ),
+                        Text("Poll"),
+                      ],
+                    ),
+                  ),
               ],
             ),
           ),

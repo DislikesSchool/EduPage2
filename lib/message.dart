@@ -253,6 +253,23 @@ class MessagePageState extends BaseState<MessagePage> {
                   ),
                 ),
               ),
+              if (data["data"]["Value"] != null &&
+                  data["data"]["Value"]["votingParams"] != null)
+                Wrap(
+                  spacing: 4.0,
+                  runSpacing: 4.0,
+                  children: <Widget>[
+                    for (Map<String, dynamic> answer in data["data"]["Value"]
+                        ["votingParams"]["answers"])
+                      Card(
+                        elevation: 5,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Text(unescape.convert(answer["text"])),
+                        ),
+                      ),
+                  ],
+                ),
               for (Map<String, dynamic> r in replies)
                 if (r["pomocny_zaznam"] == "")
                   Row(
