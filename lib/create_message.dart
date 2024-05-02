@@ -18,10 +18,12 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
   ];
   String? selectedRecipient;
   String message = '';
+  String newOption = '';
   bool isImportant = false;
   bool includePoll = false;
   bool multipleSelection = false;
   List<PollOption> pollOptions = [];
+  TextEditingController pollOptionController = TextEditingController();
 
   @override
   void initState() {
@@ -182,20 +184,122 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                   });
                 },
               ),
-              if (includePoll) ...[
-                SwitchListTile(
-                  title: const Text('Multiple Selection'),
-                  value: multipleSelection,
-                  onChanged: (bool value) {
-                    setState(() {
-                      multipleSelection = value;
-                    });
-                  },
+              if (includePoll)
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        SwitchListTile(
+                          title: const Text('Multiple Selection'),
+                          value: multipleSelection,
+                          onChanged: (bool value) {
+                            setState(() {
+                              multipleSelection = value;
+                            });
+                          },
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: pollOptionController,
+                                onChanged: (value) =>
+                                    setState(() => newOption = value),
+                                maxLines: 1,
+                                decoration: const InputDecoration(
+                                  hintText: 'New option',
+                                  contentPadding: EdgeInsets.all(8.0),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(8.0),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8.0),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  if (newOption.isNotEmpty) {
+                                    pollOptions.add(PollOption(
+                                      text: newOption,
+                                      id: DateTime.now()
+                                          .millisecondsSinceEpoch
+                                          .toString(),
+                                    ));
+                                    pollOptionController.clear();
+                                  }
+                                });
+                              },
+                              child: const Icon(Icons.add_rounded),
+                            ),
+                          ],
+                        ),
+                        if (pollOptions.isNotEmpty) const Divider(),
+                        ReorderableListView.builder(
+                          shrinkWrap: true,
+                          itemCount: pollOptions.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return ListTile(
+                              key: ValueKey(pollOptions[index].id),
+                              title: Text(pollOptions[index].text),
+                              leading: const Icon(Icons.drag_handle_rounded),
+                              trailing: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all<
+                                          Color>(
+                                      const Color.fromARGB(255, 152, 1, 29)),
+                                  foregroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.white),
+                                ),
+                                child: const Icon(Icons.delete_rounded),
+                                onPressed: () {
+                                  setState(() {
+                                    pollOptions.removeAt(index);
+                                  });
+                                },
+                              ),
+                            );
+                          },
+                          onReorder: (int oldIndex, int newIndex) {
+                            setState(() {
+                              if (oldIndex < newIndex) {
+                                newIndex -= 1;
+                              }
+                              final PollOption item =
+                                  pollOptions.removeAt(oldIndex);
+                              pollOptions.insert(newIndex, item);
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ],
               ElevatedButton(
                 onPressed: () {
                   EP2Data data = EP2Data.getInstance();
+
+                  if (selectedRecipient == null) {
+                    const snackBar = SnackBar(
+                      content: Text('Please select a recipient'),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    return;
+                  }
+
+                  if (message.isEmpty) {
+                    const snackBar = SnackBar(
+                      content: Text('Please enter a message'),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    return;
+                  }
 
                   final messageOptions = MessageOptions(
                     text: message,
