@@ -229,6 +229,7 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                                           .millisecondsSinceEpoch
                                           .toString(),
                                     ));
+                                    newOption = '';
                                     pollOptionController.clear();
                                   }
                                 });
@@ -240,6 +241,7 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                         if (pollOptions.isNotEmpty) const Divider(),
                         ReorderableListView.builder(
                           shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
                           itemCount: pollOptions.length,
                           itemBuilder: (BuildContext context, int index) {
                             return ListTile(
