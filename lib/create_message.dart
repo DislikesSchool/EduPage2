@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SendMessageScreen extends StatefulWidget {
   const SendMessageScreen({super.key});
@@ -24,6 +25,7 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
   bool multipleSelection = false;
   List<PollOption> pollOptions = [];
   TextEditingController pollOptionController = TextEditingController();
+  AppLocalizations? loc;
 
   @override
   void initState() {
@@ -46,6 +48,7 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    loc = AppLocalizations.of(context);
     return PopScope(
       canPop: message.isEmpty,
       onPopInvoked: (didPop) {
@@ -56,18 +59,17 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Discard message?'),
-              content: const Text(
-                  'You have not sent the message yet. Are you sure you want to discard it?'),
+              title: Text(loc!.createMessageDiscard),
+              content: Text(loc!.createMessageDiscardDescription),
               actions: <Widget>[
                 TextButton(
-                  child: const Text('Cancel'),
+                  child: Text(loc!.createMessageDiscardCancel),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
                 TextButton(
-                  child: const Text('Discard'),
+                  child: Text(loc!.createMessageDiscardDiscard),
                   onPressed: () {
                     Navigator.pop(context);
                     Navigator.pop(context);
@@ -80,7 +82,7 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Send Message'),
+          title: Text(loc!.createMessageTitle),
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -112,10 +114,10 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                     return TextFormField(
                       controller: textEditingController,
                       focusNode: focusNode,
-                      decoration: const InputDecoration(
-                        hintText: 'Select recipient',
-                        contentPadding: EdgeInsets.all(8.0),
-                        border: OutlineInputBorder(
+                      decoration: InputDecoration(
+                        hintText: loc!.createMessageSelectRecipient,
+                        contentPadding: const EdgeInsets.all(8.0),
+                        border: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(
                             Radius.circular(8.0),
                           ),
@@ -155,10 +157,10 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                   minLines: 4,
                   onChanged: (value) => setState(() => message = value),
                   maxLines: null,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter your message here',
-                    contentPadding: EdgeInsets.all(8.0),
-                    border: OutlineInputBorder(
+                  decoration: InputDecoration(
+                    hintText: loc!.createMessageMessageHere,
+                    contentPadding: const EdgeInsets.all(8.0),
+                    border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(
                         Radius.circular(8.0),
                       ),
@@ -167,7 +169,7 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                 ),
               ),
               SwitchListTile(
-                title: const Text('Important'),
+                title: Text(loc!.createMessageImportant),
                 value: isImportant,
                 onChanged: (bool value) {
                   setState(() {
@@ -176,7 +178,7 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                 },
               ),
               SwitchListTile(
-                title: const Text('Include Poll'),
+                title: Text(loc!.createMessageIncludePoll),
                 value: includePoll,
                 onChanged: (bool value) {
                   setState(() {
@@ -191,7 +193,7 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                     child: Column(
                       children: [
                         SwitchListTile(
-                          title: const Text('Multiple Selection'),
+                          title: Text(loc!.createMessagePollEnableMultiple),
                           value: multipleSelection,
                           onChanged: (bool value) {
                             setState(() {
@@ -207,10 +209,11 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                                 onChanged: (value) =>
                                     setState(() => newOption = value),
                                 maxLines: 1,
-                                decoration: const InputDecoration(
-                                  hintText: 'New option',
-                                  contentPadding: EdgeInsets.all(8.0),
-                                  border: OutlineInputBorder(
+                                decoration: InputDecoration(
+                                  hintText: loc!
+                                      .createMessageNewPollOptionPlaceholder,
+                                  contentPadding: const EdgeInsets.all(8.0),
+                                  border: const OutlineInputBorder(
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(8.0),
                                     ),
@@ -286,8 +289,8 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                   EP2Data data = EP2Data.getInstance();
 
                   if (selectedRecipient == null) {
-                    const snackBar = SnackBar(
-                      content: Text('Please select a recipient'),
+                    SnackBar snackBar = SnackBar(
+                      content: Text(loc!.createMessageErrorSelectRecipient),
                     );
 
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -295,8 +298,8 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                   }
 
                   if (message.isEmpty) {
-                    const snackBar = SnackBar(
-                      content: Text('Please enter a message'),
+                    SnackBar snackBar = SnackBar(
+                      content: Text(loc!.createMessageErrorNoMessage),
                     );
 
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -336,7 +339,7 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   });
                 },
-                child: const Text('Send Message'),
+                child: Text(loc!.createMessageSend),
               ),
             ],
           ),

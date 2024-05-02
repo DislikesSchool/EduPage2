@@ -123,5 +123,20 @@
         "format": "compact"
       }
     }
-  }
+  },
+  "messagesPoll": "Anketa",
+  "createMessageDiscard": "Zahodit zprávu?",
+  "createMessageDiscardDescription": "Zpráva ještě nebyla odeslána. Opravdu ji chcete zahodit?",
+  "createMessageDiscardCancel": "Zrušit",
+  "createMessageDiscardDiscard": "Zahodit",
+  "createMessageTitle": "Nová zpráva",
+  "createMessageSelectRecipient": "Vyberte příjemce",
+  "createMessageMessageHere": "Vaše zpráva zde",
+  "createMessageImportant": "Důležité",
+  "createMessageIncludePoll": "Vložit anketu",
+  "createMessagePollEnableMultiple": "Povolit více odpovědí",
+  "createMessageNewPollOptionPlaceholder": "Nová možnost",
+  "createMessageErrorSelectRecipient": "Vyberte prosím příjemce",
+  "createMessageErrorNoMessage": "Napište prosím zprávu",
+  "createMessageSend": "Odeslat"
 }

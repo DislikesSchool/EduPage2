@@ -55,5 +55,20 @@
         "format": "compact"
       }
     }
-  }
+  },
+  "messagesPoll": "Poll",
+  "createMessageDiscard": "Discard message?",
+  "createMessageDiscardDescription": "The message has not been sent yet. Are you sure you want to discard it?",
+  "createMessageDiscardCancel": "Cancel",
+  "createMessageDiscardDiscard": "Discard",
+  "createMessageTitle": "New message",
+  "createMessageSelectRecipient": "Select recipient",
+  "createMessageMessageHere": "Your message here",
+  "createMessageImportant": "Important",
+  "createMessageIncludePoll": "Include poll",
+  "createMessagePollEnableMultiple": "Allow multiple answers",
+  "createMessageNewPollOptionPlaceholder": "New option",
+  "createMessageErrorSelectRecipient": "Please select a recipient",
+  "createMessageErrorNoMessage": "Please write a message",
+  "createMessageSend": "Send"
 }
