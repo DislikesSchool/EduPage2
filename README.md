@@ -1,7 +1,7 @@
 <br/>
 <p align="center">
   <a href="https://github.com/DislikesSchool/EduPage2">
-    <img src="https://raw.githubusercontent.com/DislikesSchool/EduPage2/master/EduPage2.png" alt="Logo" width="80" height="80">
+    <img src="https://raw.githubusercontent.com/DislikesSchool/EduPage2/master/assets/EduPage2/png/logo-512px.png" alt="Logo" width="80" height="80">
   </a>
   <h3 align="center">EduPage2</h3>
 
@@ -74,12 +74,12 @@ This project is open source and distributed under the [GPL-3.0 license](https://
 
 This is a list of all the main tools, libraries and frameworks, that were used in this project
 
-- [Flutter](https://flutter.dev/)
-- [Firebase](https://firebase.google.com/)
-- [OneSignal](https://onesignal.com/)
-- [Shorebird](https://shorebird.dev/)
-- [Golang](https://go.dev/)
-- [Gin](https://gin-gonic.com/)
+- [Flutter](https://flutter.dev/) - _App framework_
+- [Firebase](https://firebase.google.com/) - _Messaging, remote config_
+- [OneSignal](https://onesignal.com/) - _Push notifications_
+- [Shorebird](https://shorebird.dev/) - _Remote patching_
+- [Golang](https://go.dev/) - _Backend programming language_
+- [Gin](https://gin-gonic.com/) - _Server library_
 
 ## Getting Started
 
@@ -134,9 +134,12 @@ Distributed under the MIT License. See [LICENSE](https://github.com/DislikesScho
 - **[WattMann](https://github.com/WattMann)** - _Created Edupage API in golang_
 - **[czmatejt9](https://github.com/czmatejt9)** - _Helped fix bugs_
 - **[SAMUELLL41](https://github.com/SAMUELLL41)** - _Slovak translation_
+- **[Ondass](https://www.instagram.com/ondras150/)** - _Old logo_
 
 ## Acknowledgements
 
-- [ShaanCoding](https://github.com/ShaanCoding/)
-- [Othneil Drew](https://github.com/othneildrew/Best-README-Template)
-- [ImgShields](https://shields.io/)
+- [AppIcon](https://www.appicon.co/) - Creation of icons for app
+- [LOGO.com](https://logo.com/) - New logo
+- [ShaanCoding](https://github.com/ShaanCoding/) - Readme generator
+- [Othneil Drew](https://github.com/othneildrew/Best-README-Template) - Readme template
+- [ImgShields](https://shields.io/) - Readme shields
