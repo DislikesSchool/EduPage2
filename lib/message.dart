@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/main.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -58,6 +60,7 @@ class MessagePageState extends BaseState<MessagePage> {
 
     HtmlUnescape unescape = HtmlUnescape();
     Map<String, dynamic> data = response.data;
+    log(data.toString());
     bool isImportantMessage = false;
     if (data["data"]["Value"] != null &&
         data["data"]["Value"]["messageContent"] != null) {
@@ -68,6 +71,10 @@ class MessagePageState extends BaseState<MessagePage> {
         data["data"]["Value"]["attachements"] is Map<String, dynamic>) {
       attachments = data["data"]["Value"]["attachements"].entries;
     }
+    List<dynamic> replies = data["replies"] ?? [];
+    replies = replies.where((r) => r["pomocny_zaznam"] == "").toList();
+    replies.sort((a, b) => DateTime.parse(a["cas_pridania"])
+        .compareTo(DateTime.parse(b["cas_pridania"])));
     messages = Stack(
       children: [
         Padding(
@@ -246,33 +253,34 @@ class MessagePageState extends BaseState<MessagePage> {
                   ),
                 ),
               ),
-              for (Map<String, dynamic> r in data["replies"] ?? [])
-                Row(
-                  children: [
-                    const SizedBox(width: 20),
-                    const Icon(Icons.subdirectory_arrow_right_rounded,
-                        size: 32),
-                    Card(
-                      elevation: 10,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Container(
-                          constraints: BoxConstraints(maxWidth: width),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text("${r["vlastnik_meno"]}: "),
-                              SelectableLinkify(
-                                text: unescape.convert(r["text"]),
-                                onOpen: _onOpen,
-                              ),
-                            ],
+              for (Map<String, dynamic> r in replies)
+                if (r["pomocny_zaznam"] == "")
+                  Row(
+                    children: [
+                      const SizedBox(width: 20),
+                      const Icon(Icons.subdirectory_arrow_right_rounded,
+                          size: 32),
+                      Card(
+                        elevation: 10,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Container(
+                            constraints: BoxConstraints(maxWidth: width),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text("${r["vlastnik_meno"]}: "),
+                                SelectableLinkify(
+                                  text: unescape.convert(r["text"]),
+                                  onOpen: _onOpen,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
             ],
           ),
         ),

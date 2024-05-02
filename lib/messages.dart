@@ -213,28 +213,31 @@ class TimeTablePageState extends BaseState<MessagesPage> {
                   for (TimelineItem r in msgs
                       .where(
                           (element) => element.reactionTo == msg.id.toString())
-                      .toList())
-                    Row(
-                      children: [
-                        const SizedBox(width: 10),
-                        const Icon(Icons.subdirectory_arrow_right_rounded),
-                        Expanded(
-                          child: Card(
-                            elevation: 10,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "${r.ownerName}: ${unescape.convert(r.text)}",
-                                softWrap: false,
-                                overflow: TextOverflow.ellipsis,
+                      .toList()
+                      .reversed)
+                    if (r.pomocnyZaznam == "")
+                      Row(
+                        children: [
+                          const SizedBox(width: 10),
+                          const Icon(Icons.subdirectory_arrow_right_rounded),
+                          Expanded(
+                            child: Card(
+                              elevation: 10,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "${r.ownerName}: ${unescape.convert(r.text)}",
+                                  softWrap: false,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
                 if (msg.data["Value"] != null &&
-                    msg.data["Value"]["attachements"]?.length > 0)
+                    msg.data["Value"]["attachements"] != null &&
+                    msg.data["Value"]["attachements"].length > 0)
                   Padding(
                     padding: const EdgeInsets.only(top: 5),
                     child: Row(
