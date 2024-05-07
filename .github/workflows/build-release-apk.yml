@@ -50,6 +50,7 @@ jobs:
         valueFile: 'pubspec.yaml'
         propertyPath: 'version'
         value: "${{ steps.semvers.outputs.minor }}"
+        commitChange: false
     - run: flutter pub get
     - run: flutter gen-l10n
     - name: 🚀 Shorebird Release
