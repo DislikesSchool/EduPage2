@@ -17,18 +17,8 @@ jobs:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0
-    - uses: actions/setup-java@v2
-      with:
-        distribution: 'zulu'
-        java-version: '11'
-    - uses: subosito/flutter-action@v2
-      with:
-        channel: 'stable'
-        cache: true
-        cache-key: 'flutter-:os:-:channel:-:version:' # optional, change this to force refresh cache
-        architecture: x64
     - name: 🐦 Setup Shorebird
-      uses: shorebirdtech/setup-shorebird@v0
+      uses: shorebirdtech/setup-shorebird@v1
     - name: Create the Keystore
       env:
         KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
@@ -63,7 +53,7 @@ jobs:
     - run: flutter pub get
     - run: flutter gen-l10n
     - name: 🚀 Shorebird Release
-      run: shorebird release android --force --artifact apk '--' --dart-define=BVS="Release ${{ steps.semvers.outputs.v_minor }} ShoreBird"
+      run: shorebird release android --artifact apk '--' --dart-define=BVS="Release ${{ steps.semvers.outputs.v_minor }} ShoreBird"
       env:
         SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
     - name: Upload to Google Play
