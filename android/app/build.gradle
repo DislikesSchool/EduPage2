@@ -29,6 +29,23 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+def versionPropertiesFile = file('version.properties')
+
+def versionProperties = new Properties()
+
+if (versionPropertiesFile.canRead()) {
+    versionProperties.load(new FileInputStream(versionPropertiesFile))
+}
+
+def appVersionCode = (versionProperties['versionCode'] ?: "1").toInteger()
+
+task incrementVersionCode {
+    doLast {
+        versionProperties['versionCode'] = (appVersionCode + 1).toString()
+        versionProperties.store(versionPropertiesFile.newWriter(), null)
+    }
+}
+
 android {
     compileSdkVersion 33
     ndkVersion flutter.ndkVersion
@@ -51,7 +68,7 @@ android {
         applicationId "com.vypal.eduapge2"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        versionCode flutterVersionCode.toInteger()
+        versionCode appVersionCode
         versionName flutterVersionName
         targetSdkVersion 33
         minSdkVersion 21
@@ -73,6 +90,12 @@ android {
            signingConfig signingConfigs.release
        }
    }
+
+   tasks.whenTaskAdded { task ->
+        if (task.name == 'assembleRelease') {
+            task.dependsOn incrementVersionCode
+        }
+    }
 }
 
 flutter {
