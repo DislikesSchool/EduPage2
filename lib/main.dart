@@ -210,8 +210,8 @@ class PageBaseState extends BaseState<PageBase> {
 
   getMsgs() async {
     apidataMsg = EP2Data.getInstance().timeline.items.values.toList();
-    var ic = await sessionManager.get('iCanteenEnabled');
-    if (ic == true) {
+    dynamic ic = await sessionManager.get('iCanteenEnabled');
+    if (ic.runtimeType == bool && ic == true) {
       iCanteenEnabled = true;
     }
   }

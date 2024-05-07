@@ -1,4 +1,5 @@
 import 'package:eduapge2/api.dart';
+import 'package:eduapge2/create_message.dart';
 import 'package:eduapge2/main.dart';
 import 'package:eduapge2/message.dart';
 import 'package:flutter/material.dart';
@@ -89,6 +90,16 @@ class TimeTablePageState extends BaseState<MessagesPage> {
             )
           : Text(AppLocalizations.of(context)!.loading),
       backgroundColor: Theme.of(context).colorScheme.background,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext buildContext) =>
+                      const SendMessageScreen()));
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
@@ -202,27 +213,30 @@ class TimeTablePageState extends BaseState<MessagesPage> {
                   for (TimelineItem r in msgs
                       .where(
                           (element) => element.reactionTo == msg.id.toString())
-                      .toList())
-                    Row(
-                      children: [
-                        const SizedBox(width: 10),
-                        const Icon(Icons.subdirectory_arrow_right_rounded),
-                        Expanded(
-                          child: Card(
-                            elevation: 10,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "${r.ownerName}: ${unescape.convert(r.text)}",
-                                softWrap: false,
-                                overflow: TextOverflow.ellipsis,
+                      .toList()
+                      .reversed)
+                    if (r.pomocnyZaznam == "")
+                      Row(
+                        children: [
+                          const SizedBox(width: 10),
+                          const Icon(Icons.subdirectory_arrow_right_rounded),
+                          Expanded(
+                            child: Card(
+                              elevation: 10,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "${r.ownerName}: ${unescape.convert(r.text)}",
+                                  softWrap: false,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                if (msg.data["Value"].containsKey("attachements") &&
+                        ],
+                      ),
+                if (msg.data["Value"] != null &&
+                    msg.data["Value"]["attachements"] != null &&
                     msg.data["Value"]["attachements"].length > 0)
                   Padding(
                     padding: const EdgeInsets.only(top: 5),
@@ -236,6 +250,21 @@ class TimeTablePageState extends BaseState<MessagesPage> {
                         Text(loc?.messagesAttachments(
                                 msg.data["Value"]["attachements"].length) ??
                             ""),
+                      ],
+                    ),
+                  ),
+                if (msg.data["Value"] != null &&
+                    msg.data["Value"]["votingParams"] != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const Icon(
+                          Icons.poll_rounded,
+                          size: 18,
+                        ),
+                        Text(loc!.messagesPoll),
                       ],
                     ),
                   ),

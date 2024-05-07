@@ -1,3 +1,4 @@
+import 'package:eduapge2/api.dart';
 import 'package:eduapge2/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -38,7 +39,7 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
 
       await tester.tap(find.byType(NavigationDestination).at(1));
-      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
       String day = DateFormat('d', const Locale('en', 'US').toString())
           .format(DateTime.now());
       String month = DateFormat('MMMM', const Locale('en', 'US').toString())
@@ -52,7 +53,7 @@ void main() {
       await prep(tester, username, password, name, false, "", true, token);
 
       await tester.tap(find.byType(NavigationDestination).at(1));
-      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
       String day = DateFormat('d', const Locale('en', 'US').toString())
           .format(DateTime.now());
       String month = DateFormat('MMMM', const Locale('en', 'US').toString())
@@ -62,7 +63,7 @@ void main() {
       expect(find.textContaining("$day $month"), findsWidgets);
 
       await tester.tap(find.byKey(const Key("TimeTableScrollForward")));
-      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
       day = DateFormat('d', const Locale('en').toString())
           .format(DateTime.now().add(const Duration(days: 1)));
       month = DateFormat('MMMM', const Locale('en').toString())
@@ -76,12 +77,58 @@ void main() {
       await prep(tester, username, password, name, false, "", true, token);
 
       await tester.tap(find.byType(NavigationDestination).at(2));
-      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
 
       await pumpUntilFound(tester, find.text("Messages"));
       expect(find.text("Messages"), findsWidgets);
       expect(find.byType(Card), findsWidgets);
     });
+
+    testWidgets('Test Send Message page', (tester) async {
+      await prep(tester, username, password, name, false, "", true, token);
+
+      await tester.tap(find.byType(NavigationDestination).at(2));
+      await tester.pump();
+
+      await pumpUntilFound(tester, find.text("Messages"));
+      expect(find.text("Messages"), findsWidgets);
+      expect(find.byType(Card), findsWidgets);
+      expect(find.byType(FloatingActionButton), findsOneWidget);
+
+      await tester.tap(find.byType(FloatingActionButton).at(0));
+      await pumpUntilFound(tester, find.text("Select recipient"));
+
+      expect(find.text("Select recipient"), findsOneWidget);
+
+      await tester.tap(find.byType(Autocomplete<Recipient>));
+      await pumpUntilFound(tester, find.byType(TextFormField));
+
+      expect(find.byType(Autocomplete<Recipient>), findsOneWidget);
+      expect(find.byType(TextFormField), findsOneWidget);
+      await tester.pump(const Duration(seconds: 1));
+
+      await tester.enterText(find.byType(TextFormField), name);
+      await tester.pump();
+      expect(find.text(name), findsExactly(2));
+      await tester.tap(find.text(name).at(1));
+      await pumpUntilFound(tester, find.text(name));
+
+      expect(find.text(name), findsOneWidget);
+
+      await tester.enterText(
+          find.byType(TextField).at(1), "EduPage2 Automated test");
+
+      await tester.tap(find.byType(SwitchListTile).at(0));
+      await tester.tap(find.byType(SwitchListTile).at(1));
+      await tester.pump(const Duration(seconds: 1));
+      await tester.tap(find.byType(SwitchListTile).at(2));
+      await tester.pump(const Duration(seconds: 1));
+      await tester.tap(find.byType(SwitchListTile).at(1));
+      await tester.tap(find.byType(SwitchListTile).at(0));
+
+      await tester.tap(find.byType(ElevatedButton).last);
+    });
+
     testWidgets('Test Message page', (tester) async {
       await prep(tester, username, password, name, false, "", false, "");
 

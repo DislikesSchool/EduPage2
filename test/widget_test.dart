@@ -5,6 +5,7 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:eduapge2/api.dart';
 import 'package:eduapge2/home.dart';
 import 'package:eduapge2/messages.dart';
 import 'package:flutter/material.dart';
@@ -54,6 +55,59 @@ void main() {
               expect(testList[3] == 5, true),
               expect(testList[4] == 4, true),
             });
+  });
+
+  group('API', () {
+    group('Recipient', () {
+      Recipient recipient = Recipient(
+          id: "-1", type: RecipientType.student, name: "Test Recipient");
+
+      test(
+          'recipientString',
+          () => {
+                expect(recipient.recipientString(false), "StudentOnly-1"),
+                expect(recipient.recipientString(true), "Student-1"),
+                recipient.type = RecipientType.teacher,
+                expect(recipient.recipientString(false), "Ucitel-1"),
+              });
+    });
+
+    group('MessageOptions', () {
+      test('toJson', () {
+        MessageOptions options = MessageOptions(
+          text: "Test message",
+          important: true,
+        );
+        expect(options.toJson(), {
+          "text": "Test message",
+          "important": true,
+          "poll": null,
+        });
+      });
+
+      test('toJson with poll', () {
+        PollOption opt = PollOption(text: "Option 1", id: "opt1");
+        PollOptions poll = PollOptions(
+          multiple: true,
+          options: [opt],
+        );
+        MessageOptions options = MessageOptions(
+          text: "Test message",
+          important: true,
+          poll: poll,
+        );
+        expect(options.toJson(), {
+          "text": "Test message",
+          "important": true,
+          "poll": {
+            "multiple": true,
+            "options": [
+              {"text": "Option 1", "id": "opt1"}
+            ]
+          },
+        });
+      });
+    });
   });
 }
 

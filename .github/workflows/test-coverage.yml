@@ -63,6 +63,8 @@ jobs:
     - run: flutter gen-l10n
     - run: dart pub global run full_coverage
     - run: flutter test --coverage
+    - name: Rename coverage file
+      run: mv coverage/lcov.info coverage/test-lcov.info # Rename the coverage file to avoid overwriting it
     - name: run integration tests
       uses: reactivecircus/android-emulator-runner@v2
       with:
@@ -76,4 +78,8 @@ jobs:
         disable-animations: true
         script: flutter test integration_test/app_test.dart --coverage --dart-define=USERNAME=${{ secrets.USERNAME }} --dart-define=PASSWORD=${{ secrets.PASSWORD }} --dart-define=NAME="${{ secrets.NAME }}"
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: true
+        files: ./coverage/lcov.info,./coverage/test-lcov.info
