@@ -74,7 +74,7 @@ jobs:
       uses: r0adkll/upload-google-play@v1
       with:
         serviceAccountJson: store_credentials.json
-        packageName: com.vypal.edupage2
+        packageName: com.vypal.eduapge2
         releaseFiles: build/app/outputs/bundle/release/app-release.aab
         track: beta
         status: completed
