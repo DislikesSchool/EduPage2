@@ -93,4 +93,5 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add pubspec.yaml
+        git add android/app/version.properties
         git commit -m 'Bump version to ${{ steps.semvers.outputs.patch }} [no ci]'
