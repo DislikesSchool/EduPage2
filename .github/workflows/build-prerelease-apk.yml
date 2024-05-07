@@ -9,10 +9,7 @@ permissions:
   repository-projects: write
   security-events: write
   statuses: write
-on:
-  push:
-    branches:
-      - build-prerelease
+on: workflow_dispatch
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -31,7 +28,7 @@ jobs:
         cache-key: 'flutter-:os:-:channel:-:version:' # optional, change this to force refresh cache
         architecture: x64
     - name: 🐦 Setup Shorebird
-      uses: shorebirdtech/setup-shorebird@v0
+      uses: shorebirdtech/setup-shorebird@v1
     - name: Create the Keystore
       env:
         KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
@@ -45,6 +42,8 @@ jobs:
         KEY_PASSWORD: ${{ secrets.KEY_PASS }}
       run: |
         echo -e "storePassword=$KEYSTORE_PASSWORD\nkeyPassword=$KEY_PASSWORD\nkeyAlias=$KEY_ALIAS\nstoreFile=$RUNNER_TEMP/keystore.jks" > android/key.properties
+    - name: Decode Android Service Account
+      run: echo "${{ secrets.SERVICE_ACCOUNT }}" | base64 --decode > store_credentials.json
     - name: 'Get Previous tag'
       id: previoustag
       uses: "WyriHaximus/github-action-get-previous-tag@v1"
@@ -62,17 +61,21 @@ jobs:
         propertyPath: 'version'
         value: "${{ steps.semvers.outputs.patch }}"
         commitChange: true
-        branch: 'build-prerelease'
-        labels: 'bump'
         message: 'Bump version to ${{ steps.semvers.outputs.patch }} [no ci]'
-        createPR: true
-        description: 'Automatic version bump to ${{ steps.semvers.outputs.patch }} for prerelease build'
     - run: flutter pub get
     - run: flutter gen-l10n
     - name: 🚀 Shorebird Release
       run: shorebird release android --force --artifact apk '--' --dart-define=BVS="Prerelease ${{ steps.semvers.outputs.v_patch }} ShoreBird"
       env:
         SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
+    - name: Upload to Google Play
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJson: store_credentials.json
+        packageName: com.vypal.edupage2
+        releaseFiles: build/app/outputs/bundle/release/app-release.aab
+        track: beta
+        status: inProgress
     - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semvers.outputs.v_patch }}.apk"
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
