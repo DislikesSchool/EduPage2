@@ -60,12 +60,10 @@ jobs:
         valueFile: 'pubspec.yaml'
         propertyPath: 'version'
         value: "${{ steps.semvers.outputs.minor }}"
-        commitChange: true
-        message: 'Bump version to ${{ steps.semvers.outputs.minor }} [no ci]'
     - run: flutter pub get
     - run: flutter gen-l10n
     - name: 🚀 Shorebird Release
-      run: shorebird release android --force --artifact apk '--' --dart-define=BVS="Release ${{ steps.semvers.outputs.v_minor }} ShoreBird"
+      run: shorebird release android --artifact apk '--' --dart-define=BVS="Release ${{ steps.semvers.outputs.v_minor }} ShoreBird"
       env:
         SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
     - name: Upload to Google Play
@@ -85,3 +83,9 @@ jobs:
         title: "EduPage2 ${{ steps.semvers.outputs.v_minor }}"
         files: |
           EduPage2-${{ steps.semvers.outputs.v_minor }}.apk
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add pubspec.yaml
+        git commit -m 'Bump version to ${{ steps.semvers.outputs.minor }} [no ci]'
