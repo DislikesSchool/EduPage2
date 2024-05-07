@@ -77,7 +77,7 @@ jobs:
         packageName: com.vypal.edupage2
         releaseFiles: build/app/outputs/bundle/release/app-release.aab
         track: beta
-        status: inProgress
+        status: completed
         mappingFile: build/app/outputs/mapping/release/mapping.txt
     - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semvers.outputs.v_patch }}.apk"
     - uses: "marvinpinto/action-automatic-releases@latest"
