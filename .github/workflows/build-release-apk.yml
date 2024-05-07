@@ -64,6 +64,7 @@ jobs:
         releaseFiles: build/app/outputs/bundle/release/app-release.aab
         track: beta
         status: inProgress
+        mappingFile: build/app/outputs/mapping/release/mapping.txt
     - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semvers.outputs.v_minor }}.apk"
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
