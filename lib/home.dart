@@ -10,6 +10,8 @@ import 'package:eduapge2/messages.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:in_app_update/in_app_update.dart';
+import 'package:install_referrer/install_referrer.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -151,6 +153,7 @@ class HomePageState extends BaseState<HomePage> {
   SharedPreferences? sharedPreferences;
 
   bool updateAvailable = false;
+  bool updateThroughGooglePlay = false;
   bool quickstart = false;
 
   List<TimelineItem> apidataMsg = [];
@@ -202,43 +205,54 @@ class HomePageState extends BaseState<HomePage> {
   }
 
   void fetchAndCompareBuildName() async {
-    final dio = Dio();
-
-    // Retrieve the package info
-    final packageInfo = await PackageInfo.fromPlatform();
-    final buildName = packageInfo.version;
-
-    try {
-      final response = await dio
-          .get(
-              'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest')
-          .catchError((obj) {
-        return Response(
-          requestOptions: RequestOptions(
-              path:
-                  'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest'),
-          statusCode: 500,
-        );
-      });
-      if (response.statusCode == 500) {
-        return;
-      }
-      final responseData = response.data;
-
-      // Extract the tag_name from the response JSON and remove the "v" prefix if present
-      final tag = responseData['tag_name'];
-      final formattedTag = tag.startsWith('v') ? tag.substring(1) : tag;
-
-      // Compare the tag_name to the app's build name
-      if (formattedTag != buildName) {
+    InstallationAppReferrer referrer = await InstallReferrer.referrer;
+    if (referrer == InstallationAppReferrer.androidGooglePlay) {
+      AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
+      if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
         setState(() {
           updateAvailable = true;
+          updateThroughGooglePlay = true;
         });
       }
-    } catch (error) {
-      // Handle any errors that occur during the request
-      if (kDebugMode) {
-        print('Error: $error');
+    } else {
+      final dio = Dio();
+
+      // Retrieve the package info
+      final packageInfo = await PackageInfo.fromPlatform();
+      final buildName = packageInfo.version;
+
+      try {
+        final response = await dio
+            .get(
+                'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest')
+            .catchError((obj) {
+          return Response(
+            requestOptions: RequestOptions(
+                path:
+                    'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest'),
+            statusCode: 500,
+          );
+        });
+        if (response.statusCode == 500) {
+          return;
+        }
+        final responseData = response.data;
+
+        // Extract the tag_name from the response JSON and remove the "v" prefix if present
+        final tag = responseData['tag_name'];
+        final formattedTag = tag.startsWith('v') ? tag.substring(1) : tag;
+
+        // Compare the tag_name to the app's build name
+        if (formattedTag != buildName) {
+          setState(() {
+            updateAvailable = true;
+          });
+        }
+      } catch (error) {
+        // Handle any errors that occur during the request
+        if (kDebugMode) {
+          print('Error: $error');
+        }
       }
     }
   }
@@ -455,13 +469,17 @@ class HomePageState extends BaseState<HomePage> {
               if (updateAvailable)
                 GestureDetector(
                   onTap: () async {
-                    final url = Uri.parse(
-                        'https://github.com/DislikesSchool/EduPage2/releases/latest');
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url,
-                          mode: LaunchMode.externalApplication);
+                    if (updateThroughGooglePlay) {
+                      await InAppUpdate.performImmediateUpdate();
                     } else {
-                      throw 'Could not launch $url';
+                      final url = Uri.parse(
+                          'https://github.com/DislikesSchool/EduPage2/releases/latest');
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url,
+                            mode: LaunchMode.externalApplication);
+                      } else {
+                        throw 'Could not launch $url';
+                      }
                     }
                   },
                   child: Container(

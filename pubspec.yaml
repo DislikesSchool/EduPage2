@@ -29,6 +29,8 @@ dependencies:
   dynamic_color: ^1.4.0
   firebase_remote_config: ^4.2.6
   flutter_displaymode: ^0.6.0
+  install_referrer: ^1.2.1
+  in_app_update: ^4.2.2
 dev_dependencies:
   integration_test:
     sdk: flutter
