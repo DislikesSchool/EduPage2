@@ -686,7 +686,7 @@ class HomePageState extends BaseState<HomePage> {
               icon: Icon(Icons.info_outline),
               applicationName: 'EduPage2',
               applicationVersion: String.fromEnvironment('BVS'),
-              applicationLegalese: '©2023 Jakub Palacký',
+              applicationLegalese: '©2024 Jakub Palacký',
               dense: true,
             ),
           ],
