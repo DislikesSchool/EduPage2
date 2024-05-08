@@ -67,7 +67,7 @@ jobs:
     - run: flutter pub get
     - run: flutter gen-l10n
     - name: 🚀 Shorebird Release
-      run: shorebird release android --artifact apk '--' --dart-define=BVS="Release ${{ steps.semvers.outputs.v_minor }} ShoreBird"
+      run: shorebird release android --artifact apk '--' --dart-define=BVS="Minor release ${{ steps.semvers.outputs.v_minor }} ShoreBird"
       env:
         SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
     - name: Upload to Google Play
@@ -76,7 +76,7 @@ jobs:
         serviceAccountJson: store_credentials.json
         packageName: com.vypal.eduapge2
         releaseFiles: build/app/outputs/bundle/release/app-release.aab
-        track: beta
+        track: production
         status: completed
         mappingFile: build/app/outputs/mapping/release/mapping.txt
     - run: cp "build/app/outputs/apk/release/app-release.apk" "EduPage2-${{ steps.semvers.outputs.v_minor }}.apk"
