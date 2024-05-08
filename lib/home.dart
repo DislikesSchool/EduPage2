@@ -215,6 +215,9 @@ class HomePageState extends BaseState<HomePage> {
         });
       }
     } else {
+      if (const String.fromEnvironment('BVS').contains("Preview")) {
+        return;
+      }
       final dio = Dio();
 
       // Retrieve the package info
