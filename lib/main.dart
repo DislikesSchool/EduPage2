@@ -60,10 +60,13 @@ class MyApp extends StatelessWidget {
   static FirebaseAnalyticsObserver observer =
       FirebaseAnalyticsObserver(analytics: analytics);
   static final _defaultLightColorScheme =
-      ColorScheme.fromSwatch(primarySwatch: Colors.blue);
+      ThemeData(colorSchemeSeed: const Color.fromARGB(255, 105, 140, 243))
+          .colorScheme;
 
-  static final _defaultDarkColorScheme = ColorScheme.fromSwatch(
-      primarySwatch: Colors.blue, brightness: Brightness.dark);
+  static final _defaultDarkColorScheme = ThemeData(
+          colorSchemeSeed: const Color.fromARGB(255, 105, 140, 243),
+          brightness: Brightness.dark)
+      .colorScheme;
 
   // This widget is the root of your application.
   @override
