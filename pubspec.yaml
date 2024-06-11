@@ -31,6 +31,7 @@ dependencies:
   flutter_displaymode: ^0.6.0
   install_referrer: ^1.2.1
   in_app_update: ^4.2.2
+  app_links: ^6.1.1
 dev_dependencies:
   integration_test:
     sdk: flutter

@@ -71,5 +71,7 @@
   "createMessageNewPollOptionPlaceholder": "New option",
   "createMessageErrorSelectRecipient": "Please select a recipient",
   "createMessageErrorNoMessage": "Please write a message",
-  "createMessageSend": "Send"
+  "createMessageSend": "Send",
+  "qrLoginPleaseLogin": "EduPage2 QR Login",
+  "qrLoginUseExistingCredentials": "You are about to login to EduPage2 using a QR code"
 }
