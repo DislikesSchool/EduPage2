@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:eduapge2/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -15,12 +16,13 @@ class QRLoginPage extends StatefulWidget {
 class QRLoinPageState extends BaseState<QRLoginPage> {
   AppLocalizations? local;
   late SharedPreferences sharedPreferences;
-  String email = "";
-  String password = "";
-  String server = "";
   bool _useCustomEndpoint = false;
-  String _customEndpoint = '';
   bool showPassword = false;
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController serverController = TextEditingController();
+  TextEditingController customEndpointController = TextEditingController();
 
   @override
   void initState() {
@@ -42,16 +44,16 @@ class QRLoinPageState extends BaseState<QRLoginPage> {
     String? sEndpoint = sharedPreferences.getString("customEndpoint");
 
     if (sEmail != null) {
-      email = sEmail;
+      emailController.text = sEmail;
     }
     if (sPassword != null) {
-      password = sPassword;
+      passwordController.text = sPassword;
     }
     if (sServer != null) {
-      server = sServer;
+      serverController.text = sServer;
     }
     if (sEndpoint != null && sEndpoint != "") {
-      _customEndpoint = sEndpoint;
+      customEndpointController.text = sEndpoint;
       _useCustomEndpoint = true;
     }
     setState(() {});
@@ -78,14 +80,15 @@ class QRLoinPageState extends BaseState<QRLoginPage> {
                   ),
                   Text(local!.qrLoginUseExistingCredentials),
                   TextField(
+                    controller: emailController,
                     decoration: InputDecoration(
                       icon: const Icon(Icons.email),
                       hintText: local!.loginUsername,
                     ),
-                    onChanged: (text) => {email = text},
                     keyboardType: TextInputType.emailAddress,
                   ),
                   TextField(
+                    controller: passwordController,
                     decoration: InputDecoration(
                       icon: const Icon(Icons.key),
                       hintText: local!.loginPassword,
@@ -100,8 +103,7 @@ class QRLoinPageState extends BaseState<QRLoginPage> {
                         },
                       ),
                     ),
-                    onChanged: (text) => {password = text},
-                    obscureText: true,
+                    obscureText: !showPassword,
                     keyboardType: TextInputType.visiblePassword,
                   ),
                   Row(
@@ -119,17 +121,18 @@ class QRLoinPageState extends BaseState<QRLoginPage> {
                   ),
                   if (_useCustomEndpoint)
                     TextField(
-                        decoration: InputDecoration(
-                          icon: const Icon(Icons.language),
-                          hintText: local!.loginCustomEndpoint,
-                        ),
-                        onChanged: (value) => {_customEndpoint = value}),
+                      controller: customEndpointController,
+                      decoration: InputDecoration(
+                        icon: const Icon(Icons.language),
+                        hintText: local!.loginCustomEndpoint,
+                      ),
+                    ),
                   TextField(
+                    controller: serverController,
                     decoration: InputDecoration(
                       icon: const Icon(Icons.cloud_queue),
                       hintText: local!.loginServer,
                     ),
-                    onChanged: (text) => {server = text},
                     keyboardType: TextInputType.url,
                   ),
                   const SizedBox(height: 10),
@@ -146,17 +149,16 @@ class QRLoinPageState extends BaseState<QRLoginPage> {
                           },
                         ),
                         data: {
-                          'username': email,
-                          'password': password,
-                          'server': server,
-                          'endpoint': _customEndpoint,
+                          'username': emailController.text,
+                          'password': passwordController.text,
+                          'server': serverController.text,
+                          'endpoint': customEndpointController.text,
                         },
                       );
 
                       if (response.statusCode == 200) {
-                        navigatorKey.currentState!.pop();
+                        SystemNavigator.pop();
                       } else {
-                        // If the server did not return a 200 OK response, throw an exception.
                         throw Exception('Failed to load data');
                       }
                     },
