@@ -139,5 +139,7 @@
   "createMessageNewPollOptionPlaceholder": "Nová možnost",
   "createMessageErrorSelectRecipient": "Vyberte prosím příjemce",
   "createMessageErrorNoMessage": "Napište prosím zprávu",
-  "createMessageSend": "Odeslat"
+  "createMessageSend": "Odeslat",
+  "qrLoginPleaseLogin": "EduPage2 QR Přihlášení",
+  "qrLoginUseExistingCredentials": "Chystáte se přihlásit pomocí QR kódu"
 }

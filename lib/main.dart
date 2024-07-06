@@ -1,9 +1,13 @@
+import 'dart:async';
+
+import 'package:app_links/app_links.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/homework.dart';
 import 'package:eduapge2/icanteen.dart';
 import 'package:eduapge2/load.dart';
 import 'package:eduapge2/messages.dart';
+import 'package:eduapge2/qrlogin.dart';
 import 'package:eduapge2/timetable.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -53,6 +57,8 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
   }
 }
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -78,6 +84,7 @@ class MyApp extends StatelessWidget {
     return DynamicColorBuilder(builder: (lightColorScheme, darkColorScheme) {
       return MaterialApp(
         title: 'EduPage2',
+        navigatorKey: navigatorKey,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         navigatorObservers: [SentryNavigatorObserver(), observer],
@@ -107,6 +114,9 @@ class PageBaseState extends BaseState<PageBase> {
   int _selectedIndex = 0;
   String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
 
+  late AppLinks _appLinks;
+  StreamSubscription<Uri>? _linkSubscription;
+
   bool loaded = false;
 
   bool error = false; //for error status
@@ -125,6 +135,28 @@ class PageBaseState extends BaseState<PageBase> {
     setOptimalDisplayMode();
     if (!_isCheckingForUpdate) _checkForUpdate(); // ik that it's not necessary
     super.initState();
+    initDeepLinks();
+  }
+
+  @override
+  void dispose() {
+    _linkSubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> initDeepLinks() async {
+    _appLinks = AppLinks();
+
+    _linkSubscription = _appLinks.uriLinkStream.listen((uri) {
+      if (uri.path.startsWith('/l/')) {
+        final code = uri.pathSegments[1];
+        navigatorKey.currentState?.push(MaterialPageRoute(
+          builder: (context) => QRLoginPage(
+            code: code,
+          ),
+        ));
+      }
+    });
   }
 
   Future<void> setOptimalDisplayMode() async {

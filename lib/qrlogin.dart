@@ -1,26 +1,28 @@
+import 'package:dio/dio.dart';
 import 'package:eduapge2/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class LoginPage extends StatefulWidget {
-  final String err;
-  const LoginPage({super.key, required this.err});
+class QRLoginPage extends StatefulWidget {
+  final String code;
+  const QRLoginPage({super.key, required this.code});
 
   @override
-  BaseState<StatefulWidget> createState() => LoinPageState();
+  BaseState<StatefulWidget> createState() => QRLoinPageState();
 }
 
-class LoinPageState extends BaseState<LoginPage> {
+class QRLoinPageState extends BaseState<QRLoginPage> {
   AppLocalizations? local;
   late SharedPreferences sharedPreferences;
-  String email = "";
-  String password = "";
-  String server = "";
-  bool _showServerField = false;
   bool _useCustomEndpoint = false;
-  String _customEndpoint = '';
   bool showPassword = false;
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController serverController = TextEditingController();
+  TextEditingController customEndpointController = TextEditingController();
 
   @override
   void initState() {
@@ -42,17 +44,16 @@ class LoinPageState extends BaseState<LoginPage> {
     String? sEndpoint = sharedPreferences.getString("customEndpoint");
 
     if (sEmail != null) {
-      email = sEmail;
+      emailController.text = sEmail;
     }
     if (sPassword != null) {
-      password = sPassword;
+      passwordController.text = sPassword;
     }
     if (sServer != null) {
-      server = sServer;
-      _showServerField = true;
+      serverController.text = sServer;
     }
     if (sEndpoint != null && sEndpoint != "") {
-      _customEndpoint = sEndpoint;
+      customEndpointController.text = sEndpoint;
       _useCustomEndpoint = true;
     }
     setState(() {});
@@ -72,22 +73,22 @@ class LoinPageState extends BaseState<LoginPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    local!.loginPleaseLogin,
+                    local!.qrLoginPleaseLogin,
                     style: const TextStyle(
                       fontSize: 18,
                     ),
                   ),
-                  Text(local!.loginUseExistingCredentials),
-                  if (widget.err != "") Text(widget.err),
+                  Text(local!.qrLoginUseExistingCredentials),
                   TextField(
+                    controller: emailController,
                     decoration: InputDecoration(
                       icon: const Icon(Icons.email),
                       hintText: local!.loginUsername,
                     ),
-                    onChanged: (text) => {email = text},
                     keyboardType: TextInputType.emailAddress,
                   ),
                   TextField(
+                    controller: passwordController,
                     decoration: InputDecoration(
                       icon: const Icon(Icons.key),
                       hintText: local!.loginPassword,
@@ -102,8 +103,7 @@ class LoinPageState extends BaseState<LoginPage> {
                         },
                       ),
                     ),
-                    onChanged: (text) => {password = text},
-                    obscureText: true,
+                    obscureText: !showPassword,
                     keyboardType: TextInputType.visiblePassword,
                   ),
                   Row(
@@ -121,30 +121,46 @@ class LoinPageState extends BaseState<LoginPage> {
                   ),
                   if (_useCustomEndpoint)
                     TextField(
-                        decoration: InputDecoration(
-                          icon: const Icon(Icons.language),
-                          hintText: local!.loginCustomEndpoint,
-                        ),
-                        onChanged: (value) => {_customEndpoint = value}),
-                  if (widget.err != "" || _showServerField)
-                    TextField(
+                      controller: customEndpointController,
                       decoration: InputDecoration(
-                        icon: const Icon(Icons.cloud_queue),
-                        hintText: local!.loginServer,
+                        icon: const Icon(Icons.language),
+                        hintText: local!.loginCustomEndpoint,
                       ),
-                      onChanged: (text) => {server = text},
-                      keyboardType: TextInputType.url,
                     ),
+                  TextField(
+                    controller: serverController,
+                    decoration: InputDecoration(
+                      icon: const Icon(Icons.cloud_queue),
+                      hintText: local!.loginServer,
+                    ),
+                    keyboardType: TextInputType.url,
+                  ),
                   const SizedBox(height: 10),
                   ElevatedButton(
-                    onPressed: () => {
-                      sharedPreferences.setString("email", email),
-                      sharedPreferences.setString("password", password),
-                      sharedPreferences.setString("server", server),
-                      sharedPreferences.setString(
-                          "customEndpoint", _customEndpoint),
-                      sharedPreferences.setBool("demo", false),
-                      Navigator.pop(context),
+                    onPressed: () async {
+                      Dio dio = Dio();
+
+                      var response = await dio.post(
+                        'https://ep2.vypal.me/qrlogin/${widget.code}',
+                        options: Options(
+                          headers: {
+                            Headers.contentTypeHeader:
+                                Headers.formUrlEncodedContentType,
+                          },
+                        ),
+                        data: {
+                          'username': emailController.text,
+                          'password': passwordController.text,
+                          'server': serverController.text,
+                          'endpoint': customEndpointController.text,
+                        },
+                      );
+
+                      if (response.statusCode == 200) {
+                        SystemNavigator.pop();
+                      } else {
+                        throw Exception('Failed to load data');
+                      }
                     },
                     style: ButtonStyle(
                       elevation: WidgetStateProperty.all(3),
@@ -154,15 +170,6 @@ class LoinPageState extends BaseState<LoginPage> {
                 ],
               ),
             ),
-          ),
-          ElevatedButton(
-            onPressed: () => {
-              sharedPreferences.setString("email", ""),
-              sharedPreferences.setString("password", ""),
-              sharedPreferences.setBool("demo", true),
-              Navigator.pop(context),
-            },
-            child: Text(local!.loginDemoButton),
           ),
         ],
       ),

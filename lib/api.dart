@@ -262,7 +262,12 @@ class User {
     try {
       Response resp = await data.dio.get(
         "${data.baseUrl}/validate-token",
-        options: Options(headers: {"Authorization": "Bearer $token"}),
+        options: Options(
+          headers: {"Authorization": "Bearer $token"},
+          validateStatus: (status) {
+            return status == 200 || status == 401;
+          },
+        ),
       );
 
       if (resp.data['success'] != true) {
@@ -399,6 +404,10 @@ class TimeTable {
       demoClass.endPeriod = demoPeriod;
       timetables[dateOnly] = TimeTableData(date, [demoClass], [demoPeriod]);
       return timetables[dateOnly]!;
+    }
+
+    if (data.user.token == "") {
+      return TimeTableData(date, [], []);
     }
 
     Response response = await data.dio.get(

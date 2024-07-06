@@ -89,7 +89,7 @@ class TimeTablePageState extends BaseState<MessagesPage> {
               children: <Widget>[messages],
             )
           : Text(AppLocalizations.of(context)!.loading),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(

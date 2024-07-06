@@ -47,7 +47,7 @@ class GradesPageState extends BaseState<GradesPage> {
               children: <Widget>[messages],
             )
           : Text(AppLocalizations.of(context)!.loading),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
     );
   }
 

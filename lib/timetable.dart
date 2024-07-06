@@ -112,7 +112,7 @@ class TimeTablePageState extends BaseState<TimeTablePage> {
                     context);
               },
             ),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
     );
   }
 }
