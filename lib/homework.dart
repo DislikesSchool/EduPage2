@@ -52,7 +52,7 @@ class HomeworkPageState extends BaseState<HomeworkPage> {
               children: <Widget>[messages],
             )
           : Text(AppLocalizations.of(context)!.loading),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
     );
   }
 

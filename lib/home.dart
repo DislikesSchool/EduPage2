@@ -341,9 +341,9 @@ class HomePageState extends BaseState<HomePage> {
                 height: 50,
                 margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceVariant,
+                  color: theme.colorScheme.surfaceContainerHighest,
                   border: Border.all(
-                    color: theme.colorScheme.background,
+                    color: theme.colorScheme.surface,
                   ),
                   borderRadius: BorderRadiusDirectional.circular(25),
                 ),
@@ -617,7 +617,7 @@ class HomePageState extends BaseState<HomePage> {
           ),
         ],
       ),
-      backgroundColor: theme.colorScheme.background,
+      backgroundColor: theme.colorScheme.surface,
       drawer: Drawer(
         child: ListView(
           children: [

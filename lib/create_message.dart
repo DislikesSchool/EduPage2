@@ -253,11 +253,11 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                               leading: const Icon(Icons.drag_handle_rounded),
                               trailing: ElevatedButton(
                                 style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all<
+                                  backgroundColor: WidgetStateProperty.all<
                                           Color>(
                                       const Color.fromARGB(255, 152, 1, 29)),
                                   foregroundColor:
-                                      MaterialStateProperty.all<Color>(
+                                      WidgetStateProperty.all<Color>(
                                           Colors.white),
                                 ),
                                 child: const Icon(Icons.delete_rounded),
