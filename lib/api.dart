@@ -406,6 +406,10 @@ class TimeTable {
       return timetables[dateOnly]!;
     }
 
+    if (data.user.token == "") {
+      return TimeTableData(date, [], []);
+    }
+
     Response response = await data.dio.get(
       "${data.baseUrl}/api/timetable?to=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime(date.year, date.month, date.day))}&from=${DateFormat('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'', 'en_US').format(DateTime(date.year, date.month, date.day))}",
       options: Options(
