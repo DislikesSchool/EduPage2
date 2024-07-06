@@ -163,7 +163,7 @@ class QRLoinPageState extends BaseState<QRLoginPage> {
                       }
                     },
                     style: ButtonStyle(
-                      elevation: MaterialStateProperty.all(3),
+                      elevation: WidgetStateProperty.all(3),
                     ),
                     child: Text(local!.loginLogin),
                   ),
