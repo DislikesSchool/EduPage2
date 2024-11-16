@@ -14,16 +14,16 @@
 #include <url_launcher_windows/url_launcher_windows.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
-    AppLinksPluginCApiRegisterWithRegistrar(
-        registry->GetRegistrarForPlugin("AppLinksPluginCApi"));
-    ConnectivityPlusWindowsPluginRegisterWithRegistrar(
-        registry->GetRegistrarForPlugin("ConnectivityPlusWindowsPlugin"));
-    DynamicColorPluginCApiRegisterWithRegistrar(
-        registry->GetRegistrarForPlugin("DynamicColorPluginCApi"));
-    FirebaseCorePluginCApiRegisterWithRegistrar(
-        registry->GetRegistrarForPlugin("FirebaseCorePluginCApi"));
-    SentryFlutterPluginRegisterWithRegistrar(
-        registry->GetRegistrarForPlugin("SentryFlutterPlugin"));
-    UrlLauncherWindowsRegisterWithRegistrar(
-        registry->GetRegistrarForPlugin("UrlLauncherWindows"));
+  AppLinksPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("AppLinksPluginCApi"));
+  ConnectivityPlusWindowsPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("ConnectivityPlusWindowsPlugin"));
+  DynamicColorPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("DynamicColorPluginCApi"));
+  FirebaseCorePluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("FirebaseCorePluginCApi"));
+  SentryFlutterPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("SentryFlutterPlugin"));
+  UrlLauncherWindowsRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("UrlLauncherWindows"));
 }

@@ -126,7 +126,7 @@ class PageBaseState extends BaseState<PageBase> {
   bool refresh = true;
   bool iCanteenEnabled = false;
   bool _isCheckingForUpdate = false;
-  final ShorebirdCodePush _shorebirdCodePush = ShorebirdCodePush();
+  final ShorebirdUpdater _shorebirdCodePush = ShorebirdUpdater();
 
   SessionManager sessionManager = SessionManager();
 
@@ -189,7 +189,7 @@ class PageBaseState extends BaseState<PageBase> {
 
     // Ask the Shorebird servers if there is a new patch available.
     final isUpdateAvailable =
-        await _shorebirdCodePush.isNewPatchAvailableForDownload();
+        await _shorebirdCodePush.checkForUpdate();
 
     if (!mounted) return;
 
@@ -197,7 +197,7 @@ class PageBaseState extends BaseState<PageBase> {
       _isCheckingForUpdate = false;
     });
 
-    if (isUpdateAvailable) {
+    if (isUpdateAvailable == UpdateStatus.outdated) {
       _downloadUpdate();
     }
   }
@@ -236,7 +236,7 @@ class PageBaseState extends BaseState<PageBase> {
 
   Future<void> _downloadUpdate() async {
     _showDownloadingBanner();
-    await _shorebirdCodePush.downloadUpdateIfAvailable();
+    await _shorebirdCodePush.update();
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).hideCurrentMaterialBanner();

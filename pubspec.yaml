@@ -15,19 +15,19 @@ dependencies:
   connectivity_plus: ^6.0.3
   intl: any
   sentry_flutter: ^8.0.0
-  firebase_core: ^2.9.0
-  firebase_analytics: ^10.2.0
+  firebase_core: ^3.8.0
+  firebase_analytics: ^11.3.5
   onesignal_flutter: ^5.1.0
-  firebase_performance: ^0.9.1
+  firebase_performance: ^0.10.0+10
   html_unescape: ^2.0.0
   flutter_cached_pdfview: ^0.4.1
-  package_info_plus: ^7.0.0
+  package_info_plus: ^8.1.1
   url_launcher: ^6.1.12
-  shorebird_code_push: ^1.1.0
+  shorebird_code_push: ^2.0.0
   restart_app: ^1.2.1
   flutter_linkify: ^6.0.0
   dynamic_color: ^1.4.0
-  firebase_remote_config: ^4.2.6
+  firebase_remote_config: ^5.1.5
   flutter_displaymode: ^0.6.0
   install_referrer: ^1.2.1
   in_app_update: ^4.2.2
@@ -37,7 +37,7 @@ dev_dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
+  flutter_lints: ^5.0.0
 flutter:
   assets:
     - shorebird.yaml
