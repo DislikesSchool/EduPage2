@@ -22,6 +22,7 @@ import 'home.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:toastification/toastification.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -82,22 +83,24 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitDown,
     ]);
     return DynamicColorBuilder(builder: (lightColorScheme, darkColorScheme) {
-      return MaterialApp(
-        title: 'EduPage2',
-        navigatorKey: navigatorKey,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        navigatorObservers: [SentryNavigatorObserver(), observer],
-        theme: ThemeData(
-          colorScheme: lightColorScheme ?? _defaultLightColorScheme,
-          useMaterial3: true,
+      return ToastificationWrapper(
+        child: MaterialApp(
+          title: 'EduPage2',
+          navigatorKey: navigatorKey,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          navigatorObservers: [SentryNavigatorObserver(), observer],
+          theme: ThemeData(
+            colorScheme: lightColorScheme ?? _defaultLightColorScheme,
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            colorScheme: darkColorScheme ?? _defaultDarkColorScheme,
+            useMaterial3: true,
+          ),
+          themeMode: ThemeMode.dark,
+          home: const PageBase(),
         ),
-        darkTheme: ThemeData(
-          colorScheme: darkColorScheme ?? _defaultDarkColorScheme,
-          useMaterial3: true,
-        ),
-        themeMode: ThemeMode.dark,
-        home: const PageBase(),
       );
     });
   }
@@ -188,8 +191,7 @@ class PageBaseState extends BaseState<PageBase> {
     });
 
     // Ask the Shorebird servers if there is a new patch available.
-    final isUpdateAvailable =
-        await _shorebirdCodePush.checkForUpdate();
+    final isUpdateAvailable = await _shorebirdCodePush.checkForUpdate();
 
     if (!mounted) return;
 

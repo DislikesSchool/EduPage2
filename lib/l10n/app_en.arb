@@ -72,6 +72,12 @@
   "createMessageErrorSelectRecipient": "Please select a recipient",
   "createMessageErrorNoMessage": "Please write a message",
   "createMessageSend": "Send",
+  "createMessageNotifSending": "Sending message",
+  "createMessageNotifSendingBody": "Your message is being sent...",
+  "createMessageNotifSent": "Sent message",
+  "createMessageNotifSentBody": "Your message was sent successfully",
+  "createMessageNotifError": "Error",
+  "createMessageNotifErrorBody": "There was an issue sending your message, it has been reported!",
   "qrLoginPleaseLogin": "EduPage2 QR Login",
   "qrLoginUseExistingCredentials": "You are about to login to EduPage2 using a QR code"
 }
