@@ -66,14 +66,18 @@ class MyApp extends StatelessWidget {
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   static FirebaseAnalyticsObserver observer =
       FirebaseAnalyticsObserver(analytics: analytics);
-  static final _defaultLightColorScheme =
-      ThemeData(colorSchemeSeed: const Color.fromARGB(255, 105, 140, 243))
-          .colorScheme;
 
-  static final _defaultDarkColorScheme = ThemeData(
-          colorSchemeSeed: const Color.fromARGB(255, 105, 140, 243),
-          brightness: Brightness.dark)
-      .colorScheme;
+  ColorScheme _generateColorScheme(Color? primaryColor,
+      [Brightness? brightness]) {
+    final Color seedColor = primaryColor ?? Colors.blue;
+
+    final ColorScheme newScheme = ColorScheme.fromSeed(
+      seedColor: seedColor,
+      brightness: brightness ?? Brightness.light,
+    );
+
+    return newScheme.harmonized();
+  }
 
   // This widget is the root of your application.
   @override
@@ -91,11 +95,17 @@ class MyApp extends StatelessWidget {
           supportedLocales: AppLocalizations.supportedLocales,
           navigatorObservers: [SentryNavigatorObserver(), observer],
           theme: ThemeData(
-            colorScheme: lightColorScheme ?? _defaultLightColorScheme,
+            colorScheme: _generateColorScheme(
+              lightColorScheme?.primary,
+              Brightness.light,
+            ),
             useMaterial3: true,
           ),
           darkTheme: ThemeData(
-            colorScheme: darkColorScheme ?? _defaultDarkColorScheme,
+            colorScheme: _generateColorScheme(
+              darkColorScheme?.primary,
+              Brightness.dark,
+            ),
             useMaterial3: true,
           ),
           themeMode: ThemeMode.dark,
