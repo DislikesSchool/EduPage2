@@ -140,6 +140,12 @@
   "createMessageErrorSelectRecipient": "Vyberte prosím příjemce",
   "createMessageErrorNoMessage": "Napište prosím zprávu",
   "createMessageSend": "Odeslat",
+  "createMessageNotifSending": "Odesílání zprávy",
+  "createMessageNotifSendingBody": "Vaše zpráva se odesílá",
+  "createMessageNotifSent": "Zpráva odeslána",
+  "createMessageNotifSentBody": "Vaše zpráva se odeslala úspěšně",
+  "createMessageNotifError": "Chyba",
+  "createMessageNotifErrorBody": "Při odesílání zprávy se vyskytla chyba, tato chyba byla nahlášena.",
   "qrLoginPleaseLogin": "EduPage2 QR Přihlášení",
   "qrLoginUseExistingCredentials": "Chystáte se přihlásit pomocí QR kódu"
 }
