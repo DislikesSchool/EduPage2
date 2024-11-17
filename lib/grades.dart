@@ -103,13 +103,14 @@ class GradesPageState extends BaseState<GradesPage> {
               ),
             ),
             Padding(
-                padding: const EdgeInsets.only(top: 40),
-                child: RefreshIndicator(
-                  onRefresh: _pullRefresh,
-                  child: ListView(
-                    children: rows,
-                  ),
-                )),
+              padding: const EdgeInsets.only(top: 40),
+              child: RefreshIndicator(
+                onRefresh: _pullRefresh,
+                child: ListView(
+                  children: rows,
+                ),
+              ),
+            ),
           ],
         ),
       ),
