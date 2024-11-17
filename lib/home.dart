@@ -613,6 +613,29 @@ class HomePageState extends BaseState<HomePage> {
                     ),
                   ),
                 ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+                child: Card(
+                  elevation: 5,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Grades",
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                        Text(
+                          "Check your grades",
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
