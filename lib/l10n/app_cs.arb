@@ -66,6 +66,8 @@
   "homePreview": "Náhled",
   "homePatchAvailable": "Instaluje se nový patch...",
   "homePatchDownloaded": "Patch byl stažen, restartujte aplikaci pro instalaci",
+  "homeGrades": "Známky",
+  "homeHomework": "Úkoly",
   "homeworkTitle": "Domácí úkoly",
   "@homeworkTitle": {
     "description": "Title of homework page"

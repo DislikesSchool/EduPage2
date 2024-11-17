@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:eduapge2/api.dart';
+import 'package:eduapge2/grades.dart';
 import 'package:eduapge2/icanteen_setup.dart';
 import 'package:eduapge2/main.dart';
 import 'package:eduapge2/message.dart';
@@ -16,6 +17,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class HomePage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -334,7 +336,7 @@ class HomePageState extends BaseState<HomePage> {
       key: scaffoldKey,
       body: Stack(
         children: [
-          Column(
+          ListView(
             children: <Widget>[
               Container(
                 width: MediaQuery.of(context).size.width,
@@ -616,24 +618,69 @@ class HomePageState extends BaseState<HomePage> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
-                child: Card(
-                  elevation: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "Grades",
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                        Text(
-                          "Check your grades",
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ],
-                    ),
+                child: GridView(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 2,
                   ),
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GradesPage(
+                              sessionManager: widget.sessionManager,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        elevation: 5,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              const Icon(Icons.assignment_rounded),
+                              AutoSizeText(
+                                local!.homeGrades,
+                                style: const TextStyle(fontSize: 20),
+                                maxLines: 1,
+                                minFontSize: 12,
+                                overflow: TextOverflow.ellipsis,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Card(
+                      elevation: 5,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            const Icon(Icons.home_work_rounded),
+                            AutoSizeText(
+                              local.homeHomework,
+                              style: const TextStyle(fontSize: 20),
+                              maxLines: 1,
+                              minFontSize: 12,
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -652,7 +699,7 @@ class HomePageState extends BaseState<HomePage> {
               splashColor: Colors.transparent,
               child: ListTile(
                 leading: const Icon(Icons.lunch_dining_rounded),
-                title: Text(local!.homeSetupICanteen),
+                title: Text(local.homeSetupICanteen),
                 onTap: () {
                   Navigator.push(
                     context,

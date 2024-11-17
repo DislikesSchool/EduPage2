@@ -19,6 +19,8 @@
   "homePreview": "Preview",
   "homePatchAvailable": "Installing new patch...",
   "homePatchDownloaded": "Patch downloaded, please restart EduPage2",
+  "homeGrades": "Grades",
+  "homeHomework": "Homework",
   "homeworkTitle": "Homework",
   "messagesTitle": "Messages",
   "loginPleaseLogin": "Please login to EduPage2",
