@@ -1,8 +1,8 @@
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/main.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_session_manager/flutter_session_manager.dart';
 
 class GradesPage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -17,7 +17,7 @@ class GradesPageState extends BaseState<GradesPage> {
   bool loading = true;
   late List<TimelineItem> apidataMsg;
 
-  late Widget messages;
+  List<Widget> messages = [];
 
   @override
   void initState() {
@@ -44,8 +44,30 @@ class GradesPageState extends BaseState<GradesPage> {
         toolbarHeight: 0,
       ),
       body: !loading
-          ? Stack(
-              children: <Widget>[messages],
+          ? Card(
+              elevation: 5,
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Stack(
+                  children: <Widget>[
+                    Text(
+                      AppLocalizations.of(context)!.gradesTitle,
+                      style: const TextStyle(
+                        fontSize: 24,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 40),
+                      child: RefreshIndicator(
+                        onRefresh: _pullRefresh,
+                        child: ListView(
+                          children: messages,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             )
           : Text(AppLocalizations.of(context)!.loading),
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -64,7 +86,7 @@ class GradesPageState extends BaseState<GradesPage> {
     setState(() {}); //refresh UI
   }
 
-  Widget getMessages(List<TimelineItem> apidataMsg) {
+  List<Widget> getMessages(List<TimelineItem> apidataMsg) {
     List<Widget> rows = <Widget>[];
     apidataMsg = apidataMsg.where((msg) => msg.type == "znamka").toList();
     Map<String, List<String>> grades = {};
@@ -84,24 +106,6 @@ class GradesPageState extends BaseState<GradesPage> {
         ),
       ));
     }
-    return Card(
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Stack(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 40),
-              child: RefreshIndicator(
-                onRefresh: _pullRefresh,
-                child: ListView(
-                  children: rows,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return rows;
   }
 }

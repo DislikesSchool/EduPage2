@@ -81,5 +81,6 @@
   "createMessageNotifError": "Error",
   "createMessageNotifErrorBody": "There was an issue sending your message, it has been reported!",
   "qrLoginPleaseLogin": "EduPage2 QR Login",
-  "qrLoginUseExistingCredentials": "You are about to login to EduPage2 using a QR code"
+  "qrLoginUseExistingCredentials": "You are about to login to EduPage2 using a QR code",
+  "gradesTitle": "Grades"
 }

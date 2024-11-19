@@ -149,5 +149,6 @@
   "createMessageNotifError": "Chyba",
   "createMessageNotifErrorBody": "Při odesílání zprávy se vyskytla chyba, tato chyba byla nahlášena.",
   "qrLoginPleaseLogin": "EduPage2 QR Přihlášení",
-  "qrLoginUseExistingCredentials": "Chystáte se přihlásit pomocí QR kódu"
+  "qrLoginUseExistingCredentials": "Chystáte se přihlásit pomocí QR kódu",
+  "gradesTitle": "Známky"
 }
