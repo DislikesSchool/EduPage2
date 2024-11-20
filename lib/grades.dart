@@ -1,7 +1,8 @@
+import 'package:eduapge2/api.dart';
 import 'package:eduapge2/main.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_session_manager/flutter_session_manager.dart';
 
 class GradesPage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -14,14 +15,14 @@ class GradesPage extends StatefulWidget {
 
 class GradesPageState extends BaseState<GradesPage> {
   bool loading = true;
-  late List<dynamic> apidataMsg;
+  late List<TimelineItem> apidataMsg;
 
-  late Widget messages;
+  List<Widget> messages = [];
 
   @override
   void initState() {
-    getData(); //fetching data
     super.initState();
+    getData();
   }
 
   getData() async {
@@ -29,7 +30,7 @@ class GradesPageState extends BaseState<GradesPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    apidataMsg = await widget.sessionManager.get('messages');
+    apidataMsg = EP2Data.getInstance().timeline.items.values.toList();
     messages = getMessages(apidataMsg);
 
     loading = false;
@@ -43,8 +44,30 @@ class GradesPageState extends BaseState<GradesPage> {
         toolbarHeight: 0,
       ),
       body: !loading
-          ? Stack(
-              children: <Widget>[messages],
+          ? Card(
+              elevation: 5,
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Stack(
+                  children: <Widget>[
+                    Text(
+                      AppLocalizations.of(context)!.gradesTitle,
+                      style: const TextStyle(
+                        fontSize: 24,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 40),
+                      child: RefreshIndicator(
+                        onRefresh: _pullRefresh,
+                        child: ListView(
+                          children: messages,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             )
           : Text(AppLocalizations.of(context)!.loading),
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -63,19 +86,12 @@ class GradesPageState extends BaseState<GradesPage> {
     setState(() {}); //refresh UI
   }
 
-  Widget getMessages(var apidataMsg) {
+  List<Widget> getMessages(List<TimelineItem> apidataMsg) {
     List<Widget> rows = <Widget>[];
-    apidataMsg ??= [
-      {
-        "type": "znamka",
-        "title": "Načítání...",
-        "text": "Nebude to trvat dlouho",
-      }
-    ];
-    apidataMsg = apidataMsg.where((msg) => msg["type"] == "znamka").toList();
+    apidataMsg = apidataMsg.where((msg) => msg.type == "znamka").toList();
     Map<String, List<String>> grades = {};
-    for (Map<String, dynamic> msg in apidataMsg) {
-      String gradeInfo = msg["text"].split(' - ')[1];
+    for (TimelineItem msg in apidataMsg) {
+      String gradeInfo = msg.text.split(' - ')[1];
       String className = gradeInfo.split(': ')[0];
       String grade = gradeInfo.split(': ')[1];
       if (!grades.containsKey(className)) grades[className] = [];
@@ -90,29 +106,6 @@ class GradesPageState extends BaseState<GradesPage> {
         ),
       ));
     }
-    return Card(
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Stack(
-          children: <Widget>[
-            Text(
-              AppLocalizations.of(context)!.messagesTitle,
-              style: const TextStyle(
-                fontSize: 24,
-              ),
-            ),
-            Padding(
-                padding: const EdgeInsets.only(top: 40),
-                child: RefreshIndicator(
-                  onRefresh: _pullRefresh,
-                  child: ListView(
-                    children: rows,
-                  ),
-                )),
-          ],
-        ),
-      ),
-    );
+    return rows;
   }
 }
