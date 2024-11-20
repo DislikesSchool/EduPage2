@@ -1,11 +1,12 @@
 import 'dart:convert';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:eduapge2/timetable.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<bool> isConnected() async {
   var connectivityResult = await (Connectivity().checkConnectivity());
@@ -23,6 +24,7 @@ class EP2Data {
   late User user;
   late Timeline timeline;
   late TimeTable timetable;
+  late Grades grades;
 
   static EP2Data? _instance;
 
@@ -120,6 +122,12 @@ class EP2Data {
       await timetable.loadRecentTt();
     }
 
+    grades = (await Grades.loadFromCache()) ?? Grades(events: {}, notes: {});
+
+    if (isInternetAvailable && !quickstart) {
+      await grades.loadGrades();
+    }
+
     if (quickstart && isInternetAvailable) {
       loadInBackground();
     }
@@ -133,6 +141,7 @@ class EP2Data {
     }
     await timeline.loadMessages();
     await timetable.loadRecentTt();
+    await grades.loadGrades();
   }
 }
 
@@ -1127,6 +1136,221 @@ class Timeline {
 
     newItems.forEach((key, value) {
       items[key] = TimelineItem.fromJson(value);
+    });
+
+    await saveToCache();
+  }
+}
+
+class Event {
+  final String provider;
+  final String id;
+  final String studentID;
+  final String subjectID;
+  final String eventID;
+  final String month;
+  final String data;
+  final String date;
+  final String teacherID;
+  final String signed;
+  final String signedAdult;
+  final String timestamp;
+  final String state;
+  final String color;
+  final String eventName;
+  final String firstAverage;
+  final dynamic eventType;
+  final dynamic weight;
+  final String classID;
+  final String planID;
+  final dynamic gradeCount;
+  final dynamic moreData;
+  final String average;
+
+  Event({
+    required this.provider,
+    required this.id,
+    required this.studentID,
+    required this.subjectID,
+    required this.eventID,
+    required this.month,
+    required this.data,
+    required this.date,
+    required this.teacherID,
+    required this.signed,
+    required this.signedAdult,
+    required this.timestamp,
+    required this.state,
+    required this.color,
+    required this.eventName,
+    required this.firstAverage,
+    required this.eventType,
+    required this.weight,
+    required this.classID,
+    required this.planID,
+    required this.gradeCount,
+    required this.moreData,
+    required this.average,
+  });
+
+  factory Event.fromJson(Map<String, dynamic> json) {
+    return Event(
+      provider: json['provider'] as String,
+      id: json['znamkaid'] as String,
+      studentID: json['studentid'] as String,
+      subjectID: json['predmetid'] as String,
+      eventID: json['udalostID'] as String,
+      month: json['mesiac'] as String,
+      data: json['data'] as String,
+      date: json['datum'] as String,
+      teacherID: json['ucitelid'] as String,
+      signed: json['podpisane'] as String,
+      signedAdult: json['podpisane_rodic'] as String,
+      timestamp: json['timestamp'] as String,
+      state: json['stav'] as String,
+      color: json['p_farba'] as String,
+      eventName: json['p_meno'] as String,
+      firstAverage: json['p_najskor_priemer'] as String,
+      eventType: json['p_typ_udalosti'],
+      weight: json['p_vaha'],
+      classID: json['TriedaID'] as String,
+      planID: json['planid'] as String,
+      gradeCount: json['p_pocet_znamok'],
+      moreData: json['moredata'],
+      average: json['priemer'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'provider': provider,
+      'znamkaid': id,
+      'studentid': studentID,
+      'predmetid': subjectID,
+      'udalostID': eventID,
+      'mesiac': month,
+      'data': data,
+      'datum': date,
+      'ucitelid': teacherID,
+      'podpisane': signed,
+      'podpisane_rodic': signedAdult,
+      'timestamp': timestamp,
+      'stav': state,
+      'p_farba': color,
+      'p_meno': eventName,
+      'p_najskor_priemer': firstAverage,
+      'p_typ_udalosti': eventType,
+      'p_vaha': weight,
+      'TriedaID': classID,
+      'planid': planID,
+      'p_pocet_znamok': gradeCount,
+      'moredata': moreData,
+      'priemer': average,
+    };
+  }
+}
+
+class Note {
+  final String id;
+  final String date;
+  final String text;
+  final String type;
+  final String subjectID;
+
+  Note({
+    required this.id,
+    required this.date,
+    required this.text,
+    required this.type,
+    required this.subjectID,
+  });
+
+  factory Note.fromJson(Map<String, dynamic> json) {
+    return Note(
+      id: json['VcelickaID'] as String,
+      date: json['p_datum'] as String,
+      text: json['p_text'] as String,
+      type: json['p_typ'] as String,
+      subjectID: json['PredmetID'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'VcelickaID': id,
+      'p_datum': date,
+      'p_text': text,
+      'p_typ': type,
+      'PredmetID': subjectID,
+    };
+  }
+}
+
+class Grades {
+  EP2Data data = EP2Data.getInstance();
+
+  final Map<String, Event> events;
+  final Map<String, Note> notes;
+
+  Grades({
+    required this.events,
+    required this.notes,
+  });
+
+  factory Grades.fromJson(Map<String, dynamic> json) {
+    return Grades(
+      events: (json['Events'] as Map<String, dynamic>).map(
+        (key, value) =>
+            MapEntry(key, Event.fromJson(value as Map<String, dynamic>)),
+      ),
+      notes: (json['Notes'] as Map<String, dynamic>).map(
+        (key, value) =>
+            MapEntry(key, Note.fromJson(value as Map<String, dynamic>)),
+      ),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'Events': events.map((key, value) => MapEntry(key, value.toJson())),
+      'Notes': notes.map((key, value) => MapEntry(key, value.toJson())),
+    };
+  }
+
+  Future<void> saveToCache() async {
+    final timelineJson = jsonEncode(toJson());
+    await data.sharedPreferences.setString('grades', timelineJson);
+  }
+
+  static Future<Grades?> loadFromCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    final timelineJson = prefs.getString('grades');
+    if (timelineJson != null) {
+      return Grades.fromJson(jsonDecode(timelineJson));
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> loadGrades() async {
+    Response response = await data.dio.get(
+      "${data.baseUrl}/api/grades",
+      options: Options(
+        headers: {
+          "Authorization": "Bearer ${data.user.token}",
+        },
+      ),
+    );
+
+    Map<String, dynamic> newEvents = response.data["Events"];
+    Map<String, dynamic> newNotes = response.data["Notes"];
+
+    newEvents.forEach((key, value) {
+      events[key] = Event.fromJson(value);
+    });
+
+    newNotes.forEach((key, value) {
+      notes[key] = Note.fromJson(value);
     });
 
     await saveToCache();
