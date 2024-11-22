@@ -15,7 +15,6 @@ class GradesPage extends StatefulWidget {
 
 class GradesPageState extends BaseState<GradesPage> {
   bool loading = true;
-  late List<TimelineItem> apidataMsg;
 
   List<Widget> messages = [];
 
@@ -30,8 +29,7 @@ class GradesPageState extends BaseState<GradesPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    apidataMsg = EP2Data.getInstance().timeline.items.values.toList();
-    messages = getMessages(apidataMsg);
+    messages = getMessages(EP2Data.getInstance().grades);
 
     loading = false;
     setState(() {}); //refresh UI
@@ -79,23 +77,19 @@ class GradesPageState extends BaseState<GradesPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    apidataMsg = await widget.sessionManager.get('messages');
-    messages = getMessages(apidataMsg);
+    messages = getMessages(EP2Data.getInstance().grades);
 
     loading = false;
     setState(() {}); //refresh UI
   }
 
-  List<Widget> getMessages(List<TimelineItem> apidataMsg) {
+  List<Widget> getMessages(Grades results) {
     List<Widget> rows = <Widget>[];
-    apidataMsg = apidataMsg.where((msg) => msg.type == "znamka").toList();
     Map<String, List<String>> grades = {};
-    for (TimelineItem msg in apidataMsg) {
-      String gradeInfo = msg.text.split(' - ')[1];
-      String className = gradeInfo.split(': ')[0];
-      String grade = gradeInfo.split(': ')[1];
-      if (!grades.containsKey(className)) grades[className] = [];
-      grades[className]?.add(grade);
+    for (Event msg in results.events.values) {
+      if (msg.data == "") continue;
+      if (!grades.containsKey(msg.subjectID)) grades[msg.subjectID] = [];
+      grades[msg.subjectID]?.add(msg.data);
     }
     for (String key in grades.keys) {
       List<String>? g = grades[key];
