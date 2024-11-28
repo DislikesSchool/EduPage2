@@ -22,6 +22,7 @@ import 'home.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:toastification/toastification.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,14 +66,18 @@ class MyApp extends StatelessWidget {
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   static FirebaseAnalyticsObserver observer =
       FirebaseAnalyticsObserver(analytics: analytics);
-  static final _defaultLightColorScheme =
-      ThemeData(colorSchemeSeed: const Color.fromARGB(255, 105, 140, 243))
-          .colorScheme;
 
-  static final _defaultDarkColorScheme = ThemeData(
-          colorSchemeSeed: const Color.fromARGB(255, 105, 140, 243),
-          brightness: Brightness.dark)
-      .colorScheme;
+  ColorScheme _generateColorScheme(Color? primaryColor,
+      [Brightness? brightness]) {
+    final Color seedColor = primaryColor ?? Colors.blue;
+
+    final ColorScheme newScheme = ColorScheme.fromSeed(
+      seedColor: seedColor,
+      brightness: brightness ?? Brightness.light,
+    );
+
+    return newScheme.harmonized();
+  }
 
   // This widget is the root of your application.
   @override
@@ -82,22 +87,30 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitDown,
     ]);
     return DynamicColorBuilder(builder: (lightColorScheme, darkColorScheme) {
-      return MaterialApp(
-        title: 'EduPage2',
-        navigatorKey: navigatorKey,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        navigatorObservers: [SentryNavigatorObserver(), observer],
-        theme: ThemeData(
-          colorScheme: lightColorScheme ?? _defaultLightColorScheme,
-          useMaterial3: true,
+      return ToastificationWrapper(
+        child: MaterialApp(
+          title: 'EduPage2',
+          navigatorKey: navigatorKey,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          navigatorObservers: [SentryNavigatorObserver(), observer],
+          theme: ThemeData(
+            colorScheme: _generateColorScheme(
+              lightColorScheme?.primary,
+              Brightness.light,
+            ),
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            colorScheme: _generateColorScheme(
+              darkColorScheme?.primary,
+              Brightness.dark,
+            ),
+            useMaterial3: true,
+          ),
+          themeMode: ThemeMode.dark,
+          home: const PageBase(),
         ),
-        darkTheme: ThemeData(
-          colorScheme: darkColorScheme ?? _defaultDarkColorScheme,
-          useMaterial3: true,
-        ),
-        themeMode: ThemeMode.dark,
-        home: const PageBase(),
       );
     });
   }
@@ -188,8 +201,7 @@ class PageBaseState extends BaseState<PageBase> {
     });
 
     // Ask the Shorebird servers if there is a new patch available.
-    final isUpdateAvailable =
-        await _shorebirdCodePush.checkForUpdate();
+    final isUpdateAvailable = await _shorebirdCodePush.checkForUpdate();
 
     if (!mounted) return;
 

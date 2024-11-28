@@ -5,6 +5,7 @@ import 'package:eduapge2/api.dart';
 import 'package:eduapge2/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:toastification/toastification.dart';
 
 class SendMessageScreen extends StatefulWidget {
   const SendMessageScreen({super.key});
@@ -51,7 +52,7 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
     loc = AppLocalizations.of(context);
     return PopScope(
       canPop: message.isEmpty,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, dynamic _) {
         if (didPop) {
           return;
         }
@@ -317,6 +318,24 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
 
                   final messageOptionsJson = jsonEncode(messageOptions);
 
+                  Navigator.of(context).pop();
+
+                  toastification.show(
+                    type: ToastificationType.info,
+                    style: ToastificationStyle.flat,
+                    title: Text(loc!.createMessageNotifSending),
+                    description: Text(loc!.createMessageNotifSendingBody),
+                    alignment: Alignment.bottomCenter,
+                    autoCloseDuration: const Duration(seconds: 2),
+                    icon: Icon(Icons.send_rounded),
+                    borderRadius: BorderRadius.circular(12.0),
+                    boxShadow: highModeShadow,
+                    showProgressBar: true,
+                    closeButtonShowType: CloseButtonShowType.none,
+                    closeOnClick: false,
+                    applyBlurEffect: true,
+                  );
+
                   data.dio
                       .post(
                     "${data.baseUrl}/api/message",
@@ -330,13 +349,37 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                     ),
                   )
                       .then((response) {
-                    Navigator.of(context).pop();
-                  }).catchError((error) {
-                    final snackBar = SnackBar(
-                      content: Text(error.toString()),
+                    toastification.show(
+                      type: ToastificationType.success,
+                      style: ToastificationStyle.flat,
+                      title: Text(loc!.createMessageNotifSent),
+                      description: Text(loc!.createMessageNotifSentBody),
+                      alignment: Alignment.bottomCenter,
+                      autoCloseDuration: const Duration(seconds: 4),
+                      icon: Icon(Icons.check),
+                      borderRadius: BorderRadius.circular(12.0),
+                      boxShadow: highModeShadow,
+                      showProgressBar: true,
+                      closeButtonShowType: CloseButtonShowType.none,
+                      closeOnClick: false,
+                      applyBlurEffect: true,
                     );
-
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  }).catchError((error) {
+                    toastification.show(
+                      type: ToastificationType.error,
+                      style: ToastificationStyle.flat,
+                      title: Text(loc!.createMessageNotifError),
+                      description: Text(loc!.createMessageNotifErrorBody),
+                      alignment: Alignment.bottomCenter,
+                      autoCloseDuration: const Duration(seconds: 4),
+                      icon: Icon(Icons.cancel),
+                      borderRadius: BorderRadius.circular(12.0),
+                      boxShadow: highModeShadow,
+                      showProgressBar: true,
+                      closeButtonShowType: CloseButtonShowType.none,
+                      closeOnClick: false,
+                      applyBlurEffect: true,
+                    );
                   });
                 },
                 child: Text(loc!.createMessageSend),
