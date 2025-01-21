@@ -102,6 +102,15 @@
   "loginDemoButton": "Anebo si prohledněte demo",
   "today": "Dnes",
   "tomorrow": "Zítra",
+  "timetableTeacher": "{count, plural, =1{Učitel} other{Učitelé}}",
+  "@timetableTeacher": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
   "loadCredentials": "Načítání přihlašovacích údajů",
   "loadLoggingIn": "Přihlašování...",
   "loadLoggedIn": "Přihlášeno",

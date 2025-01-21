@@ -34,6 +34,15 @@
   "loginDemoButton": "Or try the demo",
   "today": "Today",
   "tomorrow": "Tomorrow",
+  "timetableTeacher": "{count, plural, =1{Teacher} other{Teachers}}",
+  "@timetableTeacher": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
   "loadCredentials": "Loading credentials...",
   "loadLoggingIn": "Logging in...",
   "loadLoggedIn": "Logged in",

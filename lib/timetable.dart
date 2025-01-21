@@ -219,8 +219,8 @@ Widget getTimeTable(TimeTableData tt, int daydiff, Function(int) modifyDayDiff,
     List<Widget> extrasRow = <Widget>[];
     if (ttclass.teachers.isNotEmpty) {
       List<Teacher> teachers = ttclass.teachers;
-      String names = teachers.length == 1 ? "Teacher: " : "Teachers: ";
-      names += "${teachers[0].firstName} ${teachers[0].lastName}";
+      String names = local?.timetableTeacher(teachers.length) ?? "Teacher";
+      names += ": ${teachers[0].firstName} ${teachers[0].lastName}";
       for (Teacher teacher in teachers.skip(1)) {
         names += ", ${teacher.firstName} ${teacher.lastName}";
       }
