@@ -98,14 +98,19 @@ class GradesPageState extends BaseState<GradesPage> {
       if (g == null) continue;
       if ((await data.dbi.getSubject(key)).name == "") continue;
 
-      List<double> allGrades = g
-          .map((grade) =>
-              double.parse(grade.data) * double.parse(grade.weight) / 20)
-          .toList();
-      List<double> allWeights =
-          g.map((grade) => double.parse(grade.weight) / 20).toList();
-      double avg = allGrades.reduce((a, b) => a + b) /
-          allWeights.reduce((a, b) => a + b);
+      double avg = 0;
+      try {
+        List<double> allGrades = g
+            .map((grade) =>
+                double.parse(grade.data) * double.parse(grade.weight) / 20)
+            .toList();
+        List<double> allWeights =
+            g.map((grade) => double.parse(grade.weight) / 20).toList();
+        avg = allGrades.reduce((a, b) => a + b) /
+            allWeights.reduce((a, b) => a + b);
+      } catch (e) {
+        continue;
+      }
 
       rows.add(Card(
         elevation: 5,
