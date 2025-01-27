@@ -70,6 +70,13 @@ jobs:
           fallback: 1.0.0
       - name: Extract version from tag
         uses: damienaicheh/extract-version-from-tag-action@v1.1.0
+      - name: Update pubspec.yaml
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: "pubspec.yaml"
+          propertyPath: "version"
+          value: "${{ steps.previoustag.outputs.tag }}"
+          commitChange: false
       - run: flutter pub get
       - run: flutter gen-l10n
       - name: 🚀 Shorebird Patch
