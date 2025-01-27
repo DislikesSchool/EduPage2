@@ -70,12 +70,18 @@ jobs:
           fallback: 1.0.0
       - name: Extract version from tag
         uses: damienaicheh/extract-version-from-tag-action@v1.1.0
+      - name: Trim v prefix
+        id: trimv
+        run: |
+          prefix="v"
+          string="${{ steps.previoustag.outputs.tag }}"
+          echo "VERSION=${string#"$prefix"}" >> $GITHUB_OUTPUT
       - name: Update pubspec.yaml
         uses: fjogeleit/yaml-update-action@main
         with:
           valueFile: "pubspec.yaml"
           propertyPath: "version"
-          value: "${{ steps.previoustag.outputs.tag }}"
+          value: "${{ steps.trimv.outputs.VERSION }}"
           commitChange: false
       - run: flutter pub get
       - run: flutter gen-l10n
