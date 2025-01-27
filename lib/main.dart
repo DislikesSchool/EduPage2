@@ -11,6 +11,7 @@ import 'package:eduapge2/qrlogin.dart';
 import 'package:eduapge2/timetable.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
@@ -41,7 +42,7 @@ Future<void> main() async {
   await remoteConfig.fetchAndActivate();
   await SentryFlutter.init(
     (options) {
-      options.dsn =
+      options.dsn = kDebugMode ? '' :
           'https://9c458db0f7204c84946c2d8ca59556ed@o4504950085976064.ingest.sentry.io/4504950092136448';
       options.tracesSampleRate = 1.0;
     },
