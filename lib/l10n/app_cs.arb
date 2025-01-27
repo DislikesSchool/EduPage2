@@ -66,6 +66,8 @@
   "homePreview": "Náhled",
   "homePatchAvailable": "Instaluje se nový patch...",
   "homePatchDownloaded": "Patch byl stažen, restartujte aplikaci pro instalaci",
+  "homeGrades": "Známky",
+  "homeHomework": "Úkoly",
   "homeworkTitle": "Domácí úkoly",
   "@homeworkTitle": {
     "description": "Title of homework page"
@@ -100,6 +102,15 @@
   "loginDemoButton": "Anebo si prohledněte demo",
   "today": "Dnes",
   "tomorrow": "Zítra",
+  "timetableTeacher": "{count, plural, =1{Učitel} other{Učitelé}}",
+  "@timetableTeacher": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
   "loadCredentials": "Načítání přihlašovacích údajů",
   "loadLoggingIn": "Přihlašování...",
   "loadLoggedIn": "Přihlášeno",
@@ -140,6 +151,13 @@
   "createMessageErrorSelectRecipient": "Vyberte prosím příjemce",
   "createMessageErrorNoMessage": "Napište prosím zprávu",
   "createMessageSend": "Odeslat",
+  "createMessageNotifSending": "Odesílání zprávy",
+  "createMessageNotifSendingBody": "Vaše zpráva se odesílá",
+  "createMessageNotifSent": "Zpráva odeslána",
+  "createMessageNotifSentBody": "Vaše zpráva se odeslala úspěšně",
+  "createMessageNotifError": "Chyba",
+  "createMessageNotifErrorBody": "Při odesílání zprávy se vyskytla chyba, tato chyba byla nahlášena.",
   "qrLoginPleaseLogin": "EduPage2 QR Přihlášení",
-  "qrLoginUseExistingCredentials": "Chystáte se přihlásit pomocí QR kódu"
+  "qrLoginUseExistingCredentials": "Chystáte se přihlásit pomocí QR kódu",
+  "gradesTitle": "Známky"
 }

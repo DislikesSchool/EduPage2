@@ -1,7 +1,8 @@
+import 'package:eduapge2/api.dart';
 import 'package:eduapge2/main.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_session_manager/flutter_session_manager.dart';
 
 class GradesPage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -14,14 +15,15 @@ class GradesPage extends StatefulWidget {
 
 class GradesPageState extends BaseState<GradesPage> {
   bool loading = true;
-  late List<dynamic> apidataMsg;
 
-  late Widget messages;
+  final EP2Data data = EP2Data.getInstance();
+
+  List<Widget> messages = [];
 
   @override
   void initState() {
-    getData(); //fetching data
     super.initState();
+    getData();
   }
 
   getData() async {
@@ -29,8 +31,7 @@ class GradesPageState extends BaseState<GradesPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    apidataMsg = await widget.sessionManager.get('messages');
-    messages = getMessages(apidataMsg);
+    messages = await getMessages(EP2Data.getInstance().grades);
 
     loading = false;
     setState(() {}); //refresh UI
@@ -43,8 +44,30 @@ class GradesPageState extends BaseState<GradesPage> {
         toolbarHeight: 0,
       ),
       body: !loading
-          ? Stack(
-              children: <Widget>[messages],
+          ? Card(
+              elevation: 5,
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Stack(
+                  children: <Widget>[
+                    Text(
+                      AppLocalizations.of(context)!.gradesTitle,
+                      style: const TextStyle(
+                        fontSize: 28,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 40),
+                      child: RefreshIndicator(
+                        onRefresh: _pullRefresh,
+                        child: ListView(
+                          children: messages,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             )
           : Text(AppLocalizations.of(context)!.loading),
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -56,63 +79,81 @@ class GradesPageState extends BaseState<GradesPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    apidataMsg = await widget.sessionManager.get('messages');
-    messages = getMessages(apidataMsg);
+    messages = await getMessages(EP2Data.getInstance().grades);
 
     loading = false;
     setState(() {}); //refresh UI
   }
 
-  Widget getMessages(var apidataMsg) {
+  Future<List<Widget>> getMessages(Grades results) async {
     List<Widget> rows = <Widget>[];
-    apidataMsg ??= [
-      {
-        "type": "znamka",
-        "title": "Načítání...",
-        "text": "Nebude to trvat dlouho",
-      }
-    ];
-    apidataMsg = apidataMsg.where((msg) => msg["type"] == "znamka").toList();
-    Map<String, List<String>> grades = {};
-    for (Map<String, dynamic> msg in apidataMsg) {
-      String gradeInfo = msg["text"].split(' - ')[1];
-      String className = gradeInfo.split(': ')[0];
-      String grade = gradeInfo.split(': ')[1];
-      if (!grades.containsKey(className)) grades[className] = [];
-      grades[className]?.add(grade);
+    Map<String, List<Event>> grades = {};
+    for (Event msg in results.events.values) {
+      if (msg.data == "") continue;
+      if (!grades.containsKey(msg.subjectID)) grades[msg.subjectID] = [];
+      grades[msg.subjectID]?.add(msg);
     }
     for (String key in grades.keys) {
-      List<String>? g = grades[key];
+      List<Event>? g = grades[key];
       if (g == null) continue;
+      if ((await data.dbi.getSubject(key)).name == "") continue;
+
+      List<double> allGrades = g
+          .map((grade) =>
+              double.parse(grade.data) * double.parse(grade.weight) / 20)
+          .toList();
+      List<double> allWeights =
+          g.map((grade) => double.parse(grade.weight) / 20).toList();
+      double avg = allGrades.reduce((a, b) => a + b) /
+          allWeights.reduce((a, b) => a + b);
+
       rows.add(Card(
-        child: Row(
-          children: [Text(key), for (String grade in g) Text(grade)],
+        elevation: 5,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        (await data.dbi.getSubject(key)).name,
+                        style: TextStyle(
+                          fontSize: 16,
+                          overflow: TextOverflow.ellipsis,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        g.map((grade) => grade.data).join(', '),
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  Text(avg.toStringAsFixed(2), style: TextStyle(fontSize: 24)),
+                ],
+              ),
+            ],
+          ),
         ),
       ));
     }
-    return Card(
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Stack(
-          children: <Widget>[
-            Text(
-              AppLocalizations.of(context)!.messagesTitle,
-              style: const TextStyle(
-                fontSize: 24,
-              ),
-            ),
-            Padding(
-                padding: const EdgeInsets.only(top: 40),
-                child: RefreshIndicator(
-                  onRefresh: _pullRefresh,
-                  child: ListView(
-                    children: rows,
-                  ),
-                )),
-          ],
-        ),
-      ),
-    );
+    return rows;
   }
 }

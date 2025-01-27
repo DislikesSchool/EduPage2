@@ -19,6 +19,8 @@
   "homePreview": "Preview",
   "homePatchAvailable": "Installing new patch...",
   "homePatchDownloaded": "Patch downloaded, please restart EduPage2",
+  "homeGrades": "Grades",
+  "homeHomework": "Homework",
   "homeworkTitle": "Homework",
   "messagesTitle": "Messages",
   "loginPleaseLogin": "Please login to EduPage2",
@@ -32,6 +34,15 @@
   "loginDemoButton": "Or try the demo",
   "today": "Today",
   "tomorrow": "Tomorrow",
+  "timetableTeacher": "{count, plural, =1{Teacher} other{Teachers}}",
+  "@timetableTeacher": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "compact"
+      }
+    }
+  },
   "loadCredentials": "Loading credentials...",
   "loadLoggingIn": "Logging in...",
   "loadLoggedIn": "Logged in",
@@ -72,6 +83,13 @@
   "createMessageErrorSelectRecipient": "Please select a recipient",
   "createMessageErrorNoMessage": "Please write a message",
   "createMessageSend": "Send",
+  "createMessageNotifSending": "Sending message",
+  "createMessageNotifSendingBody": "Your message is being sent...",
+  "createMessageNotifSent": "Sent message",
+  "createMessageNotifSentBody": "Your message was sent successfully",
+  "createMessageNotifError": "Error",
+  "createMessageNotifErrorBody": "There was an issue sending your message, it has been reported!",
   "qrLoginPleaseLogin": "EduPage2 QR Login",
-  "qrLoginUseExistingCredentials": "You are about to login to EduPage2 using a QR code"
+  "qrLoginUseExistingCredentials": "You are about to login to EduPage2 using a QR code",
+  "gradesTitle": "Grades"
 }

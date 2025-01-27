@@ -31,7 +31,7 @@ class ICanteenSetupScreenState extends BaseState<ICanteenSetupScreen> {
   String server = "";
   bool showPassword = false;
 
-  Future<void> login() async {
+  void login() {
     setState(() {
       hasLogin = true;
     });
@@ -107,8 +107,9 @@ class ICanteenSetupScreenState extends BaseState<ICanteenSetupScreen> {
                 onPressed: () => {
                   if (!hasLogin)
                     {
-                      login().then((value) =>
-                          {Navigator.pop(context), widget.loadedCallback()})
+                      login(),
+                      Navigator.pop(context),
+                      widget.loadedCallback(),
                     },
                 },
                 child: !hasLogin
