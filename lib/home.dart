@@ -786,6 +786,22 @@ class HomePageState extends BaseState<HomePage> {
                 },
               ),
             ),
+            InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: ListTile(
+                leading: const Icon(Icons.code),
+                title: const Text("EduPage2 GitHub"),
+                onTap: () async {
+                  final url = Uri.parse('https://github.com/DislikesSchool/EduPage2');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  } else {
+                    throw 'Could not launch $url';
+                  }
+                },
+              ),
+            ),
             const AboutListTile(
               icon: Icon(Icons.info_outline),
               applicationName: 'EduPage2',
