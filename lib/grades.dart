@@ -16,6 +16,8 @@ class GradesPage extends StatefulWidget {
 class GradesPageState extends BaseState<GradesPage> {
   bool loading = true;
 
+  final EP2Data data = EP2Data.getInstance();
+
   List<Widget> messages = [];
 
   @override
@@ -29,7 +31,7 @@ class GradesPageState extends BaseState<GradesPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    messages = getMessages(EP2Data.getInstance().grades);
+    messages = await getMessages(EP2Data.getInstance().grades);
 
     loading = false;
     setState(() {}); //refresh UI
@@ -77,26 +79,42 @@ class GradesPageState extends BaseState<GradesPage> {
       loading = true; //make loading true to show progressindicator
     });
 
-    messages = getMessages(EP2Data.getInstance().grades);
+    messages = await getMessages(EP2Data.getInstance().grades);
 
     loading = false;
     setState(() {}); //refresh UI
   }
 
-  List<Widget> getMessages(Grades results) {
+  Future<List<Widget>> getMessages(Grades results) async {
     List<Widget> rows = <Widget>[];
-    Map<String, List<String>> grades = {};
+    Map<String, List<Event>> grades = {};
     for (Event msg in results.events.values) {
       if (msg.data == "") continue;
       if (!grades.containsKey(msg.subjectID)) grades[msg.subjectID] = [];
-      grades[msg.subjectID]?.add(msg.data);
+      grades[msg.subjectID]?.add(msg);
     }
     for (String key in grades.keys) {
-      List<String>? g = grades[key];
+      List<Event>? g = grades[key];
       if (g == null) continue;
+      if ((await data.dbi.getSubject(key)).name == "") continue;
       rows.add(Card(
-        child: Row(
-          children: [Text(key), for (String grade in g) Text(grade)],
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Text(
+                  (await data.dbi.getSubject(key)).name,
+                  style: TextStyle(
+                    fontSize: 18,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [Text(g.map((grade) => grade.data).join(', '))],
+            ),
+          ],
         ),
       ));
     }

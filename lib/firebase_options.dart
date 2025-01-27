@@ -67,7 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '515530161188',
     projectId: 'cool-beanbag-355116',
     storageBucket: 'cool-beanbag-355116.appspot.com',
-    iosClientId: '515530161188-6em8bou6f47mqqlukre85q7vmet5lkbr.apps.googleusercontent.com',
+    iosClientId:
+        '515530161188-6em8bou6f47mqqlukre85q7vmet5lkbr.apps.googleusercontent.com',
     iosBundleId: 'com.example.eduapge2',
   );
 
@@ -77,7 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '515530161188',
     projectId: 'cool-beanbag-355116',
     storageBucket: 'cool-beanbag-355116.appspot.com',
-    iosClientId: '515530161188-6em8bou6f47mqqlukre85q7vmet5lkbr.apps.googleusercontent.com',
+    iosClientId:
+        '515530161188-6em8bou6f47mqqlukre85q7vmet5lkbr.apps.googleusercontent.com',
     iosBundleId: 'com.example.eduapge2',
   );
 }

@@ -42,8 +42,9 @@ Future<void> main() async {
   await remoteConfig.fetchAndActivate();
   await SentryFlutter.init(
     (options) {
-      options.dsn = kDebugMode ? '' :
-          'https://9c458db0f7204c84946c2d8ca59556ed@o4504950085976064.ingest.sentry.io/4504950092136448';
+      options.dsn = kDebugMode
+          ? ''
+          : 'https://9c458db0f7204c84946c2d8ca59556ed@o4504950085976064.ingest.sentry.io/4504950092136448';
       options.tracesSampleRate = 1.0;
     },
     appRunner: () => runApp(const MyApp()),

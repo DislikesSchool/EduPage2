@@ -26,6 +26,8 @@ class EP2Data {
   late TimeTable timetable;
   late Grades grades;
 
+  late DBI dbi;
+
   static EP2Data? _instance;
 
   EP2Data._privateConstructor();
@@ -128,6 +130,8 @@ class EP2Data {
       await grades.loadGrades();
     }
 
+    dbi = (await DBI.loadFromCache()) ?? DBI(subjects: {});
+
     if (quickstart && isInternetAvailable) {
       loadInBackground();
     }
@@ -142,6 +146,67 @@ class EP2Data {
     await timeline.loadMessages();
     await timetable.loadRecentTt();
     await grades.loadGrades();
+  }
+}
+
+class DBI {
+  final EP2Data data = EP2Data.getInstance();
+
+  late Map<String, Subject> subjects;
+
+  DBI({
+    required this.subjects,
+  });
+
+  Future<Subject> getSubject(String id) async {
+    if (subjects.containsKey(id)) {
+      return subjects[id]!;
+    } else {
+      try {
+        Response resp = await data.dio.get(
+          "${data.baseUrl}/api/subject/$id",
+          options: Options(
+            headers: {"Authorization": "Bearer ${data.user.token}"},
+          ),
+        );
+
+        Subject subject = Subject.fromJson(resp.data);
+        subjects[id] = subject;
+        await saveToCache();
+        return subject;
+      } catch (e) {
+        return Subject(cbHidden: true, id: "", name: "", short: "");
+      }
+    }
+  }
+
+  factory DBI.fromJson(Map<String, dynamic> json) {
+    return DBI(
+      subjects: (json['Subjects'] as Map<String, dynamic>).map(
+        (key, value) => MapEntry(key, Subject.fromJson(value)),
+      ),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'Subjects': subjects.map((key, value) => MapEntry(key, value.toJson())),
+    };
+  }
+
+  Future<void> saveToCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('dbi', jsonEncode(toJson()));
+  }
+
+  static Future<DBI?> loadFromCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    final dbiJson = prefs.getString('dbi');
+    if (dbiJson != null) {
+      return DBI.fromJson(jsonDecode(dbiJson));
+    } else {
+      return null;
+    }
   }
 }
 
