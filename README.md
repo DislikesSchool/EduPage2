@@ -16,10 +16,12 @@
 </p>
 
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/dislikesschool/edupage2) ![Downloads](https://img.shields.io/github/downloads/DislikesSchool/EduPage2/total) ![Contributors](https://img.shields.io/github/contributors/DislikesSchool/EduPage2?color=dark-green) ![Issues](https://img.shields.io/github/issues/DislikesSchool/EduPage2) ![License](https://img.shields.io/github/license/DislikesSchool/EduPage2) [![codecov](https://codecov.io/github/DislikesSchool/EduPage2/branch/master/graph/badge.svg?token=HKP9WFL0LN)](https://codecov.io/github/DislikesSchool/EduPage2)
-[![Discord](https://discordapp.com/api/guilds/1143488418840584224/widget.png?style=banner2)](https://discord.gg/xy5nqWa2kQ)
 
 [![test-coverage](https://github.com/DislikesSchool/EduPage2/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/DislikesSchool/EduPage2/actions/workflows/test-coverage.yml)
 [![build-patch-android](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-patch.yml/badge.svg)](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-patch.yml)
+
+[![Discord](https://discordapp.com/api/guilds/1143488418840584224/widget.png?style=shield)](https://discord.gg/xy5nqWa2kQ)
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/I3I2K0XUW)
 
 ## Table Of Contents
 
