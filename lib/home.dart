@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/grades.dart';
+import 'package:eduapge2/homework.dart';
 import 'package:eduapge2/icanteen_setup.dart';
 import 'package:eduapge2/main.dart';
 import 'package:eduapge2/message.dart';
@@ -660,23 +661,35 @@ class HomePageState extends BaseState<HomePage> {
                         ),
                       ),
                     ),
-                    Card(
-                      elevation: 5,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            const Icon(Icons.home_work_rounded),
-                            AutoSizeText(
-                              local.homeHomework,
-                              style: const TextStyle(fontSize: 20),
-                              maxLines: 1,
-                              minFontSize: 12,
-                              overflow: TextOverflow.ellipsis,
-                            )
-                          ],
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeworkPage(
+                              sessionManager: widget.sessionManager,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        elevation: 5,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              const Icon(Icons.home_work_rounded),
+                              AutoSizeText(
+                                local.homeHomework,
+                                style: const TextStyle(fontSize: 20),
+                                maxLines: 1,
+                                minFontSize: 12,
+                                overflow: TextOverflow.ellipsis,
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -777,7 +790,7 @@ class HomePageState extends BaseState<HomePage> {
               icon: Icon(Icons.info_outline),
               applicationName: 'EduPage2',
               applicationVersion: String.fromEnvironment('BVS'),
-              applicationLegalese: '©2024 Jakub Palacký',
+              applicationLegalese: '©2025 Jakub Palacký',
               dense: true,
             ),
           ],
