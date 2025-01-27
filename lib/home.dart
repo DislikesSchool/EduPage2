@@ -803,6 +803,23 @@ class HomePageState extends BaseState<HomePage> {
                 },
               ),
             ),
+            InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: ListTile(
+                leading: const Icon(Icons.coffee),
+                title: const Text("Ko-fi"),
+                onTap: () async {
+                  final url =
+                      Uri.parse('https://ko-fi.com/vypal');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  } else {
+                    throw 'Could not launch $url';
+                  }
+                },
+              ),
+            ),
             const AboutListTile(
               icon: Icon(Icons.info_outline),
               applicationName: 'EduPage2',
