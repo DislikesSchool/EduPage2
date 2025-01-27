@@ -810,8 +810,7 @@ class HomePageState extends BaseState<HomePage> {
                 leading: const Icon(Icons.coffee),
                 title: const Text("Ko-fi"),
                 onTap: () async {
-                  final url =
-                      Uri.parse('https://ko-fi.com/vypal');
+                  final url = Uri.parse('https://ko-fi.com/vypal');
                   if (await canLaunchUrl(url)) {
                     await launchUrl(url);
                   } else {

@@ -78,6 +78,25 @@ class EP2Data {
       return true;
     }
 
+    user = (await User.loadFromCache()) ??
+        User(
+          username: sharedPreferences.getString("email") ?? "",
+          password: sharedPreferences.getString("password") ?? "",
+          server: sharedPreferences.getString("server") ?? "",
+        );
+
+    timeline = (await Timeline.loadFromCache()) ??
+        Timeline(
+          homeworks: {},
+          items: {},
+        );
+
+    timetable = (await TimeTable.loadFromCache()) ?? TimeTable();
+
+    grades = (await Grades.loadFromCache()) ?? Grades(events: {}, notes: {});
+
+    dbi = (await DBI.loadFromCache()) ?? DBI(subjects: {});
+
     bool quickstart = sharedPreferences.getBool("quickstart") ?? false;
 
     String? endpoint = sharedPreferences.getString("customEndpoint");
@@ -89,13 +108,6 @@ class EP2Data {
 
     bool isInternetAvailable = await isConnected();
 
-    user = (await User.loadFromCache()) ??
-        User(
-          username: sharedPreferences.getString("email") ?? "",
-          password: sharedPreferences.getString("password") ?? "",
-          server: sharedPreferences.getString("server") ?? "",
-        );
-
     if (isInternetAvailable && !quickstart) {
       if (!await user.validate()) {
         onProgressUpdate(local.loadLoggingIn, 0.2);
@@ -106,31 +118,19 @@ class EP2Data {
     }
     onProgressUpdate(local.loadLoggedIn, 0.4);
 
-    timeline = (await Timeline.loadFromCache()) ??
-        Timeline(
-          homeworks: {},
-          items: {},
-        );
-
     if (isInternetAvailable && !quickstart) {
       onProgressUpdate(local.loadDownloadMessages, 0.6);
       await timeline.loadMessages();
     }
-
-    timetable = (await TimeTable.loadFromCache()) ?? TimeTable();
 
     if (isInternetAvailable && !quickstart) {
       onProgressUpdate(local.loadDownloadTimetable, 0.8);
       await timetable.loadRecentTt();
     }
 
-    grades = (await Grades.loadFromCache()) ?? Grades(events: {}, notes: {});
-
     if (isInternetAvailable && !quickstart) {
       await grades.loadGrades();
     }
-
-    dbi = (await DBI.loadFromCache()) ?? DBI(subjects: {});
 
     if (quickstart && isInternetAvailable) {
       loadInBackground();
