@@ -9,7 +9,24 @@
   "homeLunchesNotLoaded": "Could not load lunches",
   "homeNoLunchToday": "You don't have any lunch for today",
   "homeLunchToday": "You have lunch option number {lunch}",
+  "@homeLunchToday": {
+    "description": "Shows the user the lunch that is ordered",
+    "placeholders": {
+      "lunch": {
+        "type": "int"
+      }
+    }
+  },
   "homeLunchDontForget": "Don't forget to order lunch for {date}",
+  "@homeLunchDontForget": {
+    "description": "Displayed to remind user to order lunch",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMd"
+      }
+    }
+  },
   "homeLogout": "Logout",
   "homeSetupICanteen": "Setup iCanteen",
   "homeNoClasses": "No school today :D",

@@ -1,63 +1,16 @@
 {
   "loading": "Načítání",
-  "@loading": {
-    "description": "When loading a page"
-  },
   "mainHome": "Domů",
-  "@mainHome": {
-    "description": "Label for home page button"
-  },
   "mainTimetable": "Rozvrh",
-  "@mainTimetable": {
-    "description":"Label for time table page button"
-  },
   "mainICanteen": "iCanteen",
-  "@mainICanteen": {
-    "description":"Label for iCanteen page button"
-  },
   "mainMessages": "Zprávy",
-  "@mainMessages": {
-    "description":"Label for messages page button"
-  },
   "mainHomework": "Úkoly",
-  "@mainHomework": {
-    "description":"Label for homework page button"
-  },
   "mainGrades": "Známky",
-  "@mainGrades": {
-    "description": "Label for grade page button"
-  },
   "homeLunchesNotLoaded": "Obědy nebyly načteny",
-  "@homeLunchesNotLoaded": {
-    "description": "Displayed when lunches weren't loaded"
-  },
   "homeNoLunchToday": "Na dnešek nemáš objednaný oběd",
-  "@homeNoLunchToday": {
-    "description": "Displayed when the user hasn't ordered a lunch for today"
-  },
   "homeLunchToday": "Dneska máš oběd číslo {lunch}",
-  "@homeLunchToday": {
-    "description": "Shows the user the lunch that is ordered",
-    "placeholders": {
-      "lunch": {
-        "type": "int"
-      }
-    }
-  },
   "homeLunchDontForget": "Nezapomeň si objednat oběd na {date}",
-  "@homeLunchDontForget": {
-    "description": "Displayed to remind user to order lunch",
-    "placeholders": {
-      "date": {
-        "type": "DateTime",
-        "format": "yMd"
-      }
-    }
-  },
   "homeLogout": "Odhlásit se",
-  "@homeLogout": {
-    "description": "Logout button on home page"
-  },
   "homeSetupICanteen": "Nastavit iCanteen",
   "homeNoClasses": "Dneska nemáš skolu! :D",
   "homeUpdateTitle": "Nová verze dostupná",
@@ -69,48 +22,19 @@
   "homeGrades": "Známky",
   "homeHomework": "Úkoly",
   "homeworkTitle": "Domácí úkoly",
-  "@homeworkTitle": {
-    "description": "Title of homework page"
-  },
   "messagesTitle": "Zprávy",
-  "@messagesTitle": {
-    "description": "Title of messages page"
-  },
   "loginPleaseLogin": "Přihlašte se prosím",
-  "@loginPleaseLogin": {
-    "description": "Main text for login page"
-  },
   "loginUseExistingCredentials": "Použijte svoje existující přihlašovací údaje",
-  "@loginUseExistingCredentials": {
-    "description": "Asks user to use their existing EduPage credentials"
-  },
   "loginUsername": "Přihlašovací jméno",
-  "@loginUsername": {
-    "description": "User's email or user name"
-  },
   "loginPassword": "Heslo",
-  "@loginPassword": {
-    "description": "User's password"
-  },
   "loginServer": "Server (např. skola.edupage.org)",
   "loginLogin": "Přihlásit se",
-  "@loginLogin": {
-    "description": "Login button"
-  },
   "loginCustomEndpointCheckbox": "Použít valstní endpoint",
   "loginCustomEndpoint": "URL vlastního endpointu",
   "loginDemoButton": "Anebo si prohledněte demo",
   "today": "Dnes",
   "tomorrow": "Zítra",
   "timetableTeacher": "{count, plural, =1{Učitel} other{Učitelé}}",
-  "@timetableTeacher": {
-    "placeholders": {
-      "count": {
-        "type": "num",
-        "format": "compact"
-      }
-    }
-  },
   "loadCredentials": "Načítání přihlašovacích údajů",
   "loadLoggingIn": "Přihlašování...",
   "loadLoggedIn": "Přihlášeno",
@@ -131,14 +55,6 @@
   "iCanteenSetupPassword": "Heslo",
   "messagesLoadingAttachment": "Načítání pdf souboru...",
   "messagesAttachments": "{count, plural, =1{1 Přípona} few{{count} Přípony} other{{count} Přípon}}",
-  "@messagesAttachments": {
-    "placeholders": {
-      "count": {
-        "type": "num",
-        "format": "compact"
-      }
-    }
-  },
   "messagesPoll": "Anketa",
   "createMessageDiscard": "Zahodit zprávu?",
   "createMessageDiscardDescription": "Zpráva ještě nebyla odeslána. Opravdu ji chcete zahodit?",
