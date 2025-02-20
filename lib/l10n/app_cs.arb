@@ -117,6 +117,7 @@
   "loadAccessToken": "Získávání přihlašovacího tokenu...",
   "loadVerify": "Ověřování...",
   "loadDownloadTimetable": "Stahování rozvrhu...",
+  "loadDownloadGrades": "Stahování známek...",
   "loadDownloadMessages": "Stahování zpráv...",
   "loadDone": "Hotovo!",
   "iCanteenLoading": "Načítání obědů (tohle by mohlo chvíli zabrat)",

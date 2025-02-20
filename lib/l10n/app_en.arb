@@ -49,6 +49,7 @@
   "loadAccessToken": "Getting access token...",
   "loadVerify": "Verifying",
   "loadDownloadTimetable": "Downloading time table...",
+  "loadDownloadGrades": "Downloading grades...",
   "loadDownloadMessages": "Downloading messages...",
   "loadDone": "Done!",
   "iCanteenLoading": "Loading lunches (this could take a while)",

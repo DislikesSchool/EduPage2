@@ -124,11 +124,12 @@ class EP2Data {
     }
 
     if (isInternetAvailable && !quickstart) {
-      onProgressUpdate(local.loadDownloadTimetable, 0.8);
+      onProgressUpdate(local.loadDownloadTimetable, 0.72);
       await timetable.loadRecentTt();
     }
 
     if (isInternetAvailable && !quickstart) {
+      onProgressUpdate(local.loadDownloadGrades, 0.85);
       await grades.loadGrades();
     }
 
