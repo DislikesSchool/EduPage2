@@ -47,6 +47,7 @@ task incrementVersionCode {
 }
 
 android {
+    namespace "com.vypal.eduapge2"
     compileSdkVersion 33
     ndkVersion flutter.ndkVersion
 
