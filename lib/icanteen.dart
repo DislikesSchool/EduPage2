@@ -6,7 +6,7 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:eduapge2/l10n/app_localizations.dart';
 
 class ICanteenPage extends StatefulWidget {
   final SessionManager sessionManager;

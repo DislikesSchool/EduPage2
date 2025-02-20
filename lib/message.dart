@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:eduapge2/l10n/app_localizations.dart';
 import 'package:dio/dio.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:shared_preferences/shared_preferences.dart';

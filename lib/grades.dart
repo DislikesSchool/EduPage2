@@ -1,7 +1,7 @@
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/main.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:eduapge2/l10n/app_localizations.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 
 class GradesPage extends StatefulWidget {

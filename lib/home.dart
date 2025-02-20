@@ -16,7 +16,7 @@ import 'package:in_app_update/in_app_update.dart';
 import 'package:install_referrer/install_referrer.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:eduapge2/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
