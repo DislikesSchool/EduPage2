@@ -70,9 +70,9 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         versionCode appVersionCode
         versionName flutterVersionName
-        targetSdkVersion 34
+        targetSdkVersion 35
         minSdkVersion 21
-        compileSdkVersion 34
+        compileSdkVersion 35
         multiDexEnabled true
     }
 
