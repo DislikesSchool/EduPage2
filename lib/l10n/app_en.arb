@@ -52,6 +52,8 @@
   "loadDownloadGrades": "Downloading grades...",
   "loadDownloadMessages": "Downloading messages...",
   "loadDone": "Done!",
+  "loadError": "Error",
+  "loadErrorDescription": "There was an error loading data. This error has been reported.",
   "iCanteenLoading": "Loading lunches (this could take a while)",
   "iCanteenCantLoad": "Unable to load lunches",
   "iCanteenSetupPleaseLogin": "Login to iCanteen",

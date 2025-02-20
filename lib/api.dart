@@ -4,9 +4,12 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:eduapge2/timetable.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toastification/toastification.dart';
 
 Future<bool> isConnected() async {
   var connectivityResult = await (Connectivity().checkConnectivity());
@@ -41,6 +44,33 @@ class EP2Data {
     required Function(String, double) onProgressUpdate,
     required AppLocalizations local,
   }) async {
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (DioException error, ErrorInterceptorHandler handler) {
+          Sentry.configureScope((scope) {
+            scope.setTag("Dio error message", error.message ?? "");
+            scope.setContexts("Dio error response", error.response?.data ?? {});
+          });
+          toastification.show(
+            type: ToastificationType.error,
+            style: ToastificationStyle.flat,
+            title: Text(local.createMessageNotifSending),
+            description: Text(local.createMessageNotifSendingBody),
+            alignment: Alignment.bottomCenter,
+            autoCloseDuration: const Duration(seconds: 15),
+            icon: Icon(Icons.send_rounded),
+            borderRadius: BorderRadius.circular(12.0),
+            boxShadow: highModeShadow,
+            showProgressBar: true,
+            closeButtonShowType: CloseButtonShowType.none,
+            closeOnClick: false,
+            applyBlurEffect: true,
+          );
+          return handler.next(error);
+        },
+      ),
+    );
+
     onProgressUpdate(local.loadCredentials, 0.1);
 
     sharedPreferences = await SharedPreferences.getInstance();
