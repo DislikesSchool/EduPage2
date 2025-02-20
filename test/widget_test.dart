@@ -7,10 +7,10 @@
 
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/home.dart';
+import 'package:eduapge2/l10n/app_localizations.dart';
 import 'package:eduapge2/messages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   group('TimeOfDay', () {

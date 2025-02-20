@@ -1,5 +1,6 @@
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/firebase_options.dart';
+import 'package:eduapge2/l10n/app_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
@@ -10,7 +11,6 @@ import 'package:integration_test/integration_test.dart';
 import 'package:eduapge2/main.dart' as app;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'utils.dart';
 
