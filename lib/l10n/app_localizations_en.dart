@@ -36,13 +36,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeNoLunchToday => 'You don\'t have any lunch for today';
 
   @override
-  String homeLunchToday(Object lunch) {
+  String homeLunchToday(int lunch) {
     return 'You have lunch option number $lunch';
   }
 
   @override
-  String homeLunchDontForget(Object date) {
-    return 'Don\'t forget to order lunch for $date';
+  String homeLunchDontForget(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.yMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return 'Don\'t forget to order lunch for $dateString';
   }
 
   @override
@@ -128,7 +131,7 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Teachers',
+      other: '$countString Teachers',
       one: 'Teacher',
     );
     return '$_temp0';

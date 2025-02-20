@@ -151,17 +151,17 @@ abstract class AppLocalizations {
   /// **'You don\'t have any lunch for today'**
   String get homeNoLunchToday;
 
-  /// No description provided for @homeLunchToday.
+  /// Shows the user the lunch that is ordered
   ///
   /// In en, this message translates to:
   /// **'You have lunch option number {lunch}'**
-  String homeLunchToday(Object lunch);
+  String homeLunchToday(int lunch);
 
-  /// No description provided for @homeLunchDontForget.
+  /// Displayed to remind user to order lunch
   ///
   /// In en, this message translates to:
   /// **'Don\'t forget to order lunch for {date}'**
-  String homeLunchDontForget(Object date);
+  String homeLunchDontForget(DateTime date);
 
   /// No description provided for @homeLogout.
   ///
@@ -310,7 +310,7 @@ abstract class AppLocalizations {
   /// No description provided for @timetableTeacher.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{Teacher} other{Teachers}}'**
+  /// **'{count, plural, =1{Teacher} other{{count} Teachers}}'**
   String timetableTeacher(num count);
 
   /// No description provided for @loadCredentials.

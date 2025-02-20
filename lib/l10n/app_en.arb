@@ -51,7 +51,7 @@
   "loginDemoButton": "Or try the demo",
   "today": "Today",
   "tomorrow": "Tomorrow",
-  "timetableTeacher": "{count, plural, =1{Teacher} other{Teachers}}",
+  "timetableTeacher": "{count, plural, =1{Teacher} other{{count} Teachers}}",
   "@timetableTeacher": {
     "placeholders": {
       "count": {

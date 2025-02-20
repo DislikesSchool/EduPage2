@@ -36,13 +36,16 @@ class AppLocalizationsSk extends AppLocalizations {
   String get homeNoLunchToday => 'Dnes nemáte žiadny obed';
 
   @override
-  String homeLunchToday(Object lunch) {
+  String homeLunchToday(int lunch) {
     return 'Dnes máte možnosť obedu číslo $lunch';
   }
 
   @override
-  String homeLunchDontForget(Object date) {
-    return 'Nezabudnite si objednať obed pre $date';
+  String homeLunchDontForget(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.yMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return 'Nezabudnite si objednať obed pre $dateString';
   }
 
   @override
@@ -128,7 +131,7 @@ class AppLocalizationsSk extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Teachers',
+      other: '$countString Teachers',
       one: 'Teacher',
     );
     return '$_temp0';
