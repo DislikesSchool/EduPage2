@@ -54,8 +54,9 @@ class EP2Data {
           toastification.show(
             type: ToastificationType.error,
             style: ToastificationStyle.flat,
-            title: Text(local.createMessageNotifSending),
-            description: Text(local.createMessageNotifSendingBody),
+            title: Text(error.message ?? local.loadError),
+            description:
+                Text(error.response?.data ?? local.loadErrorDescription),
             alignment: Alignment.bottomCenter,
             autoCloseDuration: const Duration(seconds: 15),
             icon: Icon(Icons.send_rounded),
