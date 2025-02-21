@@ -60,7 +60,7 @@ class EP2Data {
                 error.response?.data.toString() ?? local.loadErrorDescription),
             alignment: Alignment.bottomCenter,
             autoCloseDuration: const Duration(seconds: 15),
-            icon: Icon(Icons.send_rounded),
+            icon: Icon(Icons.error),
             borderRadius: BorderRadius.circular(12.0),
             boxShadow: highModeShadow,
             showProgressBar: true,

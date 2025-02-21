@@ -5,8 +5,10 @@ import 'package:eduapge2/main.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eduapge2/l10n/app_localizations.dart';
+import 'package:toastification/toastification.dart';
 
 class ICanteenPage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -40,6 +42,34 @@ class ICanteenPageState extends BaseState<ICanteenPage> {
   }
 
   getData() async {
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (DioException error, ErrorInterceptorHandler handler) {
+          Sentry.configureScope((scope) {
+            scope.setTag("Dio error message", error.message ?? "");
+            scope.setContexts(
+                "Dio error response", error.response?.data.toString() ?? {});
+          });
+          toastification.show(
+            type: ToastificationType.error,
+            style: ToastificationStyle.flat,
+            title: Text(error.message ?? ""),
+            description: Text(error.response?.data.toString() ?? ""),
+            alignment: Alignment.bottomCenter,
+            autoCloseDuration: const Duration(seconds: 15),
+            icon: Icon(Icons.error),
+            borderRadius: BorderRadius.circular(12.0),
+            boxShadow: highModeShadow,
+            showProgressBar: true,
+            closeButtonShowType: CloseButtonShowType.none,
+            closeOnClick: false,
+            applyBlurEffect: true,
+          );
+          return handler.next(error);
+        },
+      ),
+    );
+
     sharedPreferences = await SharedPreferences.getInstance();
 
     setState(() {
