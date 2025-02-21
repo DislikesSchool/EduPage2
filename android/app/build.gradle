@@ -49,7 +49,7 @@ task incrementVersionCode {
 android {
     namespace "com.vypal.eduapge2"
     compileSdkVersion 33
-    ndkVersion flutter.ndkVersion
+    ndkVersion "27.0.12077973"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17

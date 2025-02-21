@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/grades.dart';
 import 'package:eduapge2/homework.dart';
@@ -9,12 +8,9 @@ import 'package:eduapge2/icanteen_setup.dart';
 import 'package:eduapge2/main.dart';
 import 'package:eduapge2/message.dart';
 import 'package:eduapge2/messages.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:in_app_update/in_app_update.dart';
-import 'package:install_referrer/install_referrer.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eduapge2/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -208,58 +204,12 @@ class HomePageState extends BaseState<HomePage> {
   }
 
   void fetchAndCompareBuildName() async {
-    InstallationAppReferrer referrer = await InstallReferrer.referrer;
-    if (referrer == InstallationAppReferrer.androidGooglePlay) {
-      AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
-      if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
-        setState(() {
-          updateAvailable = true;
-          updateThroughGooglePlay = true;
-        });
-      }
-    } else {
-      if (const String.fromEnvironment('BVS').contains("Preview")) {
-        return;
-      }
-      final dio = Dio();
-
-      // Retrieve the package info
-      final packageInfo = await PackageInfo.fromPlatform();
-      final buildName = packageInfo.version;
-
-      try {
-        final response = await dio
-            .get(
-                'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest')
-            .catchError((obj) {
-          return Response(
-            requestOptions: RequestOptions(
-                path:
-                    'https://api.github.com/repos/DislikesSchool/EduPage2/releases/latest'),
-            statusCode: 500,
-          );
-        });
-        if (response.statusCode == 500) {
-          return;
-        }
-        final responseData = response.data;
-
-        // Extract the tag_name from the response JSON and remove the "v" prefix if present
-        final tag = responseData['tag_name'];
-        final formattedTag = tag.startsWith('v') ? tag.substring(1) : tag;
-
-        // Compare the tag_name to the app's build name
-        if (formattedTag != buildName) {
-          setState(() {
-            updateAvailable = true;
-          });
-        }
-      } catch (error) {
-        // Handle any errors that occur during the request
-        if (kDebugMode) {
-          print('Error: $error');
-        }
-      }
+    AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
+    if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+      setState(() {
+        updateAvailable = true;
+        updateThroughGooglePlay = true;
+      });
     }
   }
 

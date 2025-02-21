@@ -1,0 +1,2 @@
+/home/vypal/Dokumenty/GitHub/EduPage2/android/app/.cxx/RelWithDebInfo/366w3j3f/armeabi-v7a/CMakeFiles/edit_cache.dir
+/home/vypal/Dokumenty/GitHub/EduPage2/android/app/.cxx/RelWithDebInfo/366w3j3f/armeabi-v7a/CMakeFiles/rebuild_cache.dir
