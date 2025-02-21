@@ -49,14 +49,15 @@ class EP2Data {
         onError: (DioException error, ErrorInterceptorHandler handler) {
           Sentry.configureScope((scope) {
             scope.setTag("Dio error message", error.message ?? "");
-            scope.setContexts("Dio error response", error.response?.data ?? {});
+            scope.setContexts(
+                "Dio error response", error.response?.data.toString() ?? {});
           });
           toastification.show(
             type: ToastificationType.error,
             style: ToastificationStyle.flat,
             title: Text(error.message ?? local.loadError),
-            description:
-                Text(error.response?.data ?? local.loadErrorDescription),
+            description: Text(
+                error.response?.data.toString() ?? local.loadErrorDescription),
             alignment: Alignment.bottomCenter,
             autoCloseDuration: const Duration(seconds: 15),
             icon: Icon(Icons.send_rounded),
