@@ -10,7 +10,6 @@ import 'package:eduapge2/message.dart';
 import 'package:eduapge2/messages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
-import 'package:in_app_update/in_app_update.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eduapge2/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -151,8 +150,6 @@ class HomePageState extends BaseState<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   SharedPreferences? sharedPreferences;
 
-  bool updateAvailable = false;
-  bool updateThroughGooglePlay = false;
   bool quickstart = false;
 
   List<TimelineItem> apidataMsg = [];
@@ -166,7 +163,6 @@ class HomePageState extends BaseState<HomePage> {
   void initState() {
     super.initState();
     getData();
-    fetchAndCompareBuildName();
   }
 
   DateTime getWeekDay() {
@@ -201,16 +197,6 @@ class HomePageState extends BaseState<HomePage> {
         }
       });
     });
-  }
-
-  void fetchAndCompareBuildName() async {
-    AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
-    if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
-      setState(() {
-        updateAvailable = true;
-        updateThroughGooglePlay = true;
-      });
-    }
   }
 
   @override
@@ -416,59 +402,6 @@ class HomePageState extends BaseState<HomePage> {
                                   ),
                               ],
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              if (updateAvailable)
-                GestureDetector(
-                  onTap: () async {
-                    if (updateThroughGooglePlay) {
-                      await InAppUpdate.performImmediateUpdate();
-                    } else {
-                      final url = Uri.parse(
-                          'https://github.com/DislikesSchool/EduPage2/releases/latest');
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(url,
-                            mode: LaunchMode.externalApplication);
-                      } else {
-                        throw 'Could not launch $url';
-                      }
-                    }
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
-                    child: Stack(
-                      children: [
-                        Card(
-                          elevation: 5,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10, bottom: 10, left: 10, right: 10),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(local!.homeUpdateTitle,
-                                    style: const TextStyle(fontSize: 20)),
-                                Text(local.homeUpdateDescription,
-                                    style: const TextStyle(fontSize: 12)),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () {
-                              setState(() {
-                                updateAvailable = false;
-                              });
-                            },
                           ),
                         ),
                       ],

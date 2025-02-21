@@ -27,7 +27,6 @@ dependencies:
   dynamic_color: ^1.7.0
   firebase_remote_config: ^5.4.1
   flutter_displaymode: ^0.6.0
-  in_app_update: ^4.2.3
   app_links: ^6.4.0
   toastification: ^2.3.0
   auto_size_text: ^3.0.0
