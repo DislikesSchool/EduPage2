@@ -83,6 +83,20 @@ jobs:
           propertyPath: "version"
           value: "${{ steps.trimv.outputs.VERSION }}"
           commitChange: false
+      - name: Decrement versionCode in version.properties
+        run: |
+          FILE="android/app/version.properties"
+          if [ -f "$FILE" ]; then
+            currentVersion=$(grep -E '^versionCode=' "$FILE" | cut -d'=' -f2)
+            if [ -z "$currentVersion" ]; then
+              echo "versionCode not found in $FILE" && exit 1
+            fi
+            newVersion=$(( currentVersion - 1 ))
+            sed -i "s/versionCode=$currentVersion/versionCode=$newVersion/" "$FILE"
+            echo "versionCode updated from $currentVersion to $newVersion in $FILE"
+          else
+            echo "$FILE does not exist!" && exit 1
+          fi
       - run: flutter pub get
       - run: flutter gen-l10n
       - name: 🚀 Shorebird Patch
