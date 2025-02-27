@@ -74,6 +74,7 @@ class ICanteenPageState extends BaseState<ICanteenPage> {
 
     setState(() {
       loading = true; //make loading true to show progressindicator
+      lunches = [];
     });
 
     Response response = await dio
