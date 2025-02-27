@@ -78,6 +78,7 @@
   "iCanteenSetupServer": "Server address",
   "iCanteenSetupEmail": "Username",
   "iCanteenSetupPassword": "Password",
+  "iCanteenSetupError": "There was an error logging in",
   "messagesLoadingAttachment": "Loading pdf...",
   "messagesAttachments": "{count, plural, =1{1 Attachment} other{{count} Attachments}}",
   "@messagesAttachments": {

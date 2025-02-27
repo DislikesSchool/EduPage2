@@ -53,6 +53,7 @@
   "iCanteenSetupServer": "Adresa URL",
   "iCanteenSetupEmail": "Přihlašovací jméno",
   "iCanteenSetupPassword": "Heslo",
+  "iCanteenSetupError": "Nastala chyba při příhlášení",
   "messagesLoadingAttachment": "Načítání pdf souboru...",
   "messagesAttachments": "{count, plural, =1{1 Přípona} few{{count} Přípony} other{{count} Přípon}}",
   "messagesPoll": "Anketa",

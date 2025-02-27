@@ -193,6 +193,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get iCanteenSetupPassword => 'Heslo';
 
   @override
+  String get iCanteenSetupError => 'Nastala chyba při příhlášení';
+
+  @override
   String get messagesLoadingAttachment => 'Načítání pdf souboru...';
 
   @override

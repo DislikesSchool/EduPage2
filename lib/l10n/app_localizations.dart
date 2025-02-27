@@ -421,6 +421,12 @@ abstract class AppLocalizations {
   /// **'Password'**
   String get iCanteenSetupPassword;
 
+  /// No description provided for @iCanteenSetupError.
+  ///
+  /// In en, this message translates to:
+  /// **'There was an error logging in'**
+  String get iCanteenSetupError;
+
   /// No description provided for @messagesLoadingAttachment.
   ///
   /// In en, this message translates to:

@@ -192,6 +192,9 @@ class AppLocalizationsSk extends AppLocalizations {
   String get iCanteenSetupPassword => 'Heslo';
 
   @override
+  String get iCanteenSetupError => 'There was an error logging in';
+
+  @override
   String get messagesLoadingAttachment => 'Načítavanie pdf súboru...';
 
   @override

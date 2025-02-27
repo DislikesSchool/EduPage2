@@ -1,9 +1,12 @@
+import 'package:dio/dio.dart';
+import 'package:eduapge2/api.dart';
 import 'package:eduapge2/main.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eduapge2/l10n/app_localizations.dart';
+import 'package:toastification/toastification.dart';
 
 class ICanteenSetupScreen extends StatefulWidget {
   final Function loadedCallback;
@@ -31,14 +34,57 @@ class ICanteenSetupScreenState extends BaseState<ICanteenSetupScreen> {
   String server = "";
   bool showPassword = false;
 
-  void login() {
+  Future<void> login() async {
     setState(() {
       hasLogin = true;
     });
-    sharedPreferences.setString("ic_server", server);
-    sharedPreferences.setString("ic_email", email);
-    sharedPreferences.setString("ic_password", password);
-    sharedPreferences.setBool("ice", true);
+
+    EP2Data data = EP2Data.getInstance();
+    Response resp = await data.dio.post(
+      "${data.baseUrl}/icanteen-test",
+      data: {
+        "username": email,
+        "password": password,
+        "server": server,
+      },
+      options: Options(
+        contentType: Headers.formUrlEncodedContentType,
+        validateStatus: (status) {
+          return true; // To return all status codes
+        },
+      ),
+    );
+
+    if (resp.statusCode == 200) {
+      sharedPreferences.setString("ic_server", server);
+      sharedPreferences.setString("ic_email", email);
+      sharedPreferences.setString("ic_password", password);
+      sharedPreferences.setBool("ice", true);
+
+      if (mounted) {
+        Navigator.pop(context);
+      }
+      widget.loadedCallback();
+    } else {
+      setState(() {
+        hasLogin = false;
+      });
+      toastification.show(
+        type: ToastificationType.error,
+        style: ToastificationStyle.flat,
+        title: Text(local!.iCanteenSetupError),
+        description: Text(resp.data.toString()),
+        alignment: Alignment.bottomCenter,
+        autoCloseDuration: const Duration(seconds: 15),
+        icon: Icon(Icons.error),
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: highModeShadow,
+        showProgressBar: true,
+        closeButtonShowType: CloseButtonShowType.none,
+        closeOnClick: false,
+        applyBlurEffect: true,
+      );
+    }
   }
 
   @override
@@ -105,12 +151,7 @@ class ICanteenSetupScreenState extends BaseState<ICanteenSetupScreen> {
               ),
               ElevatedButton(
                 onPressed: () => {
-                  if (!hasLogin)
-                    {
-                      login(),
-                      Navigator.pop(context),
-                      widget.loadedCallback(),
-                    },
+                  if (!hasLogin) login(),
                 },
                 child: !hasLogin
                     ? Text(local!.loginLogin)

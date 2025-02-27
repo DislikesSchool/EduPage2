@@ -192,6 +192,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get iCanteenSetupPassword => 'Password';
 
   @override
+  String get iCanteenSetupError => 'There was an error logging in';
+
+  @override
   String get messagesLoadingAttachment => 'Loading pdf...';
 
   @override
