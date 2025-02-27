@@ -8,7 +8,7 @@
         </intent>
     </queries>
     <application
-        android:label="EduPage2"
+        android:label="EduPage 2"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
