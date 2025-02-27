@@ -110,6 +110,8 @@ class TimeTablePageState extends BaseState<MessagesPage> {
       loading = true; //make loading true to show progressindicator
     });
 
+    await EP2Data.getInstance().timeline.loadNewMessages();
+
     messages =
         getMessages(EP2Data.getInstance().timeline.items.values.toList());
 

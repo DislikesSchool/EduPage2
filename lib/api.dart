@@ -1200,6 +1200,40 @@ class Timeline {
     await saveToCache();
   }
 
+  Future<void> loadNewMessages() async {
+    DateTime newestTimestamp = items.values.fold(DateTime(0), (newest, item) {
+      DateTime timestamp = item.timestamp;
+      return timestamp.isAfter(newest) ? timestamp : newest;
+    });
+
+    // Add query parameters for from and to dates
+    Response response = await data.dio.get(
+      "${data.baseUrl}/api/timeline",
+      queryParameters: {
+        "from": newestTimestamp.toIso8601String(),
+        "to": DateTime.now().toIso8601String(),
+      },
+      options: Options(
+        headers: {
+          "Authorization": "Bearer ${data.user.token}",
+        },
+      ),
+    );
+
+    Map<String, dynamic> newHomeworks = response.data["Homeworks"];
+    Map<String, dynamic> newItems = response.data["Items"];
+
+    newHomeworks.forEach((key, value) {
+      homeworks[key] = Homework.fromJson(value);
+    });
+
+    newItems.forEach((key, value) {
+      items[key] = TimelineItem.fromJson(value);
+    });
+
+    await saveToCache();
+  }
+
   Future<void> loadOlderMessages() async {
     DateTime oldestTimestamp =
         items.values.fold(DateTime.now(), (oldest, item) {
