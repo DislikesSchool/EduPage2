@@ -1,127 +1,83 @@
 {
-  "loading": "Načítavam",
-  "@loading": {
-    "description": "When loading a page"
-  },
+  "loading": "Načítava sa",
   "mainHome": "Domov",
-  "@mainHome": {
-    "description": "Label for home page button"
-  },
   "mainTimetable": "Rozvrh",
-  "@mainTimetable": {
-    "description":"Label for time table page button"
-  },
   "mainICanteen": "iCanteen",
-  "@mainICanteen": {
-    "description":"Label for iCanteen page button"
-  },
   "mainMessages": "Správy",
-  "@mainMessages": {
-    "description":"Label for messages page button"
-  },
   "mainHomework": "Úlohy",
-  "@mainHomework": {
-    "description":"Label for homework page button"
-  },
   "mainGrades": "Známky",
-  "@mainGrades": {
-    "description": "Label for grade page button"
-  },
-  "homeLunchesNotLoaded": "Nepodarilo sa načítať obedy",
-  "@homeLunchesNotLoaded": {
-    "description": "Displayed when lunches weren't loaded"
-  },
-  "homeNoLunchToday": "Dnes nemáte žiadny obed",
-  "@homeNoLunchToday": {
-    "description": "Displayed when the user hasn't ordered a lunch for today"
-  },
-  "homeLunchToday": "Dnes máte možnosť obedu číslo {lunch}",
-  "@homeLunchToday": {
-    "description": "Shows the user the lunch that is ordered",
-    "placeholders": {
-      "lunch": {
-        "type": "int"
-      }
-    }
-  },
-  "homeLunchDontForget": "Nezabudnite si objednať obed pre {date}",
-  "@homeLunchDontForget": {
-    "description": "Displayed to remind user to order lunch",
-    "placeholders": {
-      "date": {
-        "type": "DateTime",
-        "format": "yMd"
-      }
-    }
-  },
+  "homeLunchesNotLoaded": "Obedy neboli načítané",
+  "homeNoLunchToday": "Na dnešný deň nemáš objednaný obed",
+  "homeLunchToday": "Dnes máš obed číslo {lunch}",
+  "homeLunchDontForget": "Nezabudni si objednať obed na {date}",
   "homeLogout": "Odhlásiť sa",
-  "@homeLogout": {
-    "description": "Logout button on home page"
-  },
   "homeSetupICanteen": "Nastaviť iCanteen",
-  "homeNoClasses": "Dnes sa škola nekoná :D",
-  "homeUpdateTitle": "Dostupná nová verzia",
-  "homeUpdateDescription": "Prosím navštívte https://github.com/DislikesSchool/EduPage2/releases pre nejnovšiu verziu",
+  "homeNoClasses": "Dnes nemáš skolu! :D",
+  "homeUpdateTitle": "Nová verzia dostupná",
+  "homeUpdateDescription": "Prosím navštívte https://github.com/DislikesSchool/EduPage2/releases pre najnovšiu verziu",
   "homeQuickstart": "Rýchly štart",
   "homePreview": "Náhľad",
-  "homePatchAvailable": "Inštaluje se nový patch...",
-  "homePatchDownloaded": "Patch bol stiahnutý, prosím reštartujte EduPage2",
+  "homePatchAvailable": "Inštaluje sa nový patch...",
+  "homePatchDownloaded": "Patch bol stiahnutý, pre nainštalovanie reštartujte aplikáciu",
+  "homeGrades": "Známky",
+  "homeHomework": "Úlohy",
   "homeworkTitle": "Domáce úlohy",
-  "@homeworkTitle": {
-    "description": "Title of homework page"
-  },
   "messagesTitle": "Správy",
-  "@messagesTitle": {
-    "description": "Title of messages page"
-  },
-  "loginPleaseLogin": "Prosím, prihláste sa",
-  "@loginPleaseLogin": {
-    "description": "Main text for login page"
-  },
-  "loginUseExistingCredentials": "Použite svoje existujúce údaje do EduPage",
-  "@loginUseExistingCredentials": {
-    "description": "Asks user to use their existing EduPage credentials"
-  },
+  "loginPleaseLogin": "Prihláste sa prosím",
+  "loginUseExistingCredentials": "Použite svoje existujúce prihlasovacie údaje",
   "loginUsername": "Prihlasovacie meno",
-  "@loginUsername": {
-    "description": "User's email or user name"
-  },
   "loginPassword": "Heslo",
-  "@loginPassword": {
-    "description": "User's password"
-  },
   "loginServer": "Server (napr. skola.edupage.org)",
   "loginLogin": "Prihlásiť sa",
-  "@loginLogin": {
-    "description": "Login button"
-  },
-  "loginCustomEndpointCheckbox": "Použíť valstny endpoint",
+  "loginCustomEndpointCheckbox": "Použiť valstný endpoint",
   "loginCustomEndpoint": "URL vlastného endpointu",
+  "loginDemoButton": "Alebo si pozrite demo",
   "today": "Dnes",
   "tomorrow": "Zajtra",
-  "loadCredentials": "Načítavam prihlasovacie údaje",
+  "timetableTeacher": "{count, plural, =1{Učiteľ} few{{count} Učitelia} other{{count} Učiteľov}}",
+  "loadCredentials": "Načítavanie prihlasovacích údajov",
   "loadLoggingIn": "Prihlasovanie...",
-  "loadLoggedIn": "Prihlásený",
-  "loadAccessToken": "Získavanie prístupového tokenu...",
+  "loadLoggedIn": "Prihlásené",
+  "loadAccessToken": "Získavanie prihlasovacieho tokenu...",
   "loadVerify": "Overovanie...",
   "loadDownloadTimetable": "Sťahovanie rozvrhu...",
-  "loadDownloadMessages": "Sťahovanie zpráv...",
+  "loadDownloadGrades": "Sťahovanie známok...",
+  "loadDownloadMessages": "Sťahovanie správ...",
   "loadDone": "Hotovo!",
-  "iCanteenLoading": "Načítavanie obedov (môže to chvíľu trvať)",
+  "loadError": "Chyba",
+  "loadErrorDescription": "Při načítavaní dát došlo k chybe. Tato chyba byla nahlásena.",
+  "iCanteenLoading": "Načítavanie obedov (toto môže chvíľu trvať)",
   "iCanteenCantLoad": "Nepodarilo sa načítať obedy",
-  "iCanteenSetupPleaseLogin": "Prihláste sa do iCanteen",
-  "iCanteenSetupDetails": "Adresu URL zadajte vo formáte https://stravovanie.skola.sk/login",
+  "iCanteenSetupPleaseLogin": "Prihláste sa do systému iCanteen",
+  "iCanteenSetupDetails": "Adresu URL zadajte ve formáte https://stravovanie.skola.sk/login",
   "iCanteenSetupServer": "Adresa URL",
   "iCanteenSetupEmail": "Prihlasovacie meno",
   "iCanteenSetupPassword": "Heslo",
-  "messagesLoadingAttachment": "Načítavanie pdf súboru...",
+  "iCanteenSetupError": "Nastala chyba pri prihlasovaní",
+  "messagesLoadingAttachment": "Načítanie pdf súboru...",
   "messagesAttachments": "{count, plural, =1{1 Prípona} few{{count} Prípony} other{{count} Prípon}}",
-  "@messagesAttachments": {
-    "placeholders": {
-      "count": {
-        "type": "num",
-        "format": "compact"
-      }
-    }
-  }
+  "messagesPoll": "Anketa",
+  "createMessageDiscard": "Zahodiť správu?",
+  "createMessageDiscardDescription": "Správa ešte nebola odoslaná. Naozaj ju chcete zahodiť ?",
+  "createMessageDiscardCancel": "Zrušiť",
+  "createMessageDiscardDiscard": "Zahodiť",
+  "createMessageTitle": "Nová správa",
+  "createMessageSelectRecipient": "Vyberte príjemcu",
+  "createMessageMessageHere": "Vaša správa tu",
+  "createMessageImportant": "Dôležité",
+  "createMessageIncludePoll": "Vložiť anketu",
+  "createMessagePollEnableMultiple": "Povoliť viac odpovedí",
+  "createMessageNewPollOptionPlaceholder": "Nová možnosť",
+  "createMessageErrorSelectRecipient": "Vyberte prosím príjemcu",
+  "createMessageErrorNoMessage": "Napíšte prosím správu",
+  "createMessageSend": "Odoslať",
+  "createMessageNotifSending": "Odosielanie správy",
+  "createMessageNotifSendingBody": "Vaša správa sa odosiela",
+  "createMessageNotifSent": "Správa odoslaná",
+  "createMessageNotifSentBody": "Vaše správa bola úspešne odoslaná",
+  "createMessageNotifError": "Chyba",
+  "createMessageNotifErrorBody": "Pri odosielaní správy sa vyskytla chyba, táto chyba bola nahlásená.",
+  "qrLoginPleaseLogin": "EduPage2 QR Prihlásenie",
+  "qrLoginUseExistingCredentials": "Chystáte sa prihlásiť pomocou QR kódu",
+  "gradesTitle": "Známky"
 }
