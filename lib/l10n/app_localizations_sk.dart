@@ -9,7 +9,7 @@ class AppLocalizationsSk extends AppLocalizations {
   AppLocalizationsSk([String locale = 'sk']) : super(locale);
 
   @override
-  String get loading => 'Načítavam';
+  String get loading => 'Načítava sa';
 
   @override
   String get mainHome => 'Domov';
@@ -30,14 +30,14 @@ class AppLocalizationsSk extends AppLocalizations {
   String get mainGrades => 'Známky';
 
   @override
-  String get homeLunchesNotLoaded => 'Nepodarilo sa načítať obedy';
+  String get homeLunchesNotLoaded => 'Obedy neboli načítané';
 
   @override
-  String get homeNoLunchToday => 'Dnes nemáte žiadny obed';
+  String get homeNoLunchToday => 'Na dnešný deň nemáš objednaný obed';
 
   @override
   String homeLunchToday(int lunch) {
-    return 'Dnes máte možnosť obedu číslo $lunch';
+    return 'Dnes máš obed číslo $lunch';
   }
 
   @override
@@ -45,7 +45,7 @@ class AppLocalizationsSk extends AppLocalizations {
     final intl.DateFormat dateDateFormat = intl.DateFormat.yMd(localeName);
     final String dateString = dateDateFormat.format(date);
 
-    return 'Nezabudnite si objednať obed pre $dateString';
+    return 'Nezabudni si objednať obed na $dateString';
   }
 
   @override
@@ -55,13 +55,13 @@ class AppLocalizationsSk extends AppLocalizations {
   String get homeSetupICanteen => 'Nastaviť iCanteen';
 
   @override
-  String get homeNoClasses => 'Dnes sa škola nekoná :D';
+  String get homeNoClasses => 'Dnes nemáš skolu! :D';
 
   @override
-  String get homeUpdateTitle => 'Dostupná nová verzia';
+  String get homeUpdateTitle => 'Nová verzia dostupná';
 
   @override
-  String get homeUpdateDescription => 'Prosím navštívte https://github.com/DislikesSchool/EduPage2/releases pre nejnovšiu verziu';
+  String get homeUpdateDescription => 'Prosím navštívte https://github.com/DislikesSchool/EduPage2/releases pre najnovšiu verziu';
 
   @override
   String get homeQuickstart => 'Rýchly štart';
@@ -70,16 +70,16 @@ class AppLocalizationsSk extends AppLocalizations {
   String get homePreview => 'Náhľad';
 
   @override
-  String get homePatchAvailable => 'Inštaluje se nový patch...';
+  String get homePatchAvailable => 'Inštaluje sa nový patch...';
 
   @override
-  String get homePatchDownloaded => 'Patch bol stiahnutý, prosím reštartujte EduPage2';
+  String get homePatchDownloaded => 'Patch bol stiahnutý, pre nainštalovanie reštartujte aplikáciu';
 
   @override
-  String get homeGrades => 'Grades';
+  String get homeGrades => 'Známky';
 
   @override
-  String get homeHomework => 'Homework';
+  String get homeHomework => 'Úlohy';
 
   @override
   String get homeworkTitle => 'Domáce úlohy';
@@ -88,10 +88,10 @@ class AppLocalizationsSk extends AppLocalizations {
   String get messagesTitle => 'Správy';
 
   @override
-  String get loginPleaseLogin => 'Prosím, prihláste sa';
+  String get loginPleaseLogin => 'Prihláste sa prosím';
 
   @override
-  String get loginUseExistingCredentials => 'Použite svoje existujúce údaje do EduPage';
+  String get loginUseExistingCredentials => 'Použite svoje existujúce prihlasovacie údaje';
 
   @override
   String get loginUsername => 'Prihlasovacie meno';
@@ -106,13 +106,13 @@ class AppLocalizationsSk extends AppLocalizations {
   String get loginLogin => 'Prihlásiť sa';
 
   @override
-  String get loginCustomEndpointCheckbox => 'Použíť valstny endpoint';
+  String get loginCustomEndpointCheckbox => 'Použiť valstný endpoint';
 
   @override
   String get loginCustomEndpoint => 'URL vlastného endpointu';
 
   @override
-  String get loginDemoButton => 'Or try the demo';
+  String get loginDemoButton => 'Alebo si pozrite demo';
 
   @override
   String get today => 'Dnes';
@@ -131,23 +131,24 @@ class AppLocalizationsSk extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$countString Teachers',
-      one: 'Teacher',
+      other: '$countString Učiteľov',
+      few: '$countString Učitelia',
+      one: 'Učiteľ',
     );
     return '$_temp0';
   }
 
   @override
-  String get loadCredentials => 'Načítavam prihlasovacie údaje';
+  String get loadCredentials => 'Načítavanie prihlasovacích údajov';
 
   @override
   String get loadLoggingIn => 'Prihlasovanie...';
 
   @override
-  String get loadLoggedIn => 'Prihlásený';
+  String get loadLoggedIn => 'Prihlásené';
 
   @override
-  String get loadAccessToken => 'Získavanie prístupového tokenu...';
+  String get loadAccessToken => 'Získavanie prihlasovacieho tokenu...';
 
   @override
   String get loadVerify => 'Overovanie...';
@@ -156,31 +157,31 @@ class AppLocalizationsSk extends AppLocalizations {
   String get loadDownloadTimetable => 'Sťahovanie rozvrhu...';
 
   @override
-  String get loadDownloadGrades => 'Downloading grades...';
+  String get loadDownloadGrades => 'Sťahovanie známok...';
 
   @override
-  String get loadDownloadMessages => 'Sťahovanie zpráv...';
+  String get loadDownloadMessages => 'Sťahovanie správ...';
 
   @override
   String get loadDone => 'Hotovo!';
 
   @override
-  String get loadError => 'Error';
+  String get loadError => 'Chyba';
 
   @override
-  String get loadErrorDescription => 'There was an error loading data. This error has been reported.';
+  String get loadErrorDescription => 'Při načítavaní dát došlo k chybe. Tato chyba byla nahlásena.';
 
   @override
-  String get iCanteenLoading => 'Načítavanie obedov (môže to chvíľu trvať)';
+  String get iCanteenLoading => 'Načítavanie obedov (toto môže chvíľu trvať)';
 
   @override
   String get iCanteenCantLoad => 'Nepodarilo sa načítať obedy';
 
   @override
-  String get iCanteenSetupPleaseLogin => 'Prihláste sa do iCanteen';
+  String get iCanteenSetupPleaseLogin => 'Prihláste sa do systému iCanteen';
 
   @override
-  String get iCanteenSetupDetails => 'Adresu URL zadajte vo formáte https://stravovanie.skola.sk/login';
+  String get iCanteenSetupDetails => 'Adresu URL zadajte ve formáte https://stravovanie.skola.sk/login';
 
   @override
   String get iCanteenSetupServer => 'Adresa URL';
@@ -192,10 +193,10 @@ class AppLocalizationsSk extends AppLocalizations {
   String get iCanteenSetupPassword => 'Heslo';
 
   @override
-  String get iCanteenSetupError => 'There was an error logging in';
+  String get iCanteenSetupError => 'Nastala chyba pri prihlasovaní';
 
   @override
-  String get messagesLoadingAttachment => 'Načítavanie pdf súboru...';
+  String get messagesLoadingAttachment => 'Načítanie pdf súboru...';
 
   @override
   String messagesAttachments(num count) {
@@ -216,74 +217,74 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
-  String get messagesPoll => 'Poll';
+  String get messagesPoll => 'Anketa';
 
   @override
-  String get createMessageDiscard => 'Discard message?';
+  String get createMessageDiscard => 'Zahodiť správu?';
 
   @override
-  String get createMessageDiscardDescription => 'The message has not been sent yet. Are you sure you want to discard it?';
+  String get createMessageDiscardDescription => 'Správa ešte nebola odoslaná. Naozaj ju chcete zahodiť ?';
 
   @override
-  String get createMessageDiscardCancel => 'Cancel';
+  String get createMessageDiscardCancel => 'Zrušiť';
 
   @override
-  String get createMessageDiscardDiscard => 'Discard';
+  String get createMessageDiscardDiscard => 'Zahodiť';
 
   @override
-  String get createMessageTitle => 'New message';
+  String get createMessageTitle => 'Nová správa';
 
   @override
-  String get createMessageSelectRecipient => 'Select recipient';
+  String get createMessageSelectRecipient => 'Vyberte príjemcu';
 
   @override
-  String get createMessageMessageHere => 'Your message here';
+  String get createMessageMessageHere => 'Vaša správa tu';
 
   @override
-  String get createMessageImportant => 'Important';
+  String get createMessageImportant => 'Dôležité';
 
   @override
-  String get createMessageIncludePoll => 'Include poll';
+  String get createMessageIncludePoll => 'Vložiť anketu';
 
   @override
-  String get createMessagePollEnableMultiple => 'Allow multiple answers';
+  String get createMessagePollEnableMultiple => 'Povoliť viac odpovedí';
 
   @override
-  String get createMessageNewPollOptionPlaceholder => 'New option';
+  String get createMessageNewPollOptionPlaceholder => 'Nová možnosť';
 
   @override
-  String get createMessageErrorSelectRecipient => 'Please select a recipient';
+  String get createMessageErrorSelectRecipient => 'Vyberte prosím príjemcu';
 
   @override
-  String get createMessageErrorNoMessage => 'Please write a message';
+  String get createMessageErrorNoMessage => 'Napíšte prosím správu';
 
   @override
-  String get createMessageSend => 'Send';
+  String get createMessageSend => 'Odoslať';
 
   @override
-  String get createMessageNotifSending => 'Sending message';
+  String get createMessageNotifSending => 'Odosielanie správy';
 
   @override
-  String get createMessageNotifSendingBody => 'Your message is being sent...';
+  String get createMessageNotifSendingBody => 'Vaša správa sa odosiela';
 
   @override
-  String get createMessageNotifSent => 'Sent message';
+  String get createMessageNotifSent => 'Správa odoslaná';
 
   @override
-  String get createMessageNotifSentBody => 'Your message was sent successfully';
+  String get createMessageNotifSentBody => 'Vaše správa bola úspešne odoslaná';
 
   @override
-  String get createMessageNotifError => 'Error';
+  String get createMessageNotifError => 'Chyba';
 
   @override
-  String get createMessageNotifErrorBody => 'There was an issue sending your message, it has been reported!';
+  String get createMessageNotifErrorBody => 'Pri odosielaní správy sa vyskytla chyba, táto chyba bola nahlásená.';
 
   @override
-  String get qrLoginPleaseLogin => 'EduPage2 QR Login';
+  String get qrLoginPleaseLogin => 'EduPage2 QR Prihlásenie';
 
   @override
-  String get qrLoginUseExistingCredentials => 'You are about to login to EduPage2 using a QR code';
+  String get qrLoginUseExistingCredentials => 'Chystáte sa prihlásiť pomocou QR kódu';
 
   @override
-  String get gradesTitle => 'Grades';
+  String get gradesTitle => 'Známky';
 }
