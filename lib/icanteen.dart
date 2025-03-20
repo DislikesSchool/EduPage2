@@ -27,7 +27,7 @@ class ICanteenPageState extends BaseState<ICanteenPage> {
   bool runningInit = false;
 
   String cookies = "";
-  late ICanteenData data;
+  ICanteenData data = ICanteenData(days: [], credit: "");
 
   Dio dio = Dio();
 
