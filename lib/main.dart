@@ -94,7 +94,10 @@ class MyApp extends StatelessWidget {
           title: 'EduPage2',
           navigatorKey: navigatorKey,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
+          supportedLocales: [
+            Locale('en'),
+            ...AppLocalizations.supportedLocales,
+          ],
           navigatorObservers: [SentryNavigatorObserver(), observer],
           theme: ThemeData(
             colorScheme: _generateColorScheme(
