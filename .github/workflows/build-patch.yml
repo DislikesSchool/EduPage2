@@ -11,29 +11,8 @@ permissions:
   statuses: write
 on: workflow_dispatch
 jobs:
-  check_changes:
-    outputs:
-      run_build: ${{ steps.verify-changed-files.outputs.any_changed }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Verify Changed files
-        uses: tj-actions/changed-files@v42
-        id: verify-changed-files
-        with:
-          files: |
-            .github/workflows/build-patch.yml
-            pubspec.yaml
-            pubspec.lock
-            l10n.yaml
-            lib/**
-            android/**
   build:
     runs-on: ubuntu-latest
-    needs: check_changes
-    if: needs.check_changes.outputs.run_build == 'true'
     steps:
       - uses: actions/checkout@v3
         with:
