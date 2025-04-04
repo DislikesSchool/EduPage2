@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:eduapge2/l10n/app_localizations.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:html_unescape/html_unescape.dart';
+import 'package:intl/intl.dart';
 
 class MessagesPage extends StatefulWidget {
   final SessionManager sessionManager;
@@ -42,10 +43,7 @@ class TimeTablePageState extends BaseState<MessagesPage> {
 
   final ScrollController _scrollController = ScrollController();
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  bool isScrolledDown = false;
 
   @override
   void dispose() {
@@ -61,12 +59,21 @@ class TimeTablePageState extends BaseState<MessagesPage> {
     _scrollController.addListener(() async {
       if (!_isFetching &&
           _scrollController.position.pixels >=
-              _scrollController.position.maxScrollExtent - 200) {
+              _scrollController.position.maxScrollExtent - 400) {
         _isFetching = true;
         await EP2Data.getInstance().timeline.loadOlderMessages();
         messages =
             getMessages(EP2Data.getInstance().timeline.items.values.toList());
         _isFetching = false;
+      }
+    });
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.minScrollExtent + 1000 !=
+          isScrolledDown) {
+        isScrolledDown = !isScrolledDown;
+        setState(() {});
       }
     });
     messages =
@@ -93,16 +100,38 @@ class TimeTablePageState extends BaseState<MessagesPage> {
             )
           : Text(AppLocalizations.of(context)!.loading),
       backgroundColor: Theme.of(context).colorScheme.surface,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext buildContext) => const SendMessageScreen(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            if (isScrolledDown)
+              FloatingActionButton(
+                mini: true,
+                onPressed: () {
+                  _scrollController.animateTo(
+                    _scrollController.position.minScrollExtent,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+                child: const Icon(Icons.arrow_upward),
+              ),
+            FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext buildContext) =>
+                        const SendMessageScreen(),
+                  ),
+                );
+              },
+              child: const Icon(Icons.add),
             ),
-          );
-        },
-        child: const Icon(Icons.add),
+          ],
+        ),
       ),
     );
   }
@@ -241,39 +270,60 @@ class TimeTablePageState extends BaseState<MessagesPage> {
                           ),
                         ],
                       ),
-                if (msg.data["Value"] != null &&
-                    msg.data["Value"]["attachements"] != null &&
-                    msg.data["Value"]["attachements"].length > 0)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        const Icon(
-                          Icons.attach_file_rounded,
-                          size: 18,
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        DateFormat('yyyy-MM-dd HH:mm').format(msg.timestamp),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
                         ),
-                        Text(loc?.messagesAttachments(
-                                msg.data["Value"]["attachements"].length) ??
-                            ""),
-                      ],
-                    ),
+                      ),
+                      Row(
+                        children: [
+                          if (msg.data["Value"] != null &&
+                              msg.data["Value"]["attachements"] != null &&
+                              msg.data["Value"]["attachements"].length > 0)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.attach_file_rounded,
+                                  size: 16,
+                                ),
+                                Text(
+                                  loc?.messagesAttachments(msg
+                                          .data["Value"]["attachements"]
+                                          .length) ??
+                                      "",
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                                const SizedBox(width: 8),
+                              ],
+                            ),
+                          if (msg.data["Value"] != null &&
+                              msg.data["Value"]["votingParams"] != null)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.poll_rounded,
+                                  size: 16,
+                                ),
+                                Text(
+                                  loc!.messagesPoll,
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ],
                   ),
-                if (msg.data["Value"] != null &&
-                    msg.data["Value"]["votingParams"] != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        const Icon(
-                          Icons.poll_rounded,
-                          size: 18,
-                        ),
-                        Text(loc!.messagesPoll),
-                      ],
-                    ),
-                  ),
+                ),
               ],
             ),
           ),
