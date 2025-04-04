@@ -165,6 +165,12 @@ class HomePageState extends BaseState<HomePage> {
     getData();
   }
 
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   DateTime getWeekDay() {
     DateTime now = DateTime.now();
     if (now.weekday > 5) {
