@@ -1,7 +1,7 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:eduapge2/api.dart';
+import 'package:eduapge2/components/timer_display.dart';
 import 'package:eduapge2/grades.dart';
 import 'package:eduapge2/homework.dart';
 import 'package:eduapge2/icanteen_setup.dart';
@@ -156,19 +156,12 @@ class HomePageState extends BaseState<HomePage> {
   String username = "";
   LessonStatus _lessonStatus = LessonStatus(
       hasLessonsToday: false, hasLesson: false, nextLessonTime: DateTime.now());
-  Timer? _timer;
   TimeTableData t = TimeTableData(DateTime.now(), [], []);
 
   @override
   void initState() {
     super.initState();
     getData();
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
   }
 
   DateTime getWeekDay() {
@@ -190,21 +183,7 @@ class HomePageState extends BaseState<HomePage> {
     t = await EP2Data.getInstance().timetable.today();
 
     _lessonStatus = getLessonStatus(t.classes, TimeOfDay.now());
-    if (_lessonStatus.hasLessonsToday) {
-      _startTimer();
-    }
     setState(() {}); //refresh UI
-  }
-
-  void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      setState(() {
-        _lessonStatus = getLessonStatus(t.classes, TimeOfDay.now());
-        if (!_lessonStatus.hasLessonsToday) {
-          _timer?.cancel();
-        }
-      });
-    });
   }
 
   @override
@@ -270,13 +249,7 @@ class HomePageState extends BaseState<HomePage> {
               .firstWhere((element) => int.parse(element.id) == b["id"])),
           b["index"]!);
     }
-    final remainingTime =
-        _lessonStatus.nextLessonTime.difference(DateTime.now());
-    final minutes =
-        remainingTime.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final seconds =
-        remainingTime.inSeconds.remainder(60).toString().padLeft(2, '0');
-    final remainingTimeString = '$minutes:$seconds';
+
     return Scaffold(
       key: scaffoldKey,
       body: Stack(
@@ -308,25 +281,7 @@ class HomePageState extends BaseState<HomePage> {
                       Positioned(
                         right: 7,
                         top: 7,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Color.fromARGB(
-                                70, // Using lower alpha for background
-                                _lessonStatus.hasLesson ? 255 : 0,
-                                _lessonStatus.hasLesson ? 0 : 255,
-                                0),
-                            borderRadius: BorderRadius.circular(32),
-                          ),
-                          child: Text(
-                            remainingTimeString,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                        child: TimerDisplay(lessonStatus: _lessonStatus),
                       ),
                     Padding(
                       padding: const EdgeInsets.only(left: 4.0),
