@@ -1241,8 +1241,8 @@ class Timeline {
     Response response = await data.dio.get(
       "${data.baseUrl}/api/timeline",
       queryParameters: {
-        "from": newestTimestamp.toIso8601String(),
-        "to": DateTime.now().toIso8601String(),
+        "from": newestTimestamp.toUtc().toIso8601String(),
+        "to": DateTime.now().toUtc().toIso8601String(),
       },
       options: Options(
         headers: {
