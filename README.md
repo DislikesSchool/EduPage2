@@ -15,7 +15,8 @@
   </p>
 </p>
 
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/dislikesschool/edupage2) ![Downloads](https://img.shields.io/github/downloads/DislikesSchool/EduPage2/total) ![Contributors](https://img.shields.io/github/contributors/DislikesSchool/EduPage2?color=dark-green) ![Issues](https://img.shields.io/github/issues/DislikesSchool/EduPage2) ![License](https://img.shields.io/github/license/DislikesSchool/EduPage2) [![codecov](https://codecov.io/github/DislikesSchool/EduPage2/branch/master/graph/badge.svg?token=HKP9WFL0LN)](https://codecov.io/github/DislikesSchool/EduPage2)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/dislikesschool/edupage2) ![Downloads](https://img.shields.io/github/downloads/DislikesSchool/EduPage2/total) ![Contributors](https://img.shields.io/github/contributors/DislikesSchool/EduPage2?color=dark-green) ![Issues](https://img.shields.io/github/issues/DislikesSchool/EduPage2) ![License](https://img.shields.io/github/license/DislikesSchool/EduPage2) [![codecov](https://codecov.io/github/DislikesSchool/EduPage2/branch/master/graph/badge.svg?token=HKP9WFL0LN)](https://codecov.io/github/DislikesSchool/EduPage2) [![weblate](https://hosted.weblate.org/widget/edupage-2/edupage-2-flutter/svg-badge.svg)](https://hosted.weblate.org/engage/edupage-2/)
+
 
 [![test-coverage](https://github.com/DislikesSchool/EduPage2/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/DislikesSchool/EduPage2/actions/workflows/test-coverage.yml)
 [![build-patch-android](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-patch.yml/badge.svg)](https://github.com/DislikesSchool/EduPage2/actions/workflows/build-patch.yml)
@@ -117,6 +118,10 @@ Contributions are what make the open source community such an amazing place to b
 - Please make sure you check your spelling and grammar.
 - Create individual PR for each suggestion.
 - Please also read through the [Code Of Conduct](https://github.com/DislikesSchool/EduPage2/blob/master/CODE_OF_CONDUCT) before posting your first idea as well.
+
+<a href="https://hosted.weblate.org/engage/edupage-2/">
+<img src="https://hosted.weblate.org/widget/edupage-2/edupage-2-flutter/multi-auto.svg" alt="Translation status" />
+</a>
 
 ### Creating A Pull Request
 
