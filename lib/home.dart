@@ -300,32 +300,36 @@ class HomePageState extends BaseState<HomePage> {
                     ),
                     if (_lessonStatus.hasLessonsToday)
                       Positioned(
-                        right: 15,
-                        top: 10,
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.circle,
-                              color: Color.fromARGB(
-                                  255,
-                                  _lessonStatus.hasLesson ? 255 : 0,
-                                  _lessonStatus.hasLesson ? 0 : 255,
-                                  0),
-                              size: 8,
+                        right: 7,
+                        top: 7,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(
+                                70, // Using lower alpha for background
+                                _lessonStatus.hasLesson ? 255 : 0,
+                                _lessonStatus.hasLesson ? 0 : 255,
+                                0),
+                            borderRadius: BorderRadius.circular(32),
+                          ),
+                          child: Text(
+                            remainingTimeString,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
-                            const SizedBox(width: 5),
-                            Text(
-                              remainingTimeString,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
-                    IconButton(
-                      icon: const Icon(Icons.menu),
-                      onPressed: () => {
-                        scaffoldKey.currentState?.openDrawer(),
-                      },
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4.0),
+                      child: IconButton(
+                        icon: const Icon(Icons.menu),
+                        onPressed: () => {
+                          scaffoldKey.currentState?.openDrawer(),
+                        },
+                      ),
                     ),
                   ],
                 ),
