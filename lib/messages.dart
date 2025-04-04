@@ -126,7 +126,6 @@ class TimeTablePageState extends BaseState<MessagesPage> {
     List<Widget> rows = <Widget>[];
     List<TimelineItem> msgs =
         apidataMsg.where((msg) => msg.type == "sprava").toList();
-    msgs.sort((a, b) => b.timeAdded.compareTo(a.timeAdded));
     List<TimelineItem> msgsWOR = List.from(msgs);
     List<Map<String, int>> bump = [];
     for (TimelineItem msg in msgs) {
@@ -143,6 +142,7 @@ class TimeTablePageState extends BaseState<MessagesPage> {
         }
       }
     }
+    msgsWOR.sort((a, b) => b.timestamp.compareTo(a.timestamp));
     for (TimelineItem msg in msgsWOR) {
       bool isImportantMessage = false;
       if (msg.data["Value"]?["messageContent"] != null) {

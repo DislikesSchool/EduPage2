@@ -54,7 +54,7 @@ class _SearchMessagesPageState extends State<SearchMessagesPage> {
         .toList();
 
     // Sort by newest first
-    _searchResults.sort((a, b) => b.timeAdded.compareTo(a.timeAdded));
+    _searchResults.sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
     setState(() {
       _isSearching = false;
