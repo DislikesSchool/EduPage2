@@ -103,7 +103,7 @@ class LoinPageState extends BaseState<LoginPage> {
                       ),
                     ),
                     onChanged: (text) => {password = text},
-                    obscureText: true,
+                    obscureText: !showPassword,
                     keyboardType: TextInputType.visiblePassword,
                   ),
                   Row(
