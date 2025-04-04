@@ -926,9 +926,40 @@ class TimelineItem {
   });
 
   factory TimelineItem.fromJson(Map<String, dynamic> json) {
+    DateTime timestamp = DateTime.parse(json['timestamp']);
+
+    if (json['typ'] == 'pipnutie') {
+      try {
+        String text = json['text'];
+        List<String> parts = text.split(' ');
+        if (parts.length >= 3) {
+          String dateStr = parts[1];
+          String timeStr = parts[2];
+
+          List<String> dateParts = dateStr.split('.');
+          if (dateParts.length == 3) {
+            int day = int.parse(dateParts[0]);
+            int month = int.parse(dateParts[1]);
+            int year = int.parse(dateParts[2]);
+
+            List<String> timeParts = timeStr.split(':');
+            if (timeParts.length >= 2) {
+              int hour = int.parse(timeParts[0]);
+              int minute = int.parse(timeParts[1]);
+              int second = timeParts.length > 2 ? int.parse(timeParts[2]) : 0;
+
+              timestamp = DateTime(year, month, day, hour, minute, second);
+            }
+          }
+        }
+      } catch (e) {
+        // https://tenor.com/cfrre6CzfHT.gif
+      }
+    }
+
     return TimelineItem(
       id: json['timelineid'],
-      timestamp: DateTime.parse(json['timestamp']),
+      timestamp: timestamp,
       reactionTo: json['reakcia_na'],
       type: json['typ'],
       user: json['user'],

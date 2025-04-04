@@ -179,6 +179,8 @@ class HomePageState extends BaseState<HomePage> {
     apidataMsg = EP2Data.getInstance().timeline.items.values.toList();
     username = EP2Data.getInstance().user.name;
 
+    apidataMsg.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
     t = await EP2Data.getInstance().timetable.today();
 
     _lessonStatus = getLessonStatus(t.classes, TimeOfDay.now());
@@ -408,6 +410,11 @@ class HomePageState extends BaseState<HomePage> {
                     ),
                   ),
                 ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+                child: _buildAttendanceCard(context, local, apidataMsg),
+              ),
               if (lunch != -1)
                 Container(
                   width: MediaQuery.of(context).size.width,
@@ -714,4 +721,122 @@ class HomePageState extends BaseState<HomePage> {
       ),
     );
   }
+}
+
+Widget _buildAttendanceCard(BuildContext context, AppLocalizations? local,
+    List<TimelineItem> apidataMsg) {
+  // Get today's and yesterday's date
+  final today = DateTime.now();
+  final yesterday = today.subtract(const Duration(days: 1));
+
+  // Filter pipnutie items
+  final pipnutieItems =
+      apidataMsg.where((item) => item.type == 'pipnutie').toList();
+
+  // Attempt to find today's attendance
+  List<Map<String, dynamic>> todayAttendance =
+      _getAttendanceForDate(pipnutieItems, today);
+
+  // If no arrival for today, try yesterday
+  if (todayAttendance.isEmpty ||
+      todayAttendance.every((item) => item['type'] != 1)) {
+    todayAttendance = _getAttendanceForDate(pipnutieItems, yesterday);
+  }
+
+  // Don't show widget if no valid attendance data
+  if (todayAttendance.isEmpty ||
+      todayAttendance.every((item) => item['type'] != 1)) {
+    return const SizedBox.shrink();
+  }
+
+  // Get arrival and departure times
+  final arrival =
+      todayAttendance.firstWhere((item) => item['type'] == 1, orElse: () => {});
+  final departure =
+      todayAttendance.firstWhere((item) => item['type'] == 2, orElse: () => {});
+
+  // Only proceed if we have at least an arrival time
+  if (arrival.isEmpty) {
+    return const SizedBox.shrink();
+  }
+
+  final arrivalTime = arrival['timestamp'] as DateTime;
+  final departureTime =
+      departure.isNotEmpty ? departure['timestamp'] as DateTime : null;
+
+  return Card(
+    elevation: 5,
+    child: Padding(
+      padding: const EdgeInsets.all(10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.login, color: Colors.green),
+              const SizedBox(width: 8),
+              Text(
+                "${arrivalTime.hour.toString().padLeft(2, '0')}:${arrivalTime.minute.toString().padLeft(2, '0')}",
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Icon(Icons.logout, color: Colors.red),
+              const SizedBox(width: 8),
+              departureTime != null
+                  ? Text(
+                      "${departureTime.hour.toString().padLeft(2, '0')}:${departureTime.minute.toString().padLeft(2, '0')}",
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    )
+                  : Text(
+                      "--:--",
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+List<Map<String, dynamic>> _getAttendanceForDate(
+    List<TimelineItem> items, DateTime date) {
+  final result = <Map<String, dynamic>>[];
+
+  for (final item in items) {
+    try {
+      // Check if the item's timestamp is on the specified date
+      if (item.timestamp.year == date.year &&
+          item.timestamp.month == date.month &&
+          item.timestamp.day == date.day) {
+        // Extract the attendance type from the nested data structure
+        final data = item.data;
+        if (data.containsKey('Value') &&
+            data['Value'] is Map &&
+            data['Value'].containsKey('typ')) {
+          final type = int.tryParse(data['Value']['typ'].toString());
+          if (type != null && (type == 1 || type == 2)) {
+            result.add({
+              'type': type, // 1 for arrival, 2 for departure
+              'timestamp': item.timestamp,
+            });
+          }
+        }
+      }
+    } catch (e) {
+      print('Error processing attendance item: $e');
+    }
+  }
+
+  // Sort by timestamp
+  result.sort((a, b) =>
+      (a['timestamp'] as DateTime).compareTo(b['timestamp'] as DateTime));
+
+  return result;
 }
