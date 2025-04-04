@@ -154,8 +154,6 @@ class HomePageState extends BaseState<HomePage> {
 
   List<TimelineItem> apidataMsg = [];
   String username = "";
-  LessonStatus _lessonStatus = LessonStatus(
-      hasLessonsToday: false, hasLesson: false, nextLessonTime: DateTime.now());
   TimeTableData t = TimeTableData(DateTime.now(), [], []);
 
   @override
@@ -179,10 +177,6 @@ class HomePageState extends BaseState<HomePage> {
     username = EP2Data.getInstance().user.name;
 
     apidataMsg.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-
-    t = await EP2Data.getInstance().timetable.today();
-
-    _lessonStatus = getLessonStatus(t.classes, TimeOfDay.now());
     setState(() {}); //refresh UI
   }
 
@@ -277,12 +271,11 @@ class HomePageState extends BaseState<HomePage> {
                         ),
                       ),
                     ),
-                    if (_lessonStatus.hasLessonsToday)
-                      Positioned(
-                        right: 7,
-                        top: 7,
-                        child: TimerDisplay(lessonStatus: _lessonStatus),
-                      ),
+                    Positioned(
+                      right: 7,
+                      top: 7,
+                      child: TimerDisplay(),
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(left: 4.0),
                       child: IconButton(
@@ -795,7 +788,7 @@ List<Map<String, dynamic>> _getAttendanceForDate(
         }
       }
     } catch (e) {
-      print('Error processing attendance item: $e');
+      // ._.
     }
   }
 
