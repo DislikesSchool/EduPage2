@@ -2,6 +2,7 @@ import 'package:eduapge2/api.dart';
 import 'package:eduapge2/create_message.dart';
 import 'package:eduapge2/main.dart';
 import 'package:eduapge2/message.dart';
+import 'package:eduapge2/search_messages.dart';
 import 'package:flutter/material.dart';
 import 'package:eduapge2/l10n/app_localizations.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
@@ -95,10 +96,11 @@ class TimeTablePageState extends BaseState<MessagesPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext buildContext) =>
-                      const SendMessageScreen()));
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext buildContext) => const SendMessageScreen(),
+            ),
+          );
         },
         child: const Icon(Icons.add),
       ),
@@ -290,24 +292,42 @@ class TimeTablePageState extends BaseState<MessagesPage> {
         padding: const EdgeInsets.all(10),
         child: Stack(
           children: <Widget>[
-            Text(
-              AppLocalizations.of(context)!.messagesTitle,
-              style: const TextStyle(
-                fontSize: 24,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.messagesTitle,
+                  style: const TextStyle(
+                    fontSize: 24,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            const SearchMessagesPage(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
             Padding(
-                padding: const EdgeInsets.only(top: 40),
-                child: RefreshIndicator(
-                  onRefresh: _pullRefresh,
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: rows.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return rows[index];
-                    },
-                  ),
-                )),
+              padding: const EdgeInsets.only(top: 40),
+              child: RefreshIndicator(
+                onRefresh: _pullRefresh,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: rows.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return rows[index];
+                  },
+                ),
+              ),
+            ),
           ],
         ),
       ),

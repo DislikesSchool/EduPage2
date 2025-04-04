@@ -112,5 +112,9 @@
   "createMessageNotifErrorBody": "There was an issue sending your message, it has been reported!",
   "qrLoginPleaseLogin": "EduPage2 QR Login",
   "qrLoginUseExistingCredentials": "You are about to login to EduPage2 using a QR code",
-  "gradesTitle": "Grades"
+  "gradesTitle": "Grades",
+  "messagesSearchTitle": "Search messages",
+  "messagesSearchHint": "Enter search term...",
+  "messagesSearchInstructions": "Enter a search term above",
+  "messagesNoResults": "No results found"
 }

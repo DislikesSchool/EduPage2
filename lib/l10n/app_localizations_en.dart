@@ -285,4 +285,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gradesTitle => 'Grades';
+
+  @override
+  String get messagesSearchTitle => 'Search messages';
+
+  @override
+  String get messagesSearchHint => 'Enter search term...';
+
+  @override
+  String get messagesSearchInstructions => 'Enter a search term above';
+
+  @override
+  String get messagesNoResults => 'No results found';
 }

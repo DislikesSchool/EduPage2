@@ -582,6 +582,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Grades'**
   String get gradesTitle;
+
+  /// No description provided for @messagesSearchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search messages'**
+  String get messagesSearchTitle;
+
+  /// No description provided for @messagesSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter search term...'**
+  String get messagesSearchHint;
+
+  /// No description provided for @messagesSearchInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a search term above'**
+  String get messagesSearchInstructions;
+
+  /// No description provided for @messagesNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get messagesNoResults;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
