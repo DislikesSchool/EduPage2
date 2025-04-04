@@ -1,9 +1,8 @@
-import 'dart:convert';
-
 import 'package:eduapge2/api.dart';
 import 'package:eduapge2/components/timer_display.dart';
 import 'package:eduapge2/grades.dart';
 import 'package:eduapge2/homework.dart';
+import 'package:eduapge2/icanteen.dart';
 import 'package:eduapge2/icanteen_setup.dart';
 import 'package:eduapge2/main.dart';
 import 'package:eduapge2/message.dart';
@@ -176,6 +175,8 @@ class HomePageState extends BaseState<HomePage> {
     apidataMsg = EP2Data.getInstance().timeline.items.values.toList();
     username = EP2Data.getInstance().user.name;
 
+    t = await EP2Data.getInstance().timetable.today();
+
     apidataMsg.sort((a, b) => b.timestamp.compareTo(a.timestamp));
     setState(() {}); //refresh UI
   }
@@ -187,34 +188,55 @@ class HomePageState extends BaseState<HomePage> {
 
     int lunch = -1;
     DateTime orderLunchesFor = DateTime(1998, 4, 10);
-    String? l = sharedPreferences?.getString("lunches");
-    if (l != null) {
-      var lunches = jsonDecode(l) as List<dynamic>;
-      if (lunches.isNotEmpty) {
-        var lunchToday = lunches[0] as Map<String, dynamic>;
-        if (DateTime.parse(lunchToday["day"]).day == DateTime.now().day) {
-          lunch = 0;
-          var todayLunches = lunchToday["lunches"];
-          for (int i = 0; i < todayLunches.length; i++) {
-            if (todayLunches[i]["ordered"]) lunch = i + 1;
+
+    // Get the iCanteen data from the manager
+    ICanteenData iCanteenData = ICanteenManager.getInstance().data;
+
+    if (iCanteenData.days.isNotEmpty) {
+      // Check for today's lunch
+      DateTime today = DateTime.now();
+      for (ICanteenDay day in iCanteenData.days) {
+        // Parse the date from the day string
+        // (Assuming day format is like "2023-04-10" or contains the date)
+        DateTime dayDate;
+        try {
+          // Try to parse the whole string first
+          dayDate = DateTime.parse(day.day);
+        } catch (e) {
+          // If that fails, try to extract the date portion
+          // This is a fallback and might need adjustment based on your actual date format
+          RegExp dateRegex = RegExp(r'\d{4}-\d{2}-\d{2}');
+          Match? match = dateRegex.firstMatch(day.day);
+          if (match != null) {
+            dayDate = DateTime.parse(match.group(0)!);
+          } else {
+            // Skip this day if we can't parse the date
+            continue;
           }
         }
-        for (Map<String, dynamic> li in lunches) {
-          bool canOrder = false;
-          bool hasOrdered = false;
-          for (Map<String, dynamic> l in li["lunches"]) {
-            if (l["can_order"]) {
-              canOrder = true;
-            }
-            if (l["ordered"]) {
-              hasOrdered = true;
+
+        // Check if this is today
+        if (dayDate.day == today.day &&
+            dayDate.month == today.month &&
+            dayDate.year == today.year) {
+          lunch = 0; // Default to 0 if no lunch is ordered
+
+          // Check which lunch is ordered today
+          for (int i = 0; i < day.lunches.length; i++) {
+            if (day.lunches[i].ordered) {
+              lunch = i + 1;
+              break;
             }
           }
-          if (canOrder && !hasOrdered) {
-            DateTime parsed = DateTime.parse(li["day"]);
-            orderLunchesFor = DateTime(parsed.year, parsed.month, parsed.day);
-            break;
-          }
+        }
+
+        // Find the next day where user can order but hasn't yet
+        bool canOrder = day.lunches.any((lunch) => lunch.canOrder);
+        bool hasOrdered = day.lunches.any((lunch) => lunch.ordered);
+
+        if (canOrder && !hasOrdered) {
+          orderLunchesFor = DateTime(dayDate.year, dayDate.month, dayDate.day);
+          break;
         }
       }
     }

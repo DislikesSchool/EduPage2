@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:eduapge2/main.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -24,17 +26,8 @@ class ICanteenPageState extends BaseState<ICanteenPage> {
   late SessionManager sessionManager;
   late SharedPreferences sharedPreferences;
 
-  bool runningInit = false;
-
-  String cookies = "";
-  ICanteenData data = ICanteenData(days: [], credit: "");
-
-  Dio dio = Dio();
-
-  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
   bool loading = true;
-
-  List<Widget> lunches = [];
+  ICanteenManager icm = ICanteenManager.getInstance();
 
   @override
   void initState() {
@@ -43,42 +36,20 @@ class ICanteenPageState extends BaseState<ICanteenPage> {
   }
 
   Future<void> init() async {
-    dio.interceptors.add(
-      InterceptorsWrapper(
-        onError: (DioException error, ErrorInterceptorHandler handler) {
-          Sentry.configureScope((scope) {
-            scope.setTag("Dio error message", error.message ?? "");
-            scope.setContexts(
-                "Dio error response", error.response?.data.toString() ?? {});
-          });
-          toastification.show(
-            type: ToastificationType.error,
-            style: ToastificationStyle.flat,
-            title: Text(error.message ?? ""),
-            description: Text(error.response?.data.toString() ?? ""),
-            alignment: Alignment.bottomCenter,
-            autoCloseDuration: const Duration(seconds: 15),
-            icon: Icon(Icons.error),
-            borderRadius: BorderRadius.circular(12.0),
-            boxShadow: highModeShadow,
-            showProgressBar: true,
-            closeButtonShowType: CloseButtonShowType.none,
-            closeOnClick: false,
-            applyBlurEffect: true,
-          );
-          return handler.next(error);
-        },
-      ),
-    );
-
     sharedPreferences = await SharedPreferences.getInstance();
 
-    if (await login()) {
-      int status = await getLunches();
-      if (status == 1) {
-        await login();
-        await getLunches();
+    await icm.init();
+
+    if (icm.isConfigured()) {
+      if (await icm.login()) {
+        if (await icm.loadMonth() == 1) {
+          await icm.login();
+          await icm.loadMonth();
+        }
       }
+      setState(() {
+        loading = false;
+      });
     } else {
       setState(() {
         loading = false;
@@ -86,134 +57,24 @@ class ICanteenPageState extends BaseState<ICanteenPage> {
     }
   }
 
-  Future<bool> login() async {
-    Response response = await dio.post(
-      "$baseUrl/icanteen/login",
-      data: {
-        "username": sharedPreferences.getString("ic_email"),
-        "password": sharedPreferences.getString("ic_password"),
-        "server": sharedPreferences.getString("ic_server"),
-      },
-      options: Options(
-        contentType: Headers.formUrlEncodedContentType,
-        validateStatus: (status) {
-          return true; // To return all status codes
-        },
-        responseType: ResponseType.plain,
-      ),
-    );
-
-    if (response.statusCode != 200) {
-      lunches.add(
-        Card(
-          child: Text(
-              "Sorry, but there was an issue accessing iCanteen: ${response.data}"),
-        ),
-      );
-      return false;
-    }
-
-    cookies = response.data;
-    return true;
-  }
-
-  Future<int> getLunches() async {
+  Future<void> _pullRefresh() async {
     setState(() {
       loading = true;
-      lunches = [];
     });
-
-    Response response = await dio.post(
-      "$baseUrl/icanteen/month",
-      data: {
-        "server": sharedPreferences.getString("ic_server"),
-        "cookies": cookies,
-      },
-      options: Options(
-        contentType: Headers.formUrlEncodedContentType,
-        validateStatus: (status) {
-          return true; // To return all status codes
-        },
-      ),
-    );
-
-    if (response.statusCode != 200) {
-      if (response.statusCode == 400 &&
-          response.data["error"] == "cookies are no longer valid") {
-        return 1;
-      } else {
-        lunches.add(
-          Card(
-            child: Text(
-                "Sorry, there was an issue accessing iCanteen: ${response.data}"),
-          ),
-        );
-        setState(() {
-          loading = false;
-        });
-        return 2;
-      }
-    }
-
-    data = ICanteenData.fromJson(response.data);
+    await icm.loadMonth();
     setState(() {
-      loading = false;
-    });
-    return 0;
-  }
-
-  Future<void> changeOrder(String changeURL) async {
-    Response response = await dio.post(
-      "$baseUrl/icanteen/change",
-      data: {
-        "server": sharedPreferences.getString("ic_server"),
-        "cookies": cookies,
-        "changeURL": changeURL,
-      },
-      options: Options(
-        contentType: Headers.formUrlEncodedContentType,
-        validateStatus: (status) {
-          return true; // To return all status codes
-        },
-      ),
-    );
-
-    if (response.statusCode != 200) {
-      if (response.statusCode == 400 &&
-          response.data["error"] == "cookies are no longer valid") {
-        await login();
-        await changeOrder(changeURL);
-        return;
-      } else {
-        lunches = [];
-        lunches.add(
-          Card(
-            child: Text(
-                "Sorry there was an issue accessing iCanteen: ${response.data}"),
-          ),
-        );
-        setState(() {});
-        return;
-      }
-    }
-
-    ICanteenData changedData = ICanteenData.fromJson(response.data);
-
-    data.credit = changedData.credit;
-
-    int index = data.days.indexWhere((element) {
-      return element.day == changedData.days[0].day;
-    });
-
-    data.days[index] = changedData.days[0];
-    setState(() {
-      lunches = lunches;
       loading = false;
     });
   }
 
-  Future<void> _pullRefresh() async {
-    await getLunches();
+  Future<void> _changeOrder(String changeURL) async {
+    setState(() {
+      loading = true;
+    });
+    await icm.changeOrder(changeURL);
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
@@ -224,9 +85,9 @@ class ICanteenPageState extends BaseState<ICanteenPage> {
       child: loading
           ? Text(AppLocalizations.of(context)!.iCanteenLoading)
           : ListView.builder(
-              itemCount: data.days.length,
+              itemCount: icm.data.days.length,
               itemBuilder: (context, index) {
-                ICanteenDay lunch = data.days[index];
+                ICanteenDay lunch = icm.data.days[index];
                 return Card(
                   child: Padding(
                     padding: const EdgeInsets.all(10),
@@ -255,7 +116,7 @@ class ICanteenPageState extends BaseState<ICanteenPage> {
                                   Expanded(
                                     child: TextButton(
                                       onPressed: () async {
-                                        await changeOrder(lunchOpt.changeUrl);
+                                        await _changeOrder(lunchOpt.changeUrl);
                                       },
                                       child: Text(
                                         lunchOpt.name,
@@ -273,6 +134,204 @@ class ICanteenPageState extends BaseState<ICanteenPage> {
               },
             ),
     );
+  }
+}
+
+class ICanteenManager {
+  final Dio dio = Dio();
+  late SharedPreferences sharedPreferences;
+  String cookies = "";
+
+  // Singleton instance
+  static ICanteenManager? _instance;
+
+  ICanteenData data = ICanteenData(days: [], credit: "");
+  String baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
+
+  // Private constructor
+  ICanteenManager._privateConstructor() {
+    _initDio();
+  }
+
+  // Public getter for the singleton instance
+  static ICanteenManager getInstance() {
+    _instance ??= ICanteenManager._privateConstructor();
+    return _instance!;
+  }
+
+  void _initDio() {
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (DioException error, ErrorInterceptorHandler handler) {
+          Sentry.configureScope((scope) {
+            scope.setTag("ICanteen Dio error message", error.message ?? "");
+            scope.setContexts("ICanteen Dio error response",
+                error.response?.data.toString() ?? {});
+          });
+          toastification.show(
+            type: ToastificationType.error,
+            style: ToastificationStyle.flat,
+            title: Text(error.message ?? "Error"),
+            description:
+                Text(error.response?.data.toString() ?? "An error occurred"),
+            alignment: Alignment.bottomCenter,
+            autoCloseDuration: const Duration(seconds: 15),
+            icon: const Icon(Icons.error),
+            borderRadius: BorderRadius.circular(12.0),
+            boxShadow: highModeShadow,
+            showProgressBar: true,
+            closeButtonShowType: CloseButtonShowType.none,
+            closeOnClick: false,
+            applyBlurEffect: true,
+          );
+          return handler.next(error);
+        },
+      ),
+    );
+  }
+
+  Future<void> init() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+
+    // Try loading from cache
+    await loadFromCache();
+
+    // Check if we have credentials
+    if (isConfigured()) {
+      await loadMonth();
+    }
+  }
+
+  bool isConfigured() {
+    if (sharedPreferences.getString("ic_email") == null ||
+        sharedPreferences.getString("ic_password") == null ||
+        sharedPreferences.getString("ic_server") == null) {
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> login() async {
+    Response response = await dio.post(
+      "$baseUrl/icanteen/login",
+      data: {
+        "username": sharedPreferences.getString("ic_email"),
+        "password": sharedPreferences.getString("ic_password"),
+        "server": sharedPreferences.getString("ic_server"),
+      },
+      options: Options(
+        contentType: Headers.formUrlEncodedContentType,
+        validateStatus: (status) {
+          return true;
+        },
+        responseType: ResponseType.plain,
+      ),
+    );
+
+    if (response.statusCode != 200) {
+      return false;
+    }
+
+    cookies = response.data;
+    return true;
+  }
+
+  Future<int> loadMonth() async {
+    // First ensure we have valid credentials
+    if (!await login()) {
+      return 2;
+    }
+
+    Response response = await dio.post(
+      "$baseUrl/icanteen/month",
+      data: {
+        "server": sharedPreferences.getString("ic_server"),
+        "cookies": cookies,
+      },
+      options: Options(
+        contentType: Headers.formUrlEncodedContentType,
+        validateStatus: (status) {
+          return true;
+        },
+      ),
+    );
+
+    if (response.statusCode != 200) {
+      if (response.statusCode == 400 &&
+          response.data["error"] == "cookies are no longer valid") {
+        // Try to login again and retry
+        if (await login()) {
+          return await loadMonth();
+        }
+        return 1;
+      } else {
+        return 2;
+      }
+    }
+
+    data = ICanteenData.fromJson(response.data);
+    await saveToCache();
+    return 0;
+  }
+
+  Future<void> changeOrder(String changeURL) async {
+    Response response = await dio.post(
+      "$baseUrl/icanteen/change",
+      data: {
+        "server": sharedPreferences.getString("ic_server"),
+        "cookies": cookies,
+        "changeURL": changeURL,
+      },
+      options: Options(
+        contentType: Headers.formUrlEncodedContentType,
+        validateStatus: (status) {
+          return true;
+        },
+      ),
+    );
+
+    if (response.statusCode != 200) {
+      if (response.statusCode == 400 &&
+          response.data["error"] == "cookies are no longer valid") {
+        await login();
+        await changeOrder(changeURL);
+        return;
+      }
+      return;
+    }
+
+    ICanteenData changedData = ICanteenData.fromJson(response.data);
+
+    data.credit = changedData.credit;
+
+    int index = data.days.indexWhere((element) {
+      return element.day == changedData.days[0].day;
+    });
+
+    if (index != -1) {
+      data.days[index] = changedData.days[0];
+    }
+
+    await saveToCache();
+  }
+
+  // Save data to cache
+  Future<void> saveToCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('icanteen_data', jsonEncode(data.toJson()));
+  }
+
+  // Load data from cache
+  Future<void> loadFromCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cachedData = prefs.getString('icanteen_data');
+    if (cachedData != null) {
+      try {
+        data = ICanteenData.fromJson(jsonDecode(cachedData));
+      } catch (e) {
+        // If parsing fails, keep default empty data
+      }
+    }
   }
 }
 

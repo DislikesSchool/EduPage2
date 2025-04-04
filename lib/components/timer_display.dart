@@ -58,20 +58,22 @@ class _TimerDisplayState extends BaseState<TimerDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: Color.fromARGB(70, _lessonStatus.hasLesson ? 255 : 0,
-            _lessonStatus.hasLesson ? 0 : 255, 0),
-        borderRadius: BorderRadius.circular(32),
-      ),
-      child: Text(
-        _remainingTimeString,
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
+    return _lessonStatus.hasLessonsToday
+        ? Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(70, _lessonStatus.hasLesson ? 255 : 0,
+                  _lessonStatus.hasLesson ? 0 : 255, 0),
+              borderRadius: BorderRadius.circular(32),
+            ),
+            child: Text(
+              _remainingTimeString,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          )
+        : Container();
   }
 }
