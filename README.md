@@ -39,6 +39,7 @@
 - [Usage](#usage)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
+  - [Translating](#translating)
   - [Creating A Pull Request](#creating-a-pull-request)
 - [License](#license)
 - [Contributors](#contributors)
@@ -83,6 +84,7 @@ This is a list of all the main tools, libraries and frameworks, that were used i
 - [Shorebird](https://shorebird.dev/) - _Remote patching_
 - [Golang](https://go.dev/) - _Backend programming language_
 - [Gin](https://gin-gonic.com/) - _Server library_
+- [Weblate](https://hosted.weblate.org/engage/edupage-2/) - _Managing translations_
 
 ## Getting Started
 
@@ -118,6 +120,10 @@ Contributions are what make the open source community such an amazing place to b
 - Please make sure you check your spelling and grammar.
 - Create individual PR for each suggestion.
 - Please also read through the [Code Of Conduct](https://github.com/DislikesSchool/EduPage2/blob/master/CODE_OF_CONDUCT) before posting your first idea as well.
+
+### Translating
+
+If you would like to take part in translating this project into other languages, or help improve existing translations, you can now do so easily using [Weblate](https://hosted.weblate.org/engage/edupage-2/)!
 
 <a href="https://hosted.weblate.org/engage/edupage-2/">
 <img src="https://hosted.weblate.org/widget/edupage-2/edupage-2-flutter/multi-auto.svg" alt="Translation status" />
