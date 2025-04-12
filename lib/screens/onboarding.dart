@@ -18,6 +18,8 @@ class _SetupScreenState extends BaseState<SetupScreen> {
   AppLocalizations? local;
   late SharedPreferences sharedPreferences;
 
+  Map<String, dynamic>? serverCapabilities;
+
   // Login info
   bool _useCustomEndpoint = false;
   bool showPassword = false;
@@ -71,6 +73,22 @@ class _SetupScreenState extends BaseState<SetupScreen> {
     if (sEmail != null && sPassword != null) {
       if (await EP2Data.getInstance().user.validate()) {
         _introKey.currentState?.animateScroll(2);
+
+        try {
+          final response = await EP2Data.getInstance()
+              .dio
+              .get("${EP2Data.getInstance().baseUrl}/server/capabilities");
+
+          serverCapabilities = response.data;
+        } catch (e) {
+          setState(() {
+            serverCapabilities = {
+              "cache": true,
+              "encryption": false,
+              "storage": false
+            };
+          });
+        }
       }
     }
 
@@ -106,6 +124,22 @@ class _SetupScreenState extends BaseState<SetupScreen> {
         loginError = local!.loginInvalidCredentials;
       });
       return false;
+    }
+
+    try {
+      final response = await EP2Data.getInstance()
+          .dio
+          .get("${EP2Data.getInstance().baseUrl}/server/capabilities");
+
+      serverCapabilities = response.data;
+    } catch (e) {
+      setState(() {
+        serverCapabilities = {
+          "cache": true,
+          "encryption": false,
+          "storage": false
+        };
+      });
     }
 
     return true;
@@ -421,78 +455,136 @@ class _SetupScreenState extends BaseState<SetupScreen> {
                     style: const TextStyle(fontSize: 16.0),
                   ),
                   const SizedBox(height: 20),
-                  ListTile(
-                    title: Text(local!.setupDataStorageEnable),
-                    trailing: Switch(
-                      value: storeDataOnServer,
-                      onChanged: (value) {
-                        setState(() {
-                          storeDataOnServer = value;
-                        });
-                      },
-                    ),
-                  ),
-                  const Divider(),
-                  if (storeDataOnServer) ...[
-                    Text(
-                      local!.setupDataStorageChoose,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    CheckboxListTile(
-                      title: Text(local!.setupDataStorageAttendance),
-                      value: storeCredentials,
-                      onChanged: (value) {
-                        setState(() {
-                          storeCredentials = value!;
-                        });
-                      },
-                    ),
-                    CheckboxListTile(
-                      title: Text(local!.setupDataStorageGrades),
-                      value: storeMessages,
-                      onChanged: (value) {
-                        setState(() {
-                          storeMessages = value!;
-                        });
-                      },
-                    ),
-                    CheckboxListTile(
-                      title: Text(local!.setupDataStorageMessages),
-                      value: storeTimeline,
-                      onChanged: (value) {
-                        setState(() {
-                          storeTimeline = value!;
-                        });
-                      },
-                    ),
-                  ],
-                  const SizedBox(height: 10),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.privacy_tip_outlined,
-                                  color: Colors.green.shade700),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  local!.setupDataStoragePrivacy,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
+                  if (serverCapabilities != null &&
+                      !(serverCapabilities!["storage"] ?? false))
+                    Card(
+                      color: Colors.amber.shade100,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.warning_amber_rounded,
+                                    color: Colors.amber.shade800),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    local!.setupDataStorageDisabled,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.amber.shade900,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Text(local!.setupDataStoragePrivacyDetails),
-                        ],
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(local!.setupDataStorageDisabledExplanation),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+                  if (serverCapabilities == null ||
+                      (serverCapabilities!["storage"] ?? false)) ...[
+                    ListTile(
+                      title: Text(local!.setupDataStorageEnable),
+                      trailing: Switch(
+                        value: storeDataOnServer,
+                        onChanged: (value) {
+                          setState(() {
+                            storeDataOnServer = value;
+                          });
+                        },
+                      ),
+                    ),
+                    const Divider(),
+                    if (storeDataOnServer) ...[
+                      Text(
+                        local!.setupDataStorageChoose,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      CheckboxListTile(
+                        title: Text(local!.setupDataStorageAttendance),
+                        value: storeCredentials,
+                        onChanged: (value) {
+                          setState(() {
+                            storeCredentials = value!;
+                          });
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: Text(local!.setupDataStorageGrades),
+                        value: storeMessages,
+                        onChanged: (value) {
+                          setState(() {
+                            storeMessages = value!;
+                          });
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: Text(local!.setupDataStorageMessages),
+                        value: storeTimeline,
+                        onChanged: (value) {
+                          setState(() {
+                            storeTimeline = value!;
+                          });
+                        },
+                      ),
+                    ],
+                    const SizedBox(height: 10),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  serverCapabilities != null &&
+                                          (serverCapabilities!["encryption"] ??
+                                              false)
+                                      ? Icons.shield
+                                      : Icons.shield_outlined,
+                                  color: serverCapabilities != null &&
+                                          (serverCapabilities!["encryption"] ??
+                                              false)
+                                      ? Colors.green.shade700
+                                      : Colors.red.shade700,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    serverCapabilities != null &&
+                                            (serverCapabilities![
+                                                    "encryption"] ??
+                                                false)
+                                        ? local!
+                                            .setupDataStoragePrivacyEncrypted
+                                        : local!
+                                            .setupDataStoragePrivacyUnencrypted,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              serverCapabilities != null &&
+                                      (serverCapabilities!["encryption"] ??
+                                          false)
+                                  ? local!
+                                      .setupDataStoragePrivacyDetailsEncrypted
+                                  : local!
+                                      .setupDataStoragePrivacyDetailsUnencrypted,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 10),
                   Card(
                     child: Padding(
@@ -511,13 +603,19 @@ class _SetupScreenState extends BaseState<SetupScreen> {
                           ),
                           _buildFeatureStatus(
                             local!.setupFeatureSearch,
-                            storeDataOnServer &&
+                            (serverCapabilities != null &&
+                                    (serverCapabilities!["storage"] ??
+                                        false)) &&
+                                storeDataOnServer &&
                                 storeCredentials &&
                                 storeMessages,
                           ),
                           _buildFeatureStatus(
                             local!.setupFeatureNotifications,
-                            storeDataOnServer &&
+                            (serverCapabilities != null &&
+                                    (serverCapabilities!["storage"] ??
+                                        false)) &&
+                                storeDataOnServer &&
                                 storeCredentials &&
                                 storeTimeline,
                           ),

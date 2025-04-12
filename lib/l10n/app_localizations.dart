@@ -391,6 +391,42 @@ abstract class AppLocalizations {
   /// **'EduPage2 has can optionally store some user data on the EduPage2 server to provide advanced functionality. The app will work fine without it, but some features may be limited.'**
   String get setupDataStorageExplanation;
 
+  /// No description provided for @setupDataStorageDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Server storage is disabled'**
+  String get setupDataStorageDisabled;
+
+  /// No description provided for @setupDataStorageDisabledExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Server storage is disabled on the EduPage2 server instance that you are connecting to.'**
+  String get setupDataStorageDisabledExplanation;
+
+  /// No description provided for @setupDataStoragePrivacyEncrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is encrypted'**
+  String get setupDataStoragePrivacyEncrypted;
+
+  /// No description provided for @setupDataStoragePrivacyUnencrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is not encrypted'**
+  String get setupDataStoragePrivacyUnencrypted;
+
+  /// No description provided for @setupDataStoragePrivacyDetailsEncrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'The server that you are connecting to stores your credentials in a secure and encrypted manner.'**
+  String get setupDataStoragePrivacyDetailsEncrypted;
+
+  /// No description provided for @setupDataStoragePrivacyDetailsUnencrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'The server that you are connecting to does not encrypt your data. We would recommend either enabling encryption on the server, or using the official EduPage2 server to store your data securely.'**
+  String get setupDataStoragePrivacyDetailsUnencrypted;
+
   /// No description provided for @setupDataStorageEnable.
   ///
   /// In en, this message translates to:

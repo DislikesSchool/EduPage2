@@ -163,6 +163,24 @@ class AppLocalizationsCs extends AppLocalizations {
   String get setupDataStorageExplanation => 'EduPage2 has can optionally store some user data on the EduPage2 server to provide advanced functionality. The app will work fine without it, but some features may be limited.';
 
   @override
+  String get setupDataStorageDisabled => 'Server storage is disabled';
+
+  @override
+  String get setupDataStorageDisabledExplanation => 'Server storage is disabled on the EduPage2 server instance that you are connecting to.';
+
+  @override
+  String get setupDataStoragePrivacyEncrypted => 'Your data is encrypted';
+
+  @override
+  String get setupDataStoragePrivacyUnencrypted => 'Your data is not encrypted';
+
+  @override
+  String get setupDataStoragePrivacyDetailsEncrypted => 'The server that you are connecting to stores your credentials in a secure and encrypted manner.';
+
+  @override
+  String get setupDataStoragePrivacyDetailsUnencrypted => 'The server that you are connecting to does not encrypt your data. We would recommend either enabling encryption on the server, or using the official EduPage2 server to store your data securely.';
+
+  @override
   String get setupDataStorageEnable => 'Enable Data Storage';
 
   @override
