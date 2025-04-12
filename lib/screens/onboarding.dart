@@ -159,6 +159,10 @@ class _SetupScreenState extends BaseState<SetupScreen> {
     sharedPreferences.setBool("storeTimeline", storeTimeline);
     sharedPreferences.setBool("onboardingCompleted", true);
     sharedPreferences.setBool("isFirstStart", true);
+
+    EP2Data.getInstance().user.login();
+    EP2Data.getInstance().user.updateDataStorageSettings(
+        storeDataOnServer, storeCredentials, storeMessages, storeTimeline);
   }
 
   void useDemoMode() {

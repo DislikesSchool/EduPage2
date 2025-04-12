@@ -79,6 +79,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homePatchDownloaded => 'Patch downloaded, please restart EduPage2';
 
   @override
+  String get homeDeleteData => 'Delete data';
+
+  @override
+  String get homeDeleteDataTitle => 'Delete data';
+
+  @override
+  String get homeDeleteDataConfirmation => 'Are you sure you want to request data deletion from the server?';
+
+  @override
+  String get homeDeleteDataProcessing => 'Deleting data…';
+
+  @override
+  String get homeDeleteDataSuccess => 'Data deleted successfully';
+
+  @override
+  String get homeDeleteDataError => 'Failed to delete data';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
   String get homeGrades => 'Grades';
 
   @override

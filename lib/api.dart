@@ -49,7 +49,9 @@ class EP2Data {
         onError: (DioException error, ErrorInterceptorHandler handler) {
           if ([
             "{error: username field is missing}",
-            "{error: token is expired}"
+            "{error: token is expired}",
+            "{error: record not found}",
+            "{error: Authorization header is invalid}"
           ].contains(error.response?.data.toString())) {
             return handler.next(error);
           }
@@ -363,7 +365,13 @@ class User {
 
   Future<bool> login() async {
     try {
-      print("Trying to access ${data.baseUrl}/login");
+      Map<String, dynamic> preferences = {
+        "credentials": data.sharedPreferences.getBool("storeCredentials"),
+        "enabled": data.sharedPreferences.getBool("storeDataOnServer"),
+        "messages": data.sharedPreferences.getBool("storeMessages"),
+        "timeline": data.sharedPreferences.getBool("storeTimeline")
+      };
+
       Response resp = await data.dio.post(
         "${data.baseUrl}/login",
         data: {
@@ -371,9 +379,11 @@ class User {
           "password": password,
           "server": server,
         },
+        queryParameters: {
+          "storage": jsonEncode(preferences),
+        },
         options: Options(contentType: Headers.formUrlEncodedContentType),
       );
-      print("Login successful");
 
       token = resp.data['token'];
       name = resp.data["name"];
@@ -382,6 +392,42 @@ class User {
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<void> updateDataStorageSettings(
+      bool credentials, bool enabled, bool messages, bool timeline) async {
+    try {
+      Map<String, dynamic> preferences = {
+        "credentials": credentials,
+        "enabled": enabled,
+        "messages": messages,
+        "timeline": timeline
+      };
+
+      await data.dio.post(
+        "${data.baseUrl}/security/preferences",
+        data: jsonEncode(preferences),
+        options: Options(
+          headers: {"Authorization": "Bearer $token"},
+        ),
+      );
+    } catch (e) {
+      // print("Failed to update data storage settings: $e");
+    }
+  }
+
+  Future<void> requestDataDeletion() async {
+    try {
+      await data.dio.delete(
+        "${data.baseUrl}/security/delete-data",
+        queryParameters: {"confirm": true},
+        options: Options(
+          headers: {"Authorization": "Bearer $token"},
+        ),
+      );
+    } catch (e) {
+      // print("Failed to request data deletion: $e");
     }
   }
 

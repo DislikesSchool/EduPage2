@@ -641,6 +641,82 @@ class HomePageState extends BaseState<HomePage> {
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
               child: ListTile(
+                leading: const Icon(Icons.delete_forever),
+                title: Text(local.homeDeleteData),
+                onTap: () async {
+                  bool? confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(local.homeDeleteDataTitle),
+                        content: Text(local.homeDeleteDataConfirmation),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: Text(local.cancel),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: Text(local.confirm,
+                                style: TextStyle(color: Colors.red)),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
+                  if (confirm == true) {
+                    // Show loading indicator
+                    if (!context.mounted) return;
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Row(
+                            children: [
+                              CircularProgressIndicator(),
+                              SizedBox(width: 20),
+                              Text(local.homeDeleteDataProcessing)
+                            ],
+                          ),
+                        );
+                      },
+                    );
+
+                    try {
+                      await EP2Data.getInstance().user.requestDataDeletion();
+                      if (!context.mounted) return;
+                      Navigator.pop(context); // Close loading dialog
+
+                      // Clear all local data
+                      await sharedPreferences?.remove('email');
+                      await sharedPreferences?.remove('password');
+                      await sharedPreferences?.remove('token');
+                      await sharedPreferences?.clear();
+                      await EP2Data.getInstance().clearCache();
+
+                      // Show success message
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(local.homeDeleteDataSuccess)));
+
+                      // Trigger re-login
+                      widget.reLogin();
+                    } catch (e) {
+                      if (!context.mounted) return;
+                      Navigator.pop(context); // Close loading dialog
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(local.homeDeleteDataError)));
+                    }
+                  }
+                },
+              ),
+            ),
+            InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: ListTile(
                 leading: const Icon(Icons.logout_rounded),
                 title: Text(local.homeLogout),
                 onTap: () {

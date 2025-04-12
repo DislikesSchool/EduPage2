@@ -223,6 +223,54 @@ abstract class AppLocalizations {
   /// **'Patch downloaded, please restart EduPage2'**
   String get homePatchDownloaded;
 
+  /// No description provided for @homeDeleteData.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete data'**
+  String get homeDeleteData;
+
+  /// No description provided for @homeDeleteDataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete data'**
+  String get homeDeleteDataTitle;
+
+  /// No description provided for @homeDeleteDataConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to request data deletion from the server?'**
+  String get homeDeleteDataConfirmation;
+
+  /// No description provided for @homeDeleteDataProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting data…'**
+  String get homeDeleteDataProcessing;
+
+  /// No description provided for @homeDeleteDataSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Data deleted successfully'**
+  String get homeDeleteDataSuccess;
+
+  /// No description provided for @homeDeleteDataError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete data'**
+  String get homeDeleteDataError;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
   /// No description provided for @homeGrades.
   ///
   /// In en, this message translates to:
