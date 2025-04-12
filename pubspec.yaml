@@ -30,6 +30,7 @@ dependencies:
   app_links: ^6.4.0
   toastification: ^2.3.0
   auto_size_text: ^3.0.0
+  introduction_screen: ^3.1.17
 dev_dependencies:
   integration_test:
     sdk: flutter
@@ -39,5 +40,6 @@ dev_dependencies:
 flutter:
   assets:
     - shorebird.yaml
+    - assets/EduPage2/png/logo-no-background.png
   generate: true
   uses-material-design: true

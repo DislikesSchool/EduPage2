@@ -169,6 +169,12 @@ abstract class AppLocalizations {
   /// **'Logout'**
   String get homeLogout;
 
+  /// No description provided for @homeOnboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Onboarding'**
+  String get homeOnboarding;
+
   /// No description provided for @homeSetupICanteen.
   ///
   /// In en, this message translates to:
@@ -208,7 +214,7 @@ abstract class AppLocalizations {
   /// No description provided for @homePatchAvailable.
   ///
   /// In en, this message translates to:
-  /// **'Installing new patch...'**
+  /// **'Installing new patch…'**
   String get homePatchAvailable;
 
   /// No description provided for @homePatchDownloaded.
@@ -277,6 +283,12 @@ abstract class AppLocalizations {
   /// **'Login'**
   String get loginLogin;
 
+  /// No description provided for @loggingIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Logging in...'**
+  String get loggingIn;
+
   /// No description provided for @loginCustomEndpointCheckbox.
   ///
   /// In en, this message translates to:
@@ -294,6 +306,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Or try the demo'**
   String get loginDemoButton;
+
+  /// No description provided for @loginCredentialsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Username and password are required'**
+  String get loginCredentialsRequired;
+
+  /// No description provided for @loginInvalidCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid username or password'**
+  String get loginInvalidCredentials;
+
+  /// No description provided for @loginServerOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Server is optional, but might help if you are unable to login and are sure you have the correct credentials'**
+  String get loginServerOptional;
+
+  /// No description provided for @setupWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to EduPage2'**
+  String get setupWelcomeTitle;
+
+  /// No description provided for @setupWelcomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'EduPage2 is a modern client for Edupage focusing on speed, efficiency and user experience. EduPage2 is fully open-source and free to use. Make sure to join our Discord server for news and updates.'**
+  String get setupWelcomeBody;
+
+  /// No description provided for @setupQuickStartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Start'**
+  String get setupQuickStartTitle;
+
+  /// No description provided for @setupQuickStartExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Experimental feature to greatly speed up app loading times.'**
+  String get setupQuickStartExplanation;
+
+  /// No description provided for @setupQuickStartEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Quick Start'**
+  String get setupQuickStartEnable;
+
+  /// No description provided for @setupQuickStartDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabling Quick Start will make the app prefer cached data over fetching data from the server. This can be disabled later.'**
+  String get setupQuickStartDetails;
+
+  /// No description provided for @setupQuickStartInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Start is still experimental'**
+  String get setupQuickStartInfo;
+
+  /// No description provided for @setupQuickStartBenefits.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Start will make the app start nearly instant, and fetch data from the server in the background, as opposed to waiting for the server to respond.'**
+  String get setupQuickStartBenefits;
+
+  /// No description provided for @setupQuickStartDrawbacks.
+  ///
+  /// In en, this message translates to:
+  /// **'While this speeds up the initial loading time, it may lead to outdated data being displayed briefly.'**
+  String get setupQuickStartDrawbacks;
+
+  /// No description provided for @setupDataStorageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Storage'**
+  String get setupDataStorageTitle;
+
+  /// No description provided for @setupDataStorageExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'EduPage2 has can optionally store some user data on the EduPage2 server to provide advanced functionality. The app will work fine without it, but some features may be limited.'**
+  String get setupDataStorageExplanation;
+
+  /// No description provided for @setupDataStorageEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Data Storage'**
+  String get setupDataStorageEnable;
+
+  /// No description provided for @setupDataStorageChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what data to store'**
+  String get setupDataStorageChoose;
+
+  /// No description provided for @setupDataStorageAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'User login credentials'**
+  String get setupDataStorageAttendance;
+
+  /// No description provided for @setupDataStorageGrades.
+  ///
+  /// In en, this message translates to:
+  /// **'Text message storage'**
+  String get setupDataStorageGrades;
+
+  /// No description provided for @setupDataStorageMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeline storage'**
+  String get setupDataStorageMessages;
+
+  /// No description provided for @setupDataStoragePrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'EduPage2 Data Storage Security'**
+  String get setupDataStoragePrivacy;
+
+  /// No description provided for @setupDataStoragePrivacyDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'The EduPage2 server stores data securely and in an encrypted manner on a private dedicated server. No data is shared with any external parties.'**
+  String get setupDataStoragePrivacyDetails;
+
+  /// No description provided for @setupFeaturesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Working features'**
+  String get setupFeaturesAvailable;
+
+  /// No description provided for @setupFeatureBasic.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic app functionality (messages, timetables, grades, ...)'**
+  String get setupFeatureBasic;
+
+  /// No description provided for @setupFeatureNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Push notificatons'**
+  String get setupFeatureNotifications;
+
+  /// No description provided for @setupFeatureSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Full-text search'**
+  String get setupFeatureSearch;
+
+  /// No description provided for @setupCompleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup Complete'**
+  String get setupCompleteTitle;
+
+  /// No description provided for @setupCompleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your setup is complete. You can now start using EduPage2.'**
+  String get setupCompleteBody;
+
+  /// No description provided for @setupDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup Done'**
+  String get setupDone;
 
   /// No description provided for @today.
   ///
@@ -316,13 +496,13 @@ abstract class AppLocalizations {
   /// No description provided for @loadCredentials.
   ///
   /// In en, this message translates to:
-  /// **'Loading credentials...'**
+  /// **'Loading credentials…'**
   String get loadCredentials;
 
   /// No description provided for @loadLoggingIn.
   ///
   /// In en, this message translates to:
-  /// **'Logging in...'**
+  /// **'Logging in…'**
   String get loadLoggingIn;
 
   /// No description provided for @loadLoggedIn.
@@ -334,7 +514,7 @@ abstract class AppLocalizations {
   /// No description provided for @loadAccessToken.
   ///
   /// In en, this message translates to:
-  /// **'Getting access token...'**
+  /// **'Getting access token…'**
   String get loadAccessToken;
 
   /// No description provided for @loadVerify.
@@ -346,19 +526,19 @@ abstract class AppLocalizations {
   /// No description provided for @loadDownloadTimetable.
   ///
   /// In en, this message translates to:
-  /// **'Downloading time table...'**
+  /// **'Downloading time table…'**
   String get loadDownloadTimetable;
 
   /// No description provided for @loadDownloadGrades.
   ///
   /// In en, this message translates to:
-  /// **'Downloading grades...'**
+  /// **'Downloading grades…'**
   String get loadDownloadGrades;
 
   /// No description provided for @loadDownloadMessages.
   ///
   /// In en, this message translates to:
-  /// **'Downloading messages...'**
+  /// **'Downloading messages…'**
   String get loadDownloadMessages;
 
   /// No description provided for @loadDone.
@@ -430,7 +610,7 @@ abstract class AppLocalizations {
   /// No description provided for @messagesLoadingAttachment.
   ///
   /// In en, this message translates to:
-  /// **'Loading pdf...'**
+  /// **'Loading pdf…'**
   String get messagesLoadingAttachment;
 
   /// No description provided for @messagesAttachments.
@@ -538,7 +718,7 @@ abstract class AppLocalizations {
   /// No description provided for @createMessageNotifSendingBody.
   ///
   /// In en, this message translates to:
-  /// **'Your message is being sent...'**
+  /// **'Your message is being sent…'**
   String get createMessageNotifSendingBody;
 
   /// No description provided for @createMessageNotifSent.
@@ -592,7 +772,7 @@ abstract class AppLocalizations {
   /// No description provided for @messagesSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Enter search term...'**
+  /// **'Enter search term…'**
   String get messagesSearchHint;
 
   /// No description provided for @messagesSearchInstructions.

@@ -52,6 +52,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get homeLogout => 'Odhlásit se';
 
   @override
+  String get homeOnboarding => 'Onboarding';
+
+  @override
   String get homeSetupICanteen => 'Nastavit iCanteen';
 
   @override
@@ -70,7 +73,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get homePreview => 'Náhled';
 
   @override
-  String get homePatchAvailable => 'Instaluje se nový patch...';
+  String get homePatchAvailable => 'Instaluje se nový patch…';
 
   @override
   String get homePatchDownloaded => 'Patch byl stažen, restartujte aplikaci pro instalaci';
@@ -106,6 +109,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get loginLogin => 'Přihlásit se';
 
   @override
+  String get loggingIn => 'Logging in...';
+
+  @override
   String get loginCustomEndpointCheckbox => 'Použít valstní endpoint';
 
   @override
@@ -113,6 +119,90 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get loginDemoButton => 'Anebo si prohledněte demo';
+
+  @override
+  String get loginCredentialsRequired => 'Username and password are required';
+
+  @override
+  String get loginInvalidCredentials => 'Invalid username or password';
+
+  @override
+  String get loginServerOptional => 'Server is optional, but might help if you are unable to login and are sure you have the correct credentials';
+
+  @override
+  String get setupWelcomeTitle => 'Welcome to EduPage2';
+
+  @override
+  String get setupWelcomeBody => 'EduPage2 is a modern client for Edupage focusing on speed, efficiency and user experience. EduPage2 is fully open-source and free to use. Make sure to join our Discord server for news and updates.';
+
+  @override
+  String get setupQuickStartTitle => 'Quick Start';
+
+  @override
+  String get setupQuickStartExplanation => 'Experimental feature to greatly speed up app loading times.';
+
+  @override
+  String get setupQuickStartEnable => 'Enable Quick Start';
+
+  @override
+  String get setupQuickStartDetails => 'Enabling Quick Start will make the app prefer cached data over fetching data from the server. This can be disabled later.';
+
+  @override
+  String get setupQuickStartInfo => 'Quick Start is still experimental';
+
+  @override
+  String get setupQuickStartBenefits => 'Quick Start will make the app start nearly instant, and fetch data from the server in the background, as opposed to waiting for the server to respond.';
+
+  @override
+  String get setupQuickStartDrawbacks => 'While this speeds up the initial loading time, it may lead to outdated data being displayed briefly.';
+
+  @override
+  String get setupDataStorageTitle => 'Data Storage';
+
+  @override
+  String get setupDataStorageExplanation => 'EduPage2 has can optionally store some user data on the EduPage2 server to provide advanced functionality. The app will work fine without it, but some features may be limited.';
+
+  @override
+  String get setupDataStorageEnable => 'Enable Data Storage';
+
+  @override
+  String get setupDataStorageChoose => 'Choose what data to store';
+
+  @override
+  String get setupDataStorageAttendance => 'User login credentials';
+
+  @override
+  String get setupDataStorageGrades => 'Text message storage';
+
+  @override
+  String get setupDataStorageMessages => 'Timeline storage';
+
+  @override
+  String get setupDataStoragePrivacy => 'EduPage2 Data Storage Security';
+
+  @override
+  String get setupDataStoragePrivacyDetails => 'The EduPage2 server stores data securely and in an encrypted manner on a private dedicated server. No data is shared with any external parties.';
+
+  @override
+  String get setupFeaturesAvailable => 'Working features';
+
+  @override
+  String get setupFeatureBasic => 'Basic app functionality (messages, timetables, grades, ...)';
+
+  @override
+  String get setupFeatureNotifications => 'Push notificatons';
+
+  @override
+  String get setupFeatureSearch => 'Full-text search';
+
+  @override
+  String get setupCompleteTitle => 'Setup Complete';
+
+  @override
+  String get setupCompleteBody => 'Your setup is complete. You can now start using EduPage2.';
+
+  @override
+  String get setupDone => 'Setup Done';
 
   @override
   String get today => 'Dnes';
@@ -139,28 +229,28 @@ class AppLocalizationsCs extends AppLocalizations {
   }
 
   @override
-  String get loadCredentials => 'Načítání přihlašovacích údajů';
+  String get loadCredentials => 'Načítání přihlašovacích údajů…';
 
   @override
-  String get loadLoggingIn => 'Přihlašování...';
+  String get loadLoggingIn => 'Přihlašování…';
 
   @override
   String get loadLoggedIn => 'Přihlášeno';
 
   @override
-  String get loadAccessToken => 'Získávání přihlašovacího tokenu...';
+  String get loadAccessToken => 'Získávání přihlašovacího tokenu…';
 
   @override
-  String get loadVerify => 'Ověřování...';
+  String get loadVerify => 'Ověřování';
 
   @override
-  String get loadDownloadTimetable => 'Stahování rozvrhu...';
+  String get loadDownloadTimetable => 'Stahování rozvrhu…';
 
   @override
-  String get loadDownloadGrades => 'Stahování známek...';
+  String get loadDownloadGrades => 'Stahování známek…';
 
   @override
-  String get loadDownloadMessages => 'Stahování zpráv...';
+  String get loadDownloadMessages => 'Stahování zpráv…';
 
   @override
   String get loadDone => 'Hotovo!';
@@ -196,7 +286,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get iCanteenSetupError => 'Nastala chyba při příhlášení';
 
   @override
-  String get messagesLoadingAttachment => 'Načítání pdf souboru...';
+  String get messagesLoadingAttachment => 'Načítání pdf souboru…';
 
   @override
   String messagesAttachments(num count) {
@@ -265,7 +355,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get createMessageNotifSending => 'Odesílání zprávy';
 
   @override
-  String get createMessageNotifSendingBody => 'Vaše zpráva se odesílá';
+  String get createMessageNotifSendingBody => 'Vaše zpráva se odesílá…';
 
   @override
   String get createMessageNotifSent => 'Zpráva odeslána';
@@ -277,7 +367,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get createMessageNotifError => 'Chyba';
 
   @override
-  String get createMessageNotifErrorBody => 'Při odesílání zprávy se vyskytla chyba, tato chyba byla nahlášena.';
+  String get createMessageNotifErrorBody => 'Při odesílání zprávy se vyskytla chyba, tato chyba byla nahlášena!';
 
   @override
   String get qrLoginPleaseLogin => 'EduPage2 QR Přihlášení';
@@ -289,14 +379,14 @@ class AppLocalizationsCs extends AppLocalizations {
   String get gradesTitle => 'Známky';
 
   @override
-  String get messagesSearchTitle => 'Search messages';
+  String get messagesSearchTitle => 'Prohledat zprávy';
 
   @override
-  String get messagesSearchHint => 'Enter search term...';
+  String get messagesSearchHint => 'Zadejte hledaný výraz…';
 
   @override
-  String get messagesSearchInstructions => 'Enter a search term above';
+  String get messagesSearchInstructions => 'Zadejte vyhledávací výraz výše';
 
   @override
-  String get messagesNoResults => 'No results found';
+  String get messagesNoResults => 'Nebyly nalezeny žádné výsledky';
 }

@@ -47,6 +47,12 @@ class EP2Data {
     dio.interceptors.add(
       InterceptorsWrapper(
         onError: (DioException error, ErrorInterceptorHandler handler) {
+          if ([
+            "{error: username field is missing}",
+            "{error: token is expired}"
+          ].contains(error.response?.data.toString())) {
+            return handler.next(error);
+          }
           Sentry.configureScope((scope) {
             scope.setTag("Dio error message", error.message ?? "");
             scope.setContexts(
@@ -59,7 +65,7 @@ class EP2Data {
             description: Text(
                 error.response?.data.toString() ?? local.loadErrorDescription),
             alignment: Alignment.bottomCenter,
-            autoCloseDuration: const Duration(seconds: 15),
+            autoCloseDuration: const Duration(seconds: 7),
             icon: Icon(Icons.error),
             borderRadius: BorderRadius.circular(12.0),
             boxShadow: highModeShadow,
@@ -130,12 +136,20 @@ class EP2Data {
     dbi = (await DBI.loadFromCache()) ?? DBI(subjects: {});
 
     bool quickstart = sharedPreferences.getBool("quickstart") ?? false;
+    if (sharedPreferences.getBool("isFirstStart") ?? true) {
+      quickstart = false;
+      sharedPreferences.setBool("isFirstStart", false);
+    }
 
     String? endpoint = sharedPreferences.getString("customEndpoint");
     if (endpoint != null && endpoint != "") {
       baseUrl = endpoint;
     } else {
       baseUrl = FirebaseRemoteConfig.instance.getString("testUrl");
+    }
+
+    if (!(sharedPreferences.getBool("onboardingCompleted") ?? false)) {
+      return false;
     }
 
     bool isInternetAvailable = await isConnected();
@@ -179,6 +193,13 @@ class EP2Data {
     await timeline.loadMessages();
     await timetable.loadRecentTt();
     await grades.loadGrades();
+  }
+
+  Future<void> clearCache() async {
+    await user.clearCache();
+    await timeline.clearCache();
+    await timetable.clearCache();
+    await grades.clearCache();
   }
 }
 
@@ -327,8 +348,8 @@ class PollOptions {
 class User {
   final EP2Data data = EP2Data.getInstance();
 
-  final String username;
-  final String password;
+  String username;
+  String password;
   String server = "";
 
   String token = "";
@@ -342,6 +363,7 @@ class User {
 
   Future<bool> login() async {
     try {
+      print("Trying to access ${data.baseUrl}/login");
       Response resp = await data.dio.post(
         "${data.baseUrl}/login",
         data: {
@@ -351,6 +373,7 @@ class User {
         },
         options: Options(contentType: Headers.formUrlEncodedContentType),
       );
+      print("Login successful");
 
       token = resp.data['token'];
       name = resp.data["name"];
@@ -420,6 +443,11 @@ class User {
     } else {
       return null;
     }
+  }
+
+  Future<void> clearCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user');
   }
 }
 
@@ -613,6 +641,11 @@ class TimeTable {
       return null;
     }
     return fromJson(jsonDecode(prefs.getString('timetable')!));
+  }
+
+  Future<void> clearCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('timetable');
   }
 }
 
@@ -1207,6 +1240,11 @@ class Timeline {
     }
   }
 
+  Future<void> clearCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('timeline');
+  }
+
   Future<void> loadMessages() async {
     Response response = await data.dio.get(
       "${data.baseUrl}/api/timeline/recent",
@@ -1493,6 +1531,11 @@ class Grades {
     } else {
       return null;
     }
+  }
+
+  Future<void> clearCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('grades');
   }
 
   Future<void> loadGrades() async {

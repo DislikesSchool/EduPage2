@@ -629,12 +629,26 @@ class HomePageState extends BaseState<HomePage> {
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
               child: ListTile(
-                leading: const Icon(Icons.logout),
+                leading: const Icon(Icons.login_rounded),
+                title: Text(local.homeOnboarding),
+                onTap: () {
+                  sharedPreferences?.setBool('onboardingCompleted', false);
+                  widget.reLogin();
+                },
+              ),
+            ),
+            InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: ListTile(
+                leading: const Icon(Icons.logout_rounded),
                 title: Text(local.homeLogout),
                 onTap: () {
                   sharedPreferences?.remove('email');
                   sharedPreferences?.remove('password');
                   sharedPreferences?.remove('token');
+                  sharedPreferences?.clear();
+                  EP2Data.getInstance().clearCache();
                   widget.reLogin();
                 },
               ),

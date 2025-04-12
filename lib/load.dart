@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:eduapge2/api.dart';
-import 'package:eduapge2/login.dart';
 import 'package:eduapge2/main.dart';
+import 'package:eduapge2/screens/onboarding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session_manager/flutter_session_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,28 +45,25 @@ class LoadingScreenState extends BaseState<LoadingScreen> {
     progress = 0.1;
     loaderText = local!.loadCredentials;
     setState(() {});
-    if (sharedPreferences.getString("email") != null &&
-        sharedPreferences.getString("password") != null) {
-      if (!await EP2Data.getInstance().init(
-          onProgressUpdate: (text, prog) {
-            setState(() {
-              loaderText = text;
-              progress = prog;
-            });
-          },
-          local: local!)) {
-        gotoLogin();
-      } else {
-        widget.loadedCallback();
-      }
-    } else {
+    if (!await EP2Data.getInstance().init(
+        onProgressUpdate: (text, prog) {
+          setState(() {
+            loaderText = text;
+            progress = prog;
+          });
+        },
+        local: local!)) {
       gotoLogin();
+    } else {
+      widget.loadedCallback();
     }
   }
 
   void gotoLogin([String? err]) async {
-    Navigator.push(context,
-            MaterialPageRoute(builder: (context) => LoginPage(err: err ?? "")))
+    Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SetupScreen(err: err ?? "")))
         .then((value) => {
               setState(() {
                 startedInit = false;
