@@ -160,9 +160,18 @@ class _SetupScreenState extends BaseState<SetupScreen> {
     sharedPreferences.setBool("onboardingCompleted", true);
     sharedPreferences.setBool("isFirstStart", true);
 
-    EP2Data.getInstance().user.login();
-    EP2Data.getInstance().user.updateDataStorageSettings(
-        storeDataOnServer, storeCredentials, storeMessages, storeTimeline);
+    EP2Data inst = EP2Data.getInstance();
+    inst.user = User(
+      username: emailController.text,
+      password: passwordController.text,
+      server: serverController.text,
+    );
+    EP2Data.getInstance().user.login().then((val) {
+      if (val) {
+        EP2Data.getInstance().user.updateDataStorageSettings(
+            storeDataOnServer, storeCredentials, storeMessages, storeTimeline);
+      }
+    });
   }
 
   void useDemoMode() {
