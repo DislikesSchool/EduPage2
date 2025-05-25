@@ -200,5 +200,13 @@
   "setupQuickStartExplanation": "Experimentální funkce která může znatelně zrychlit start aplikace.",
   "@setupQuickStartExplanation": {},
   "setupQuickStartEnable": "Zapnout Rychlý Start",
-  "@setupQuickStartEnable": {}
+  "@setupQuickStartEnable": {},
+  "loginServerOptional": "Server není vyžadován, ale může pomoci, když se nemůžete přihlásit a jste si jist(á), že jste zadal(a) správné přihlašovací údaje",
+  "@loginServerOptional": {},
+  "setupWelcomeBody": "EduPage2 je moderní klient pro EduPage zaměřený na rychlost, efektivitu a uživatelský zážitek. EduPage2 je plně open-source a volně k použití. Připojte se na náš Discord server pro příjem novinek.",
+  "@setupWelcomeBody": {},
+  "setupQuickStartDetails": "Při povolení Rychlého startu aplikace preferuje data z mezipaměti před získáváním dat ze serveru. Toto může být později zakázáno.",
+  "@setupQuickStartDetails": {},
+  "setupQuickStartInfo": "Rychlý start je stále experimentální",
+  "@setupQuickStartInfo": {}
 }
