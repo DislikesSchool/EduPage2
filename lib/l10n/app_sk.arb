@@ -254,5 +254,7 @@
   "setupCompleteBody": "Tvoje nastavenie je dokončené. Teraz môžeš začať používať EduPage2.",
   "@setupCompleteBody": {},
   "setupDone": "Nastavenie dokončené",
-  "@setupDone": {}
+  "@setupDone": {},
+  "homeOnboarding": "zaučovanie",
+  "@homeOnboarding": {}
 }
