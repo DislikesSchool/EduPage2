@@ -365,25 +365,41 @@ class User {
 
   Future<bool> login() async {
     try {
-      Map<String, dynamic> preferences = {
-        "credentials": data.sharedPreferences.getBool("storeCredentials"),
-        "enabled": data.sharedPreferences.getBool("storeDataOnServer"),
-        "messages": data.sharedPreferences.getBool("storeMessages"),
-        "timeline": data.sharedPreferences.getBool("storeTimeline")
-      };
+      bool onboardingComplete =
+          data.sharedPreferences.getBool("onboardingCompleted") ?? false;
 
-      Response resp = await data.dio.post(
-        "${data.baseUrl}/login",
-        data: {
-          "username": username,
-          "password": password,
-          "server": server,
-        },
-        queryParameters: {
-          "storage": jsonEncode(preferences),
-        },
-        options: Options(contentType: Headers.formUrlEncodedContentType),
-      );
+      Response resp;
+      if (onboardingComplete) {
+        Map<String, dynamic> preferences = {
+          "credentials": data.sharedPreferences.getBool("storeCredentials"),
+          "enabled": data.sharedPreferences.getBool("storeDataOnServer"),
+          "messages": data.sharedPreferences.getBool("storeMessages"),
+          "timeline": data.sharedPreferences.getBool("storeTimeline")
+        };
+
+        resp = await data.dio.post(
+          "${data.baseUrl}/login",
+          data: {
+            "username": username,
+            "password": password,
+            "server": server,
+          },
+          queryParameters: {
+            "storage": jsonEncode(preferences),
+          },
+          options: Options(contentType: Headers.formUrlEncodedContentType),
+        );
+      } else {
+        resp = await data.dio.post(
+          "${data.baseUrl}/login",
+          data: {
+            "username": username,
+            "password": password,
+            "server": server,
+          },
+          options: Options(contentType: Headers.formUrlEncodedContentType),
+        );
+      }
 
       token = resp.data['token'];
       name = resp.data["name"];
