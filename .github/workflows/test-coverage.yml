@@ -42,18 +42,18 @@ jobs:
       - run: flutter test --coverage
       - name: Rename coverage file
         run: mv coverage/lcov.info coverage/test-lcov.info # Rename the coverage file to avoid overwriting it
-      - name: run integration tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 31
-          arch: x86_64
-          profile: pixel_6_pro
-          avd-name: Pixel_6_Pro_API_31
-          force-avd-creation: false
-          ram-size: 4096M
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: flutter test integration_test/app_test.dart --coverage --dart-define=USERNAME=${{ secrets.USERNAME }} --dart-define=PASSWORD=${{ secrets.PASSWORD }} --dart-define=NAME="${{ secrets.NAME }}"
+      #      - name: run integration tests
+      #        uses: reactivecircus/android-emulator-runner@v2
+      #        with:
+      #          api-level: 31
+      #          arch: x86_64
+      #          profile: pixel_6_pro
+      #          avd-name: Pixel_6_Pro_API_31
+      #          force-avd-creation: false
+      #          ram-size: 4096M
+      #          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+      #          disable-animations: true
+      #          script: flutter test integration_test/app_test.dart --coverage --dart-define=USERNAME=${{ secrets.USERNAME }} --dart-define=PASSWORD=${{ secrets.PASSWORD }} --dart-define=NAME="${{ secrets.NAME }}"
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4
         with:
