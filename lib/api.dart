@@ -371,10 +371,12 @@ class User {
       Response resp;
       if (onboardingComplete) {
         Map<String, dynamic> preferences = {
-          "credentials": data.sharedPreferences.getBool("storeCredentials"),
-          "enabled": data.sharedPreferences.getBool("storeDataOnServer"),
-          "messages": data.sharedPreferences.getBool("storeMessages"),
-          "timeline": data.sharedPreferences.getBool("storeTimeline")
+          "credentials":
+              data.sharedPreferences.getBool("storeCredentials") ?? false,
+          "enabled":
+              data.sharedPreferences.getBool("storeDataOnServer") ?? false,
+          "messages": data.sharedPreferences.getBool("storeMessages") ?? false,
+          "timeline": data.sharedPreferences.getBool("storeTimeline") ?? false
         };
 
         resp = await data.dio.post(
