@@ -169,7 +169,7 @@ class HomePageState extends BaseState<HomePage> {
     return DateTime(now.year, now.month, now.day);
   }
 
-  getData() async {
+  Future<void> getData() async {
     sharedPreferences = await SharedPreferences.getInstance();
     quickstart = sharedPreferences?.getBool('quickstart') ?? false;
     apidataMsg = EP2Data.getInstance().timeline.items.values.toList();

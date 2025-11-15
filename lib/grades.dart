@@ -26,7 +26,7 @@ class GradesPageState extends BaseState<GradesPage> {
     getData();
   }
 
-  getData() async {
+  Future<void> getData() async {
     setState(() {
       loading = true; //make loading true to show progressindicator
     });

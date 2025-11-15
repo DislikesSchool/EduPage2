@@ -4,9 +4,9 @@ import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
 
-/// The translations for English (`en`).
-class AppLocalizationsEn extends AppLocalizations {
-  AppLocalizationsEn([String locale = 'en']) : super(locale);
+/// The translations for German (`de`).
+class AppLocalizationsDe extends AppLocalizations {
+  AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
   String get loading => 'Loading';
@@ -15,29 +15,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mainHome => 'Home';
 
   @override
-  String get mainTimetable => 'Time table';
+  String get mainTimetable => 'Zeitplan';
 
   @override
   String get mainICanteen => 'iCanteen';
 
   @override
-  String get mainMessages => 'Messages';
+  String get mainMessages => 'Nachrichten';
 
   @override
-  String get mainHomework => 'Homework';
+  String get mainHomework => 'Hausaufgaben';
 
   @override
-  String get mainGrades => 'Grades';
+  String get mainGrades => 'Noten';
 
   @override
-  String get homeLunchesNotLoaded => 'Could not load lunches';
+  String get homeLunchesNotLoaded => 'Konnte das Essen nicht Laden';
 
   @override
-  String get homeNoLunchToday => 'You don\'t have any lunch for today';
+  String get homeNoLunchToday => 'Du hast für Heute kein Essen geplant';
 
   @override
   String homeLunchToday(int lunch) {
-    return 'You have lunch option number $lunch';
+    return 'Sie haben die Möglichkeit, zu Mittag zu essen $lunch';
   }
 
   @override
@@ -45,173 +45,178 @@ class AppLocalizationsEn extends AppLocalizations {
     final intl.DateFormat dateDateFormat = intl.DateFormat.yMd(localeName);
     final String dateString = dateDateFormat.format(date);
 
-    return 'Don\'t forget to order lunch for $dateString';
+    return 'Vergiss nicht dein essen zu Bestellen für den $dateString';
   }
 
   @override
-  String get homeLogout => 'Logout';
+  String get homeLogout => 'Abmelden';
 
   @override
-  String get homeOnboarding => 'Onboarding';
+  String get homeOnboarding => 'Einführung';
 
   @override
-  String get homeSetupICanteen => 'Setup iCanteen';
+  String get homeSetupICanteen => 'iCanteen einrichten';
 
   @override
-  String get homeNoClasses => 'No school today :D';
+  String get homeNoClasses => 'Heute ist keine Schule :D';
 
   @override
-  String get homeUpdateTitle => 'New version available';
+  String get homeUpdateTitle => 'Neue Version Verfügbar';
 
   @override
   String get homeUpdateDescription =>
-      'Please visit https://github.com/DislikesSchool/EduPage2/releases to download the latest version';
+      'Bitte besuchen Sie https://github.com/DislikesSchool/EduPage2/releases, um die neueste Version herunterzuladen';
 
   @override
-  String get homeQuickstart => 'QuickStart';
+  String get homeQuickstart => 'Schnell Stark';
 
   @override
-  String get homePreview => 'Preview';
+  String get homePreview => 'Vorschau';
 
   @override
-  String get homePatchAvailable => 'Installing new patch…';
+  String get homePatchAvailable => 'Installiere Neuen Patch…';
 
   @override
-  String get homePatchDownloaded => 'Patch downloaded, please restart EduPage2';
+  String get homePatchDownloaded =>
+      'Patch heruntergeladen, Bitte starte die App neu um ihn zu Installieren';
 
   @override
-  String get homeDeleteData => 'Delete data';
+  String get homeDeleteData => 'Daten Löschen';
 
   @override
-  String get homeDeleteDataTitle => 'Delete data';
+  String get homeDeleteDataTitle => 'Daten Löschen';
 
   @override
   String get homeDeleteDataConfirmation =>
-      'Are you sure you want to request data deletion from the server?';
+      'Sind Sie sicher, dass Sie die Löschung der Daten vom Server beantragen möchten?';
 
   @override
-  String get homeDeleteDataProcessing => 'Deleting data…';
+  String get homeDeleteDataProcessing => 'Lösche daten.…';
 
   @override
-  String get homeDeleteDataSuccess => 'Data deleted successfully';
+  String get homeDeleteDataSuccess => 'Daten Erfolgreich Gelöscht';
 
   @override
-  String get homeDeleteDataError => 'Failed to delete data';
+  String get homeDeleteDataError => 'Daten konnten nicht gelöscht werden';
 
   @override
-  String get cancel => 'Cancel';
+  String get cancel => 'Abbrechen';
 
   @override
-  String get confirm => 'Confirm';
+  String get confirm => 'Bestätigen';
 
   @override
-  String get homeGrades => 'Grades';
+  String get homeGrades => 'Noten';
 
   @override
-  String get homeHomework => 'Homework';
+  String get homeHomework => 'Hausaufgaben';
 
   @override
-  String get homeworkTitle => 'Homework';
+  String get homeworkTitle => 'Hausaufgaben';
 
   @override
-  String get messagesTitle => 'Messages';
+  String get messagesTitle => 'Nachrichten';
 
   @override
-  String get loginPleaseLogin => 'Please login to EduPage2';
+  String get loginPleaseLogin => 'Bitte melde dich bei Edupage2 an';
 
   @override
   String get loginUseExistingCredentials =>
-      'Use your existing EduPage credentials';
+      'Nutze deine Existierenden Edupage Anmelde Daten';
 
   @override
-  String get loginUsername => 'Username';
+  String get loginUsername => 'Nutzername';
 
   @override
   String get loginPassword => 'Password';
 
   @override
-  String get loginServer => 'Server (e.g., school.edupage.org)';
+  String get loginServer => 'Server (z. B. Schule.edupage.org)';
 
   @override
-  String get loginLogin => 'Login';
+  String get loginLogin => 'Anmelden';
 
   @override
-  String get loggingIn => 'Logging in...';
+  String get loggingIn => 'Anmeden....';
 
   @override
-  String get loginCustomEndpointCheckbox => 'Use custom endpoint';
+  String get loginCustomEndpointCheckbox =>
+      'Benutzerdefinierten Endpunkt verwenden';
 
   @override
-  String get loginCustomEndpoint => 'Enter custom endpoint URL';
+  String get loginCustomEndpoint => 'Benutzerdefinierte Endpunkt-URL eingeben';
 
   @override
-  String get loginDemoButton => 'Or try the demo';
+  String get loginDemoButton => 'Oder Benutzte die Demo Version';
 
   @override
-  String get loginCredentialsRequired => 'Username and password are required';
+  String get loginCredentialsRequired =>
+      'Benutzername und Passwort sind erforderlich';
 
   @override
-  String get loginInvalidCredentials => 'Invalid username or password';
+  String get loginInvalidCredentials => 'Ungültiger Benutzername oder Passwort';
 
   @override
   String get loginServerOptional =>
-      'Server is optional, but might help if you are unable to login and are sure you have the correct credentials';
+      'Der Server ist optional, kann jedoch hilfreich sein, wenn Sie sich nicht anmelden können und sicher sind, dass Sie über die richtigen Anmeldedaten verfügen';
 
   @override
-  String get setupWelcomeTitle => 'Welcome to EduPage2';
+  String get setupWelcomeTitle => 'Willkommen auf Edupage2';
 
   @override
   String get setupWelcomeBody =>
-      'EduPage2 is a modern client for Edupage focusing on speed, efficiency and user experience. EduPage2 is fully open-source and free to use. Make sure to join our Discord server for news and updates.';
+      'EduPage2 ist ein moderner Client für Edupage, der sich auf Geschwindigkeit, Effizienz und Benutzerfreundlichkeit konzentriert. EduPage2 ist vollständig Open Source und kostenlos nutzbar. Treten Sie unserem Discord-Server bei, um Neuigkeiten und Updates zu erhalten';
 
   @override
-  String get setupQuickStartTitle => 'Quick Start';
+  String get setupQuickStartTitle => 'Schnell Start';
 
   @override
   String get setupQuickStartExplanation =>
-      'Experimental feature to greatly speed up app loading times.';
+      'Experimentelle Funktion zur Beschleunigung der App Ladezeiten';
 
   @override
-  String get setupQuickStartEnable => 'Enable Quick Start';
+  String get setupQuickStartEnable => 'Schnellstart aktivieren';
 
   @override
   String get setupQuickStartDetails =>
-      'Enabling Quick Start will make the app prefer cached data over fetching data from the server. This can be disabled later.';
+      'Durch Aktivieren von „Schnellstart“ bevorzugt die App zwischengespeicherte Daten gegenüber Daten, die vom Server abgerufen werden. Diese Option kann im Nachhinein deaktiviert werden.';
 
   @override
-  String get setupQuickStartInfo => 'Quick Start is still experimental';
+  String get setupQuickStartInfo => 'Schnellstart Ist immernoch Experimentell';
 
   @override
   String get setupQuickStartBenefits =>
-      'Quick Start will make the app start nearly instant, and fetch data from the server in the background, as opposed to waiting for the server to respond.';
+      'Mit „Schnellstart“ wird die App fast sofort gestartet und ruft Daten im Hintergrund vom Server ab, anstatt auf die Antwort des Servers zu warten.';
 
   @override
   String get setupQuickStartDrawbacks =>
-      'While this speeds up the initial loading time, it may lead to outdated data being displayed briefly.';
+      'Dies beschleunigt zwar die anfängliche Ladezeit, kann jedoch dazu führen, dass kurzzeitig veraltete Daten angezeigt werden.';
 
   @override
-  String get setupDataStorageTitle => 'Data Storage';
+  String get setupDataStorageTitle => 'Datenspeicherung';
 
   @override
   String get setupDataStorageExplanation =>
-      'EduPage2 has can optionally store some user data on the EduPage2 server to provide advanced functionality. The app will work fine without it, but some features may be limited.';
+      'EduPage2 kann optional einige Benutzerdaten auf dem EduPage2-Server speichern, um erweiterte Funktionen bereitzustellen. Die App funktioniert auch ohne diese Speicherung einwandfrei, jedoch können einige Funktionen eingeschränkt sein.';
 
   @override
-  String get setupDataStorageDisabled => 'Server storage is disabled';
+  String get setupDataStorageDisabled => 'Der Serverspeicher ist deaktiviert';
 
   @override
   String get setupDataStorageDisabledExplanation =>
-      'Server storage is disabled on the EduPage2 server instance that you are connecting to.';
+      'Der Serverspeicher ist auf der EduPage2-Serverinstanz, mit der Sie sich verbinden, deaktiviert.';
 
   @override
-  String get setupDataStoragePrivacyEncrypted => 'Your data is encrypted';
+  String get setupDataStoragePrivacyEncrypted =>
+      'Ihre Daten SInd verschlüsselt';
 
   @override
-  String get setupDataStoragePrivacyUnencrypted => 'Your data is not encrypted';
+  String get setupDataStoragePrivacyUnencrypted =>
+      'Ihre Daten sind nicht verschlüsselt';
 
   @override
   String get setupDataStoragePrivacyDetailsEncrypted =>
-      'The server that you are connecting to stores your credentials in a secure and encrypted manner.';
+      'Der Server, mit dem Sie sich verbinden, speichert Ihre Anmeldedaten auf sichere und verschlüsselte Weise';
 
   @override
   String get setupDataStoragePrivacyDetailsUnencrypted =>

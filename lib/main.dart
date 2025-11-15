@@ -260,7 +260,7 @@ class PageBaseState extends BaseState<PageBase> {
     _showRestartBanner();
   }
 
-  getMsgs() async {
+  Future<void> getMsgs() async {
     apidataMsg = EP2Data.getInstance().timeline.items.values.toList();
     dynamic ic = await sessionManager.get('iCanteenEnabled');
     if (ic.runtimeType == bool && ic == true) {

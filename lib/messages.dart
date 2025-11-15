@@ -51,7 +51,7 @@ class TimeTablePageState extends BaseState<MessagesPage> {
     super.dispose();
   }
 
-  getData() async {
+  Future<void> getData() async {
     setState(() {
       loading = true; //make loading true to show progressindicator
     });

@@ -25,7 +25,7 @@ class HomeworkPageState extends BaseState<HomeworkPage> {
     super.initState();
   }
 
-  getData() async {
+  Future<void> getData() async {
     setState(() {
       loading = true; //make loading true to show progressindicator
     });

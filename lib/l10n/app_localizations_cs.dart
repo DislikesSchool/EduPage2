@@ -1,5 +1,5 @@
+// ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -64,7 +64,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get homeUpdateTitle => 'Nová verze dostupná';
 
   @override
-  String get homeUpdateDescription => 'Prosím navštivte https://github.com/DislikesSchool/EduPage2/releases pro nejnovější verzi';
+  String get homeUpdateDescription =>
+      'Prosím navštivte https://github.com/DislikesSchool/EduPage2/releases pro nejnovější verzi';
 
   @override
   String get homeQuickstart => 'Rychlý start';
@@ -76,31 +77,33 @@ class AppLocalizationsCs extends AppLocalizations {
   String get homePatchAvailable => 'Instaluje se nový patch…';
 
   @override
-  String get homePatchDownloaded => 'Patch byl stažen, restartujte aplikaci pro instalaci';
+  String get homePatchDownloaded =>
+      'Patch byl stažen, restartujte aplikaci pro instalaci';
 
   @override
-  String get homeDeleteData => 'Delete data';
+  String get homeDeleteData => 'Vymazat data';
 
   @override
-  String get homeDeleteDataTitle => 'Delete data';
+  String get homeDeleteDataTitle => 'Vymazat data';
 
   @override
-  String get homeDeleteDataConfirmation => 'Are you sure you want to request data deletion from the server?';
+  String get homeDeleteDataConfirmation =>
+      'Jste si jistí že chcete požádat o vymazání dat ze serveru?';
 
   @override
-  String get homeDeleteDataProcessing => 'Deleting data…';
+  String get homeDeleteDataProcessing => 'Mazání dat…';
 
   @override
-  String get homeDeleteDataSuccess => 'Data deleted successfully';
+  String get homeDeleteDataSuccess => 'Data smazána úspěšně';
 
   @override
-  String get homeDeleteDataError => 'Failed to delete data';
+  String get homeDeleteDataError => 'Smazání dat selhalo';
 
   @override
-  String get cancel => 'Cancel';
+  String get cancel => 'Zrušit';
 
   @override
-  String get confirm => 'Confirm';
+  String get confirm => 'Potvrdit';
 
   @override
   String get homeGrades => 'Známky';
@@ -118,7 +121,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get loginPleaseLogin => 'Přihlašte se prosím';
 
   @override
-  String get loginUseExistingCredentials => 'Použijte svoje existující přihlašovací údaje';
+  String get loginUseExistingCredentials =>
+      'Použijte svoje existující přihlašovací údaje';
 
   @override
   String get loginUsername => 'Přihlašovací jméno';
@@ -133,7 +137,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get loginLogin => 'Přihlásit se';
 
   @override
-  String get loggingIn => 'Logging in...';
+  String get loggingIn => 'Přihlašování…';
 
   @override
   String get loginCustomEndpointCheckbox => 'Použít valstní endpoint';
@@ -145,106 +149,120 @@ class AppLocalizationsCs extends AppLocalizations {
   String get loginDemoButton => 'Anebo si prohledněte demo';
 
   @override
-  String get loginCredentialsRequired => 'Username and password are required';
+  String get loginCredentialsRequired =>
+      'Uživatelské jméno a heslo jsou požadovány';
 
   @override
-  String get loginInvalidCredentials => 'Invalid username or password';
+  String get loginInvalidCredentials => 'Neplatné uživatelské jméno nebo heslo';
 
   @override
-  String get loginServerOptional => 'Server is optional, but might help if you are unable to login and are sure you have the correct credentials';
+  String get loginServerOptional =>
+      'Server není vyžadován, ale může pomoci, když se nemůžete přihlásit a jste si jist(á), že jste zadal(a) správné přihlašovací údaje';
 
   @override
-  String get setupWelcomeTitle => 'Welcome to EduPage2';
+  String get setupWelcomeTitle => 'Vítejte v EduPage2';
 
   @override
-  String get setupWelcomeBody => 'EduPage2 is a modern client for Edupage focusing on speed, efficiency and user experience. EduPage2 is fully open-source and free to use. Make sure to join our Discord server for news and updates.';
+  String get setupWelcomeBody =>
+      'EduPage2 je moderní klient pro EduPage zaměřený na rychlost, efektivitu a uživatelský zážitek. EduPage2 je plně open-source a volně k použití. Připojte se na náš Discord server pro příjem novinek.';
 
   @override
-  String get setupQuickStartTitle => 'Quick Start';
+  String get setupQuickStartTitle => 'Rychlý start';
 
   @override
-  String get setupQuickStartExplanation => 'Experimental feature to greatly speed up app loading times.';
+  String get setupQuickStartExplanation =>
+      'Experimentální funkce která může znatelně zrychlit start aplikace.';
 
   @override
-  String get setupQuickStartEnable => 'Enable Quick Start';
+  String get setupQuickStartEnable => 'Zapnout Rychlý Start';
 
   @override
-  String get setupQuickStartDetails => 'Enabling Quick Start will make the app prefer cached data over fetching data from the server. This can be disabled later.';
+  String get setupQuickStartDetails =>
+      'Při povolení Rychlého startu aplikace preferuje data z mezipaměti před získáváním dat ze serveru. Toto může být později zakázáno.';
 
   @override
-  String get setupQuickStartInfo => 'Quick Start is still experimental';
+  String get setupQuickStartInfo => 'Rychlý start je stále experimentální';
 
   @override
-  String get setupQuickStartBenefits => 'Quick Start will make the app start nearly instant, and fetch data from the server in the background, as opposed to waiting for the server to respond.';
+  String get setupQuickStartBenefits =>
+      'Rychlý start umožní aplikaci spustit se téměř okamžitě a mezitím načítat data ze serveru na pozadí, místo aby čekala na odpověď serveru.';
 
   @override
-  String get setupQuickStartDrawbacks => 'While this speeds up the initial loading time, it may lead to outdated data being displayed briefly.';
+  String get setupQuickStartDrawbacks =>
+      'I když to urychlí počáteční načítání, může to krátce zobrazit zastaralá data.';
 
   @override
-  String get setupDataStorageTitle => 'Data Storage';
+  String get setupDataStorageTitle => 'Úložiště dat';
 
   @override
-  String get setupDataStorageExplanation => 'EduPage2 has can optionally store some user data on the EduPage2 server to provide advanced functionality. The app will work fine without it, but some features may be limited.';
+  String get setupDataStorageExplanation =>
+      '„EduPage2 může volitelně ukládat některá uživatelská data na server EduPage2, aby byla dostupná rozšířená funkčnost. Aplikace bude fungovat i bez toho, ale některé funkce mohou být omezené.';
 
   @override
-  String get setupDataStorageDisabled => 'Server storage is disabled';
+  String get setupDataStorageDisabled => 'Ukládání na server je vypnuto';
 
   @override
-  String get setupDataStorageDisabledExplanation => 'Server storage is disabled on the EduPage2 server instance that you are connecting to.';
+  String get setupDataStorageDisabledExplanation =>
+      'Ukládání na server je vypnuto na instanci serveru EduPage2, ke které se připojujete.';
 
   @override
-  String get setupDataStoragePrivacyEncrypted => 'Your data is encrypted';
+  String get setupDataStoragePrivacyEncrypted => 'Vaše data JSOU šifrována';
 
   @override
-  String get setupDataStoragePrivacyUnencrypted => 'Your data is not encrypted';
+  String get setupDataStoragePrivacyUnencrypted => 'Vaša data NEJSOU šifrována';
 
   @override
-  String get setupDataStoragePrivacyDetailsEncrypted => 'The server that you are connecting to stores your credentials in a secure and encrypted manner.';
+  String get setupDataStoragePrivacyDetailsEncrypted =>
+      'Server, ke kterému se připojujete, ukládá vaše přihlašovací údaje bezpečně a šifrovaně.';
 
   @override
-  String get setupDataStoragePrivacyDetailsUnencrypted => 'The server that you are connecting to does not encrypt your data. We would recommend either enabling encryption on the server, or using the official EduPage2 server to store your data securely.';
+  String get setupDataStoragePrivacyDetailsUnencrypted =>
+      'Server, ke kterému se připojujete, nešifruje vaše data. Doporučujeme buď zapnout šifrování na serveru, nebo použít oficiální server EduPage2 pro bezpečné uložení vašich dat.';
 
   @override
-  String get setupDataStorageEnable => 'Enable Data Storage';
+  String get setupDataStorageEnable => 'Povolit ukládání dat';
 
   @override
-  String get setupDataStorageChoose => 'Choose what data to store';
+  String get setupDataStorageChoose => 'Vyberte, která data ukládat';
 
   @override
-  String get setupDataStorageAttendance => 'User login credentials';
+  String get setupDataStorageAttendance => 'Přihlašovací údaje';
 
   @override
-  String get setupDataStorageGrades => 'Text message storage';
+  String get setupDataStorageGrades => 'Ukládání textových zpráv';
 
   @override
-  String get setupDataStorageMessages => 'Timeline storage';
+  String get setupDataStorageMessages => 'Ukládání časové osy';
 
   @override
-  String get setupDataStoragePrivacy => 'EduPage2 Data Storage Security';
+  String get setupDataStoragePrivacy => 'Bezpečnost ukládání dat v EduPage2';
 
   @override
-  String get setupDataStoragePrivacyDetails => 'The EduPage2 server stores data securely and in an encrypted manner on a private dedicated server. No data is shared with any external parties.';
+  String get setupDataStoragePrivacyDetails =>
+      'Server EduPage2 ukládá data bezpečně a šifrovaně na soukromém dedikovaném serveru. Žádná data nejsou sdílena s externími stranami.';
 
   @override
-  String get setupFeaturesAvailable => 'Working features';
+  String get setupFeaturesAvailable => 'Funkční funkce';
 
   @override
-  String get setupFeatureBasic => 'Basic app functionality (messages, timetables, grades, ...)';
+  String get setupFeatureBasic =>
+      'Základní funkce aplikace (zprávy, rozvrhy, známky, …)';
 
   @override
-  String get setupFeatureNotifications => 'Push notificatons';
+  String get setupFeatureNotifications => 'Notifikace';
 
   @override
-  String get setupFeatureSearch => 'Full-text search';
+  String get setupFeatureSearch => 'Vyhledávání';
 
   @override
-  String get setupCompleteTitle => 'Setup Complete';
+  String get setupCompleteTitle => 'Nastavení dokončeno';
 
   @override
-  String get setupCompleteBody => 'Your setup is complete. You can now start using EduPage2.';
+  String get setupCompleteBody =>
+      'Nastavení je dokončeno. Nyní můžete začít používat EduPage2.';
 
   @override
-  String get setupDone => 'Setup Done';
+  String get setupDone => 'Nastavení hotovo';
 
   @override
   String get today => 'Dnes';
@@ -256,7 +274,6 @@ class AppLocalizationsCs extends AppLocalizations {
   String timetableTeacher(num count) {
     final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
       locale: localeName,
-      
     );
     final String countString = countNumberFormat.format(count);
 
@@ -301,7 +318,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get loadError => 'Chyba';
 
   @override
-  String get loadErrorDescription => 'Při načítání dat došlo k chybě. Tato chyba byla nahlášena.';
+  String get loadErrorDescription =>
+      'Při načítání dat došlo k chybě. Tato chyba byla nahlášena.';
 
   @override
   String get iCanteenLoading => 'Načítání obědů (tohle by mohlo chvíli zabrat)';
@@ -313,7 +331,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get iCanteenSetupPleaseLogin => 'Přihlašte se do systému iCanteen';
 
   @override
-  String get iCanteenSetupDetails => 'Adresu URL zadejte ve formátu https://stravovani.skola.cz/login';
+  String get iCanteenSetupDetails =>
+      'Adresu URL zadejte ve formátu https://stravovani.skola.cz/login';
 
   @override
   String get iCanteenSetupServer => 'Adresa URL';
@@ -334,7 +353,6 @@ class AppLocalizationsCs extends AppLocalizations {
   String messagesAttachments(num count) {
     final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
       locale: localeName,
-      
     );
     final String countString = countNumberFormat.format(count);
 
@@ -355,7 +373,8 @@ class AppLocalizationsCs extends AppLocalizations {
   String get createMessageDiscard => 'Zahodit zprávu?';
 
   @override
-  String get createMessageDiscardDescription => 'Zpráva ještě nebyla odeslána. Opravdu ji chcete zahodit?';
+  String get createMessageDiscardDescription =>
+      'Zpráva ještě nebyla odeslána. Opravdu ji chcete zahodit?';
 
   @override
   String get createMessageDiscardCancel => 'Zrušit';
@@ -409,13 +428,15 @@ class AppLocalizationsCs extends AppLocalizations {
   String get createMessageNotifError => 'Chyba';
 
   @override
-  String get createMessageNotifErrorBody => 'Při odesílání zprávy se vyskytla chyba, tato chyba byla nahlášena!';
+  String get createMessageNotifErrorBody =>
+      'Při odesílání zprávy se vyskytla chyba, tato chyba byla nahlášena!';
 
   @override
   String get qrLoginPleaseLogin => 'EduPage2 QR Přihlášení';
 
   @override
-  String get qrLoginUseExistingCredentials => 'Chystáte se přihlásit pomocí QR kódu';
+  String get qrLoginUseExistingCredentials =>
+      'Chystáte se přihlásit pomocí QR kódu';
 
   @override
   String get gradesTitle => 'Známky';

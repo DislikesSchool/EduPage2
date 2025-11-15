@@ -45,7 +45,7 @@ class MessagePageState extends BaseState<MessagePage> {
     super.initState();
   }
 
-  getData() async {
+  Future<void> getData() async {
     setState(() {
       loading = true; //make loading true to show progressindicator
     });

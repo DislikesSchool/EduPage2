@@ -48,8 +48,8 @@ task incrementVersionCode {
 
 android {
     namespace "com.vypal.eduapge2"
-    compileSdkVersion 33
-    ndkVersion "27.0.12077973"
+    compileSdkVersion 36
+    ndkVersion "28.2.13676358"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -71,9 +71,9 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         versionCode appVersionCode
         versionName flutterVersionName
-        targetSdkVersion 35
-        minSdkVersion 21
-        compileSdkVersion 35
+        targetSdkVersion 36
+        minSdkVersion flutter.minSdkVersion
+        compileSdkVersion 36
         multiDexEnabled true
     }
 

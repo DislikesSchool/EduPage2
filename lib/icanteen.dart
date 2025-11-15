@@ -180,7 +180,6 @@ class ICanteenManager {
             borderRadius: BorderRadius.circular(12.0),
             boxShadow: highModeShadow,
             showProgressBar: true,
-            closeButtonShowType: CloseButtonShowType.none,
             closeOnClick: false,
             applyBlurEffect: true,
           );
