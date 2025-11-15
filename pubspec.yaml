@@ -1,7 +1,7 @@
 name: eduapge2
 description: A custom mobile client for EduPage, focusing on design and speed improvement
 publish_to: none
-version: 1.12.0
+version: 1.12.1
 environment:
   sdk: ^3.2.0
 dependencies:
