@@ -95,7 +95,7 @@
     "setupDone": "அமைவு முடிந்தது",
     "today": "இன்று",
     "tomorrow": "நாளை",
-    "timetableTeacher": "{count, plural, =1{Teacher} மற்ற{{count} ஆசிரியர்கள்}}",
+    "timetableTeacher": "{count, plural, =1{Teacher} other{{count} ஆசிரியர்கள்}}",
     "@timetableTeacher": {
         "placeholders": {
             "count": {
