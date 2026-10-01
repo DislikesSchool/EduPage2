@@ -270,11 +270,8 @@ class SendMessageScreenState extends BaseState<SendMessageScreen> {
                               ),
                             );
                           },
-                          onReorder: (int oldIndex, int newIndex) {
+                          onReorderItem: (int oldIndex, int newIndex) {
                             setState(() {
-                              if (oldIndex < newIndex) {
-                                newIndex -= 1;
-                              }
                               final PollOption item =
                                   pollOptions.removeAt(oldIndex);
                               pollOptions.insert(newIndex, item);
