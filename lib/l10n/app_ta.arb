@@ -124,7 +124,7 @@
     "iCanteenSetupPassword": "கடவுச்சொல்",
     "iCanteenSetupError": "உள்நுழைவதில் பிழை ஏற்பட்டது",
     "messagesLoadingAttachment": "pdf ஏற்றுகிறது…",
-    "messagesAttachments": "{count, plural, =1{1 Attachment} மற்ற{{count} இணைப்புகள்}}",
+    "messagesAttachments": "{count, plural, =1{1 Attachment} other{{count} இணைப்புகள்}}",
     "@messagesAttachments": {
         "placeholders": {
             "count": {
